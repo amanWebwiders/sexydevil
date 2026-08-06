@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Request Reject</title>
+    <style>
+        /* Add any necessary CSS styles here */
+    </style>
+</head>
+
+<body style="margin:0;padding:0;">
+    <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" name="mjqemailid"
+        content="B0WB7P9VV27ACYA96DTTHDGYXR1I0SUB">
+        <tbody>
+            <tr>
+                <td align="center" valign="top">
+                    <table border="0" cellpadding="10" cellspacing="0" width="100%"
+                        style="border:1px solid #ddd;margin:50px 0px 100px 0px;text-align:center;color:#363636;font-family:'Montserrat',Arial,Helvetica,sans-serif;background-color:white">
+                        <tbody>
+                            <tr>
+                                <td align="center" valign="top"
+                                    style="padding:0px; background: #b91d04; border-bottom: 2px solid #b91d04;">
+                                    <table border="0" cellpadding="0" cellspacing="10" width="100%">
+                                        <tbody>
+                                            <tr>
+                                                <td align="center" style="text-align: center;" valign="middle">
+                                                    <a style="font-family:'Ubuntu',sans-serif;color:#ff3000;font-weight:300;display:block;letter-spacing:-1.5px;text-decoration:none;margin-top:2px"
+                                                        href="#">
+                                                        <img src="{{ asset(env('LOGO_PATH')) }}"
+                                                            style="padding-top:0;display:inline-block;vertical-align:middle;margin-right:0px;height:55px"
+                                                            class="CToWUd">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top">
+                                    <table border="0" cellpadding="0" cellspacing="10" width="100%">
+                                        <tbody>
+                                            
+                                            <tr>
+                                                <td align="left" valign="top" style="color:#444;font-size:14px">
+                                                    <p>{{__('message.dear')}} {{ $userDetails->store_owner_name }},</p>
+                                                    <p>{{__('message.reject_text1')}}</p>
+                                                    <p><strong>{{__('message.reject_text2')}}:</strong> {{ $userDetails->message }}</p>
+                                                    <p>{{__('message.reject_text3')}}</p>
+                                                    <p>{{__('message.reject_text4')}}.</p>
+                                                    <p style="margin:0;padding:10px 0px">{{__('message.kindly')}},<br>
+                                                        {{ env('APP_NAME') }} 
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" valign="top" style="background-color:#b91d04;color:white">
+                                    <table border="0" cellpadding="0" cellspacing="10" width="100%">
+                                        <tbody>
+                                            <tr>
+                                                <td align="center" valign="top" width="80%">
+                                                    <div style="margin:0;padding:0;color:#fff;font-size:13px">
+                                                        Copyright © <?= date("Y"); ?> <a href="#"
+                                                            style="color:white;text-decoration:none">
+                                                            {{ config('app.name') }} </a>. All rights reserved.
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

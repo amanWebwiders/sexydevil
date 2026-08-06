@@ -1,0 +1,8 @@
+[11-Apr-2025 12:47:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home1/webwiqpq/compare.webwiders.com/config/app.php:18
+Stack trace:
+#0 {main}
+  thrown in /home1/webwiqpq/compare.webwiders.com/config/app.php on line 18
+[16-Apr-2025 09:54:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function env() in /home1/webwiqpq/compare.webwiders.com/config/app.php:18
+Stack trace:
+#0 {main}
+  thrown in /home1/webwiqpq/compare.webwiders.com/config/app.php on line 18
