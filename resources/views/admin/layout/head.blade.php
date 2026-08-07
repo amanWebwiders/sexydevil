@@ -20,6 +20,9 @@
 	<!-- ================== BEGIN page-css ================== -->
 	<link href="{{ asset('admin/assets/plugins/jvectormap-next/jquery-jvectormap.css')}}" rel="stylesheet">
 	<link href="{{ asset('admin/assets/plugins/bootstrap-daterangepicker/daterangepicker.css')}}" rel="stylesheet">
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 	<!-- ================== END page-css ================== -->
 
 </head>
