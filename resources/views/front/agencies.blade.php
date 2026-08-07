@@ -28,7 +28,7 @@
 <section class="main-area">
   <div class="container">
 
-    <h2 class="text-center mb-4">Agencies</h2>
+    <h1 class="text-center mb-4">Agencies</h1>
 
     @if($agencies->count())
         @foreach($agencies as $agency)

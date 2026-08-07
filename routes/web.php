@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -204,4 +205,3 @@ Route::prefix('/user')->name('user.')->namespace('App\Http\Controllers\Front')->
 Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::get('/{city?}', 'HomeController@index')->name('home');
 });
-

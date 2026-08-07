@@ -53,7 +53,7 @@
                     <img src="{{ asset('images/escort_logo1.png')}}" alt="">
                 </div>
                 <div class="col">
-                    <h2 class="mx-auto text-center">Please Wait</h2>
+                    <h1 class="mx-auto text-center">Please Wait</h1>
                     <span class=" mb-3 text-center d-block mx-auto">Important alert!</span>
 
 

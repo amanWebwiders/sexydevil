@@ -33,7 +33,7 @@
                                         <!-- tabs start -->
                                         <div class="container-fluid">
                                         <div class="col-12">
-                                                <h2 class="mb-4 text-left">Boost Your Profile</h2>                                                
+                                                <h1 class="mb-4 text-left">Boost Your Profile</h1>                                                
 
                                                 <div class="text-justify">Top Push places your profile at the top of the list for a short time, giving you instant visibility and more attention exactly when you want it most.                                                
                                                     <div class="top-socials justify-content-start align-items-center ">

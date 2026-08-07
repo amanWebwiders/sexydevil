@@ -29,7 +29,7 @@
                     <img src="{{ asset('images/escort_logo1.png') }}" alt="">
                 </div>
                 <div class="col-lg-6 py-0">
-                    <h4>Create Profile</h4>
+                    <h1>Create Profile</h1>
                     <form class="contact-form c-mb-20 c-gutter-20" id="addUserForm" method="POST"
                         action="{{ route('user.register') }}">
                         @csrf

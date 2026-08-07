@@ -21,7 +21,7 @@
                         <img src="{{ asset('storage/'.$agency->photo) }}" class="agencies-detail-profile-img" alt="Profile">
                     </div>
                     <div class="agency-detail-modal-desc p-3">
-                        <h2 class="modal-detail-name">{{ $agency->name }}</h2>
+                        <h1 class="modal-detail-name">{{ $agency->name }}</h1>
 
                         <div class="meta-info meta-info-agency-detail mt-2">
                             <p>

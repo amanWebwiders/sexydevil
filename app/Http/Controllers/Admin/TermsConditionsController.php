@@ -9,8 +9,8 @@ use App\Repository\Eloquent\{TermsConditionsRepository, ContactSettingRepository
 use App\Services\Admin\ContentSettingsServices;
 
 class TermsConditionsController extends Controller {
-    
-    protected $termsConditionsRepository, $contactSettingRepository, $contentSettingsServices, $countryRepository, $stateRepository, $cityRepository;
+
+    protected $termsConditionsRepository, $contactSettingRepository, $contentSettingsServices;
 
     public function __construct(TermsConditionsRepository $termsConditionsRepository,
     ContactSettingRepository $contactSettingRepository, ContentSettingsServices $contentSettingsServices, CountryRepository $countryRepository, StateRepository $stateRepository, CityRepository $cityRepository) {
@@ -27,7 +27,7 @@ class TermsConditionsController extends Controller {
         return view('admin.terms-conditions', compact('terms'));
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong.');            
+            return redirect()->back()->with('error', 'Something went wrong.');
         }
     }
 
@@ -38,10 +38,10 @@ class TermsConditionsController extends Controller {
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
             return redirect()->back()->with('error', 'Something went wrong.');
-            
+
         }
     }
-    
+
 
     public function adminTermsUpdate(Request $request) {
         try {
@@ -61,7 +61,7 @@ class TermsConditionsController extends Controller {
             return view('admin.contact-page-content', compact('content'));
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong.');            
+            return redirect()->back()->with('error', 'Something went wrong.');
         }
     }
 
@@ -70,18 +70,18 @@ class TermsConditionsController extends Controller {
             $this->contentSettingsServices->updateContent($request->all());
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong.');            
+            return redirect()->back()->with('error', 'Something went wrong.');
         }
         return redirect()->back()->with('success', 'Data updated successfully !!');
-    }   
-    
+    }
+
     public function locationSeoContent() {
         try {
             $countries = $this->countryRepository->getAllRecordWhere();
             return view('admin.location-seo-content', compact('countries'));
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong.');            
+            return redirect()->back()->with('error', 'Something went wrong.');
         }
     }
 
@@ -107,7 +107,25 @@ class TermsConditionsController extends Controller {
 
     public function locationSeoContentStore(Request $request) {
         try {
+            $request->validate([
+                'title' => 'required|string',
+                'meta_title' => 'nullable|string|max:60',
+                'meta_description' => 'nullable|string|max:160',
+                'image_alt_text' => 'nullable|string|max:255',
+                'meta_keywords' => 'nullable|string',
+                'seo_url_slug' => 'nullable|string|max:255',
+                'canonical_url' => 'nullable|string|max:255',
+                'robots_setting' => 'nullable|string|max:50',
+                'og_title' => 'nullable|string|max:255',
+                'og_description' => 'nullable|string',
+                'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                'twitter_title' => 'nullable|string|max:255',
+                'twitter_description' => 'nullable|string',
+                'twitter_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            ]);
             return $this->contentSettingsServices->updateLocationSeoContent($request->all());
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            return ['status' => 400, "message" => implode(', ', \Illuminate\Support\Arr::flatten($exception->errors()))];
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
             return ['status' => 400, "message" => __('message.something_went_wrong')];

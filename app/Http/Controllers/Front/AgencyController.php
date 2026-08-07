@@ -37,11 +37,7 @@ class AgencyController extends Controller
         //dd($locationSeoContent);
         $agencies = $this->AgencyRepository->getAllPaginated(10);;
         // dd($agencies);
-        $metaContent = [
-            "title" => "Escort Agencies & Independent Listings | Global Directory",
-            "description" => "Browse escort agencies and independent profiles worldwide. Discover listings across UK, Colombia & Germany with 24/7 escort service access."
-        ];
-        return view('front.agencies', compact('agencies', 'locationSeoContent', 'metaContent'));
+        return view('front.agencies', compact('agencies', 'locationSeoContent'));
     }
     public function detail($id)
     {
@@ -54,8 +50,10 @@ class AgencyController extends Controller
                 true                  // random
             );
 
-          
-            return view('front.agency-detail', compact('agency', 'teams'));
+            $locationSeoContent = $this->userServices->getLocationSeoContent($agency->city_id ?? null, "Agency Profile");
+            $pageTitle = $agency->name ?? 'Agency Profile';
+            $seoOgImage = !empty($agency->agency_logo) ? config('app.img_url') . $agency->agency_logo : null;
+            return view('front.agency-detail', compact('agency', 'teams', 'locationSeoContent', 'pageTitle', 'seoOgImage'));
         } catch (\Exception $e) {
             \Log::error("Error in AgencyController.detail(): " . $e->getMessage());
 

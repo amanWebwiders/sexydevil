@@ -232,11 +232,7 @@ class NewStoryController extends Controller
                 return ["status" => isset($allUsers) && !empty($allUsers) ? 200 : 400, "list" => view('front.component.reelsAjax', compact('allUsers'))->render(), "page" => $page, "records_from" => $records_from, 'content' => $locationSeoContent['data']->content ?? null];
             }
             $country = $this->countryRepository->getAllRecordWhere([], ['id', 'name']);
-            $metaContent = [
-                "title" => "Sexy Devil Escorts Reels | Watch Escort Profile Videos",
-                "description" => "Watch escort profile videos from UK, Colombia & Germany listings. Preview independent escorts and agencies before you book escort online."
-            ];
-            return view('front.reels', compact('data', 'allUsers', 'country', 'page', 'records_from', 'locationSeoContent', 'metaContent'));
+            return view('front.reels', compact('data', 'allUsers', 'country', 'page', 'records_from', 'locationSeoContent'));
         } catch (\Exception $e) {
             Log::error("Error in HomeController.reels(): " . $e->getMessage() . " line" . $e->getLine());
             return response()->json(['status' => 0, 'message' => __('message.statusZero'), 'data' => $this->dataObject, 'error' => $this->dataObject], 500);

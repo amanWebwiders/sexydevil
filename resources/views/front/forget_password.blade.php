@@ -29,7 +29,7 @@
                 <img src="./images/escort_logo.png" alt="">
                 </div>
                 <div class="col">
-                    <h2 class="mx-auto mb-5 text-center">Forget Password</h2>
+                    <h1 class="mx-auto mb-5 text-center">Forget Password</h1>
 
 
                     <form form id="formAuthentication" onsubmit="return sendPassword()" method="post" name="login_form" class="contact-form c-mb-20 c-gutter-20">

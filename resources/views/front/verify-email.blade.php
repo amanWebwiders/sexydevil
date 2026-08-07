@@ -81,8 +81,7 @@
                     <a href="{{route('home')}}"><img src="{{ asset('images/escort_logo1.png')}}" alt=""></a>
                 </div>
                 <div class="col-lg-6">
-                    <!-- <h2 class="mx-auto text-center">Welcome, {{ $user->name }}!</h2> -->
-                    <!-- <span class=" mb-3 text-center d-block mx-auto">Important alert!</span> -->
+                    <h1 class="mx-auto mb-4 text-center fs-28">Verify Your Email</h1>
 
 
                     <form class="contact-form c-mb-20 c-gutter-20" method="post" action="">

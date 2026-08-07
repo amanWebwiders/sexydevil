@@ -20,7 +20,7 @@
                     <div class="contact-form">
                         <div class="title-section style9 sec-title-animation animation-style2">
                             <div class="title-content">
-                                <h2>My Form</h>
+                                <h2>My Form</h2>
                             </div>
                         </div>
                         <section class="container forms multistep">
@@ -774,7 +774,7 @@
                                             <div class="row mb-3 mt-5">
                                                 <h3 class="mb-3">16) Provide details about the proposed building work </h3>
                                                 <div class="mb-3">
-                                                    <h5 class="mb-3">a) What placeholder="Lorem Ipsum is simply dummy text of the printing "  type  of approval is being sought?</h4>
+                                                    <h5 class="mb-3">a) What type of approval is being sought?</h5>
                                                         <div class="checkbox_div">
                                                             <label class="check_div">
                                                                 <input placeholder="Lorem Ipsum is simply dummy text of the printing "  type ="checkbox">
@@ -792,7 +792,7 @@
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <h5 class="mb-3">b) What is the level of assessment?</h4>
+                                                    <h5 class="mb-3">b) What is the level of assessment?</h5>
                                                         <div class="checkbox_div">
                                                             <label class="check_div">
                                                                 <input placeholder="Lorem Ipsum is simply dummy text of the printing "  type ="checkbox">
@@ -810,7 +810,7 @@
                                                 </div>
 
                                                 <div class="mb-3">
-                                                    <h5 class="mb-3">c) Nature of the proposed building work (tick all applicable boxes)</h4>
+                                                    <h5 class="mb-3">c) Nature of the proposed building work (tick all applicable boxes)</h5>
                                                         <div class="row">
                                                             <div class="checkbox_div col-md-6">
                                                                 <label class="check_div">
@@ -940,7 +940,7 @@
                                                     </div>
 
                                                     <div class="section">
-                                                        <h6 class="mb-3 mt-4">Frame</h5>
+                                                        <h6 class="mb-3 mt-4">Frame</h6>
                                                             <div class="row">
                                                                 <div class="checkbox_div col-md-3">
                                                                     <label class="check_div">
@@ -1146,7 +1146,7 @@
 
                                         <div class="mb-3 row">
                                             <h3 class="mb-3">19) Development application checklist</h3>
-                                            <h5 class="mb-2 mt-3">The relevant parts of Form 2 – Building work details have been completed</h4>
+                                            <h5 class="mb-2 mt-3">The relevant parts of Form 2 – Building work details have been completed</h5>
                                                 <div class="checkbox_div">
                                                     <label class="check_div">
                                                         <input checked="checked" placeholder="Lorem Ipsum is simply dummy text of the printing "  type ="checkbox">
@@ -1155,7 +1155,7 @@
                                                     <span>yes</span>
                                                 </div>
 
-                                                <h5 class="mb-2 mt-3">This development application includes a material change of use, reconfiguring a lot or operational work and is accompanied by a completed Form 1 – Development application details</h4>
+                                                <h5 class="mb-2 mt-3">This development application includes a material change of use, reconfiguring a lot or operational work and is accompanied by a completed Form 1 – Development application details</h5>
                                                     <div class="checkbox_div">
                                                         <label class="check_div">
                                                             <input checked="checked" placeholder="Lorem Ipsum is simply dummy text of the printing "  type ="checkbox">
@@ -1182,7 +1182,7 @@
                                                         </div>
 
 
-                                                        <h5 class="mb-2 mt-3">This development application includes a material change of use, reconfiguring a lot or operational work and is accompanied by a completed Form 1 – Development application details</h4>
+                                                        <h5 class="mb-2 mt-3">This development application includes a material change of use, reconfiguring a lot or operational work and is accompanied by a completed Form 1 – Development application details</h5>
                                                             <div class="checkbox_div">
                                                                 <label class="check_div">
                                                                     <input checked="checked" placeholder="Lorem Ipsum is simply dummy text of the printing "  type ="checkbox">

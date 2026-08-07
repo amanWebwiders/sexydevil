@@ -6,7 +6,6 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\Country;
 use App\Repository\Eloquent\{GenderRepository, CommonRepository,CountryRepository};
 use App\Models\EscortServiceCategory;
-use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,9 +36,5 @@ class AppServiceProvider extends ServiceProvider
             $view->with('pubicHair', $commonRepo->setModel(new \App\Models\PubicHair())->getAll());
             
         });
-        
-         if (app()->environment('production')) {
-            URL::forceScheme('https');
-        }
     }
 }

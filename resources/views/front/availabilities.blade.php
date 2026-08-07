@@ -207,7 +207,7 @@
 
                                         <div class="">
                                             <div class="col-12">
-                                                <h4 class="mt-0 my-md-3">Set Availability</h4>
+                                                 <h1 class="mt-0 my-md-3 fs-28">Set Availability</h1>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="col-12">

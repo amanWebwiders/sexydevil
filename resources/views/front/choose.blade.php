@@ -21,7 +21,7 @@
                     <img src="{{ asset('images/escort_logo1.png') }}" alt="">
                 </div>
                 <div class="col-lg-6 ">
-                    <h3 class="mb-5 text-left">Don't have an account yet?</h3>
+                    <h1 class="mb-5 text-left fs-28">Don't have an account yet?</h1>
 
                     <div class="radio-button-container">
                         <div class="radio-button">

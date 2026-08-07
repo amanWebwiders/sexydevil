@@ -24,7 +24,7 @@ class UserServices
     protected $AdminRepository;
     private $dataObject;
 
-    public function __construct(AdminRepository $AdminRepository, 
+    public function __construct(AdminRepository $AdminRepository,
     UserRepository $userRepository,
     CityRepository $cityRepository,
     CountryRepository $countryRepository,
@@ -105,7 +105,7 @@ class UserServices
                         // Generate a unique file name for the image and store it
                         $imagePath = $this->uploadImage($image, 'document_image');  // Save to 'artists' folder in the public disk
                         // Add the image path to the data
-                        $create['document_image'] = $imagePath; 
+                        $create['document_image'] = $imagePath;
                     }
                 }
                 if ($request->hasFile('holding_document_image')) {
@@ -187,7 +187,7 @@ class UserServices
                 $update['password'] = Hash::make($randomPassword);
                 $this->userRepository->update(['id' => $userData->id], $update);
                 $email = $userData->email;
-                // dd($randomPassword); 
+                // dd($randomPassword);
                 $body = 'Hello ' . $userData->name;
                 $body .= '<p>This is an automated message. If you did not recently initiate the Forgot Password process, please disregard this email.</p>';
                 $body .= '<p>Your new temporary password for logging in is  <b>' .  $randomPassword . '</b> Please do not share the password.</p>';
@@ -200,7 +200,6 @@ class UserServices
 
                 try {
                     Mail::to($email)->send(new \App\Mail\DemoMail($mailData));
-                    
                     return response()->json([
                         'status' => '1',
                         'message' => 'Please check your registered email. We have sent you a temporary password.',
@@ -261,7 +260,7 @@ class UserServices
                 $data['profile_image'] = $imagePath;
             }
             $data['nickname'] = $request->nickname;
-            
+
             if ($request->type == 2) {
 
                 $data['displayed_age'] = $request->displayed_age;
@@ -479,7 +478,7 @@ class UserServices
                     //dump($favorites);
                     // Store back in cookie (valid for 30 days)
                     return response()->json([
-                        'status' => 1, 
+                        'status' => 1,
                         'message' => $message
                     ])->cookie('favorites', json_encode($favorites), 60 * 24 * 30);
             }
@@ -556,8 +555,8 @@ class UserServices
             $user = Auth::guard('web')->user();
             $user_id = $user->id ?? 0;
             $where = [
-                'users.type' => 2, 
-                'user_status' => 0, 
+                'users.type' => 2,
+                'user_status' => 0,
                 'admin_status' => 'approved',
                 ['plan_start_date', '<=', $current_date],
                 ['plan_end_date', '>=', $current_date],
@@ -576,14 +575,14 @@ class UserServices
                 $records_from = "country";
             }
             //from current county
-            if($users->isEmpty() && $records_from == 'country') {                
+            if($users->isEmpty() && $records_from == 'country') {
                 $users = $this->userRepository->usersByMyCurrentLocation(
                     array_merge($where, [
                                 ['city_id', '!=', $myCity],
                                 ['country_id', '=', $myCountryId],
                             ]), $page
-                );                
-            } 
+                );
+            }
             //dd($users->count());
             if(isset($users) && $users->count() > 1 && $records_from == 'country') {
                 $records_from = "country";
@@ -591,7 +590,7 @@ class UserServices
             } else if($records_from == 'country') {
                 $page = isset($request->records_from) && $request->records_from == 'globally' ? $page:1;
                 $records_from = "globally";
-            } 
+            }
             //dd($records_from);
             //globally
             if($users->isEmpty() && $records_from == "globally") {
@@ -642,13 +641,13 @@ class UserServices
 
             if(isset($inputs["city"]) && !empty($inputs["city"])) {
                 $where['city_id'] = $inputs["city"];
-            } 
+            }
             $page = (int)$inputs["page"];
             $allUsers = $this->userRepository->usersByMyCurrentLocation($where, $page);
             if($allUsers->isEmpty()) {
                 //dd(123);
-                $allUsers = $this->userRepository->usersByMyCurrentLocation($where, 1); 
-                $page = 1;               
+                $allUsers = $this->userRepository->usersByMyCurrentLocation($where, 1);
+                $page = 1;
             }
             //dd($allUsers);
             $page = $page + 1;
@@ -678,8 +677,8 @@ class UserServices
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             return null;
           }
-    }  
-    
+    }
+
     public function manuallyBoostProcessService($data) {
         try {
             $user = Auth::guard('web')->user();
@@ -690,7 +689,7 @@ class UserServices
                 return ["status" => 400, "message" => __('message.already_boost')];
             } else {
                 if(auth()->user()->alloted_ups > 0) {
-                    $data = [                    
+                    $data = [
                         'user_id' => $user->id,
                         'ups_quantity' => 1,
                         'boosted_from' => $current_time->copy()->format('Y-m-d H:i:s'),
@@ -729,20 +728,101 @@ class UserServices
 
     public function getLocationSeoContent($city, $pageType) {
         try {
-            $seoType = session()->get('SeoType', 'worldwide');
-                //dump($city);
-                //dump($seoType);
-            if(is_string($city) && !is_numeric($city)) {
-                //dump('chel');
-                $where = ($seoType == 'worldwide' || $seoType == 'country') ? ['country' => ($seoType == 'worldwide') ? 'worldwide' : $city, ["state", "=", null], ["city", "=", null]] : ($seoType == 'state' ? ['state' => $city, ["city", "=", null]] : ['city' => $city]);
-            } else {
-                $where = ($seoType == 'worldwide') ? ['country' => 'worldwide', ["state", "=", null], ["city", "=", null]] : ($seoType == 'country' ? ['country_id' => $city, ["state_id", "=", null], ["city_id", "=", null]] : ($seoType == 'state' ? ['state_id' => $city, ["city_id", "=", null]] : ['city_id' => $city]));
+            $run = null;
+
+            if (!empty($city) && $city !== 'home') {
+                // 1. Try City match (by name or ID)
+                if (is_numeric($city)) {
+                    $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                        'city_id' => (int)$city,
+                        'title' => $pageType
+                    ]);
+                } else {
+                    $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                        'city' => $city,
+                        'title' => $pageType
+                    ]);
+                    if (!$run) {
+                        $cityObj = \App\Models\City::where('name', $city)->first();
+                        if ($cityObj) {
+                            $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                                'city_id' => $cityObj->id,
+                                'title' => $pageType
+                            ]);
+                        }
+                    }
+                }
+
+                // 2. Try State match if City match not found
+                if (!$run) {
+                    if (is_numeric($city)) {
+                        $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                            'state_id' => (int)$city,
+                            'city_id' => null,
+                            'title' => $pageType
+                        ]);
+                    } else {
+                        $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                            'state' => $city,
+                            'city_id' => null,
+                            'title' => $pageType
+                        ]);
+                        if (!$run) {
+                            $stateObj = \App\Models\State::where('name', $city)->first();
+                            if ($stateObj) {
+                                $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                                    'state_id' => $stateObj->id,
+                                    'city_id' => null,
+                                    'title' => $pageType
+                                ]);
+                            }
+                        }
+                    }
+                }
+
+                // 3. Try Country match if State match not found
+                if (!$run) {
+                    if (is_numeric($city)) {
+                        $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                            'country_id' => (int)$city,
+                            'state_id' => null,
+                            'city_id' => null,
+                            'title' => $pageType
+                        ]);
+                    } else {
+                        $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                            'country' => $city,
+                            'state_id' => null,
+                            'city_id' => null,
+                            'title' => $pageType
+                        ]);
+                        if (!$run) {
+                            $countryObj = \App\Models\Country::where('name', $city)->first();
+                            if ($countryObj) {
+                                $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                                    'country_id' => $countryObj->id,
+                                    'state_id' => null,
+                                    'city_id' => null,
+                                    'title' => $pageType
+                                ]);
+                            }
+                        }
+                    }
+                }
             }
-            $where["title"] = $pageType;
-            //dd($where);
-            $run = $this->locationSeoContentRepository->getSingleRecordWhere($where);
+
+            // 4. Fallback to Worldwide
+            if (!$run) {
+                $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                    'country' => 'worldwide',
+                    'state_id' => null,
+                    'city_id' => null,
+                    'title' => $pageType
+                ]);
+            }
+
             return [ "status" => $run ? 200 : 400, "data" => $run ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
             return [ "status" => 400 ];
         }

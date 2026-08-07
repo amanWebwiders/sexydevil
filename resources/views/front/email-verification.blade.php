@@ -60,8 +60,8 @@
 
                     </div>
                     <div class="col-lg-6 text-center">
-                        <h2 class="mx-auto mb-5 text-center">Email Verification</h2>
-                        <h1 class="my-2" style="font-size: 100px;"><i class="fa-solid fa-envelope-circle-check mt-2 fs-1 text-success"></i></h1>
+                        <h1 class="mx-auto mb-5 text-center">Email Verification</h1>
+                        <div class="my-2" style="font-size: 100px;"><i class="fa-solid fa-envelope-circle-check mt-2 fs-1 text-success"></i></div>
                         <!-- <a href="{{route('home')}}"><img src="{{ asset('images/verified.png')}}" alt=""></a> -->
                         <h6 class="mt-2 mb-4">{{ $message ?? ''}}</h6>
                         @php

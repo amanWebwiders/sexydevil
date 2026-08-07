@@ -19,7 +19,7 @@ class ContentSettingsServices {
     }
 
     public function updateContent($inputs) {
-        try { 
+        try {
             $update = [
                 "phone_no" => $inputs["phone_no"] ?? 0,
                 "alter_phone_no" => $inputs["alter_phone_no"] ?? 0,
@@ -45,8 +45,7 @@ class ContentSettingsServices {
             $where = [
                 "country_id" => $inputs["country"] == "worldwide" ? 0 : $inputs["country"],
                 "state_id" => $inputs["state"] ?? null,
-                "city_id" => $inputs["city"] ?? null,
-                "title" => $inputs["title"]
+                "city_id" => $inputs["city"] ?? null
             ];
             $country = $this->countryRepository->getSingleRecordWhere(["id" => $inputs["country"] ?? 0]);
             $state = $this->stateRepository->getSingleRecordWhere(["id" => $inputs["state"] ?? null]);
@@ -56,11 +55,38 @@ class ContentSettingsServices {
                 $city = $this->cityRepository->getSingleRecordWhere(["id" => $inputs["city"] ?? null]);
             }
             $data = [
-                "country" => $inputs["country"] == "worldwide" ? 'worldwide' : $country["name"],
+                "country" => $inputs["country"] == "worldwide" ? 'worldwide' : ($country["name"] ?? 'worldwide'),
                 "state" => $state["name"] ?? null,
                 "city" => $city["name"] ?? null,
-                "content" => $inputs["content"] ?? null
+                "content" => $inputs["content"] ?? "",
+                "title" => $inputs["title"] ?? null,
+                "meta_title" => $inputs["meta_title"] ?? null,
+                "meta_description" => $inputs["meta_description"] ?? null,
+                "image_alt_text" => $inputs["image_alt_text"] ?? null,
+                "meta_keywords" => $inputs["meta_keywords"] ?? null,
+                "seo_url_slug" => $inputs["seo_url_slug"] ?? null,
+                "canonical_url" => $inputs["canonical_url"] ?? null,
+                "robots_setting" => $inputs["robots_setting"] ?? null,
+                "og_title" => $inputs["og_title"] ?? null,
+                "og_description" => $inputs["og_description"] ?? null,
+                "twitter_title" => $inputs["twitter_title"] ?? null,
+                "twitter_description" => $inputs["twitter_description"] ?? null,
             ];
+
+            if (isset($inputs['og_image']) && $inputs['og_image'] instanceof \Illuminate\Http\UploadedFile) {
+                $file = $inputs['og_image'];
+                $filename = time() . '_og.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/seo'), $filename);
+                $data['og_image'] = 'uploads/seo/' . $filename;
+            }
+
+            if (isset($inputs['twitter_image']) && $inputs['twitter_image'] instanceof \Illuminate\Http\UploadedFile) {
+                $file = $inputs['twitter_image'];
+                $filename = time() . '_tw.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/seo'), $filename);
+                $data['twitter_image'] = 'uploads/seo/' . $filename;
+            }
+
             $run = $this->locationSeoContentRepository->createOrUpdate($where, $data);
             return ["status" => $run ? 200 : 400, "message" => $run ? __('message.common_success') : __('message.something_went_wrong')];
         } catch (\Exception $exception) {
@@ -72,7 +98,7 @@ class ContentSettingsServices {
     public function getLocationSeoContent($inputs) {
         try {
 
-            if(isset($inputs["country"]) && $inputs["country"] == "worldwide") {                
+            if(isset($inputs["country"]) && $inputs["country"] == "worldwide") {
                 $where = [ "country" => $inputs["country"] ];
             } else {
                 $where = [ "country_id" => $inputs["country"] ];
@@ -93,4 +119,4 @@ class ContentSettingsServices {
             return ['status' => 400, "message" => __('message.something_went_wrong')];
         }
     }
-}    
+}

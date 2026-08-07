@@ -11,7 +11,7 @@
 </style>
 <section class="main-sec-contact top_mask_add background-contact s-py-70 s-pt-md-100 s-pb-md-95 s-pt-xl-150 s-pb-xl-185 c-gutter-30">
     <div class="container">
-        <h2 class="mt-5 mb-40 text-uppercase">Contact us</h2>
+        <h1 class="mt-5 mb-40 text-uppercase">Contact us</h1>
         <div class="row">
             <div class="col-lg-5 col-xl-4" data-animation="scaleAppear">
                 <!-- <span class="color-main font-main fs-24 text-uppercase">modelia</span> -->

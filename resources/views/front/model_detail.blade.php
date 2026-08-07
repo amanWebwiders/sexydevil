@@ -513,7 +513,7 @@
                 <div class="profile-card">
                     <div class="profile-info">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h2 class="name notranslate" translate="no">{{$user->nickname}}</h2>
+                            <h1 class="name notranslate" translate="no">{{$user->nickname}}</h1>
                             @if ($user->is_online == 1)
                             <span class="available text-success">
                                 <i class="fa fa-circle"></i> Available Now
