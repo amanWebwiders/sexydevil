@@ -19,7 +19,6 @@ use App\Http\Requests\FrontEnd\{
 use Validator;
 use App\Models\{EscortServiceCategory, UserEscortService};
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Artisan;
 
 class HomeController extends Controller
 {
@@ -157,24 +156,19 @@ class HomeController extends Controller
 
     public function aboutUs()
     {
-
-        return view('front.about');
+        $locationSeoContent = $this->userServices->getLocationSeoContent(null, "About Us");
+        return view('front.about', compact('locationSeoContent'));
     }
 
     public function contactUs()
     {
-        $metaContent = [
-            "title" => "Contact | Directory Support & Advertising Inquiries",
-            "description" => "Get in touch for support, listings or advertising inquiries. Sexy Devil is a global escort directory platform"
-        ];
-        return view('front.contact', compact('metaContent'));
+        $locationSeoContent = $this->userServices->getLocationSeoContent(null, "Contact Us");
+        return view('front.contact', compact('locationSeoContent'));
     }
 
     public function Login()
-    
     {
-        // Artisan::call('optimize:clear');
-        //dd(Artisan::output());
+
         return view('front.login');
     }
 
@@ -252,7 +246,7 @@ class HomeController extends Controller
     {
 
         try {
-           
+
             $credentials = $request->only('email', 'password');
 
             if (Auth::attempt($credentials)) {
@@ -407,7 +401,10 @@ class HomeController extends Controller
                     ->values()
                     ->toArray();
                 $newsstory =  $data = $this->NewsandstoryRepository->getByWhere(['user_id' => $user->id]);
-                return view('front.model_detail', compact('newsstory', 'user', 'selectedServices', 'selectedSelections', 'categories', 'uploadedPhotos', 'uploadedVideos', 'availabilities', 'countryCodes', 'language' ,'favorite_users'));
+                $locationSeoContent = $this->userServices->getLocationSeoContent($user->city_id ?? null, "Model Profile");
+                $pageTitle = $user->nickname ?? $user->name;
+                $seoOgImage = !empty($user->profile_image) ? config('app.img_url') . $user->profile_image : null;
+                return view('front.model_detail', compact('newsstory', 'user', 'selectedServices', 'selectedSelections', 'categories', 'uploadedPhotos', 'uploadedVideos', 'availabilities', 'countryCodes', 'language' ,'favorite_users', 'locationSeoContent', 'pageTitle', 'seoOgImage'));
             }
         } catch (\Exception $e) {
             Log::error("Error in HomeController.Register(): " . $e->getMessage());
@@ -418,7 +415,8 @@ class HomeController extends Controller
     public function termsConditions() {
         try {
         $terms = $this->termsConditionsRepository->getAllData();
-        return view('front.terms', compact('terms'));
+        $locationSeoContent = $this->userServices->getLocationSeoContent(null, "Terms & Conditions");
+        return view('front.terms', compact('terms', 'locationSeoContent'));
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
             return redirect()->back()->with('error', 'Something went wrong.');            
@@ -442,11 +440,7 @@ class HomeController extends Controller
                 $country['flag'] = asset('images/flags/'.strtolower(emojiToCountryCode($country['emoji']).'.svg')); // or make URL if using image flags
                 return $country;
             }); */
-        $metaContent = [
-            "title" => "Sexy Devil Escorts | Luxury Escort Directory UK, DE, CO",
-            "description" => "Sexy Devil Escorts is a global directory of independent escorts and agencies. Explore premium escorts service options across UK, Colombia & Germany with 24/7 access."
-        ];
-        return view('front.enter', compact('country', 'state', 'MyCity', 'cityCountry', 'allCountry', 'locationSeo', 'metaContent'));
+        return view('front.enter', compact('country', 'state', 'MyCity', 'cityCountry', 'allCountry', 'locationSeo'));
     }
     public function getCitiesUsers(Request $request) {
         try {

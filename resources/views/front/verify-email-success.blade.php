@@ -53,6 +53,7 @@
                                             <tr>
                                                 <td align="left" valign="top"
                                                     style="color:#444;font-size:17px;font-weight: 700;">
+                                                    <h1 style="color:#ff3000;font-size:24px;margin-bottom:15px;">Email Verification Successful</h1>
                                                     <p>Dear User,</p>
                                                     <p>{{ isset($message) ? $message : '' }}</p>
                                                     <p>Thank you!</p>

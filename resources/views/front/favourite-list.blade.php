@@ -38,7 +38,7 @@
                     <div class="container-fluid">
                         <div class="">
                             <div class="row justify-content-between align-items-center mb-4 w-100 mx-0">
-                                <h2 class="heading ">Favourite List</h2>
+                                <h1 class="heading ">Favourite List</h1>
                                 @if(!$data->isEmpty())
                                 <select class="form-control orderby col-3" name="orderby" id="orderby">
                                     <option value="default" selected="">Actions</option>

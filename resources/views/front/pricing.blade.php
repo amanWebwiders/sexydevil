@@ -11,7 +11,7 @@
             <div class="col-12">
                 <!-- tabs start -->
 
-                <h2>Choose Plan</h2>
+                <h1>Choose Plan</h1>
                 <div class="row">
                     @foreach($data as $data)
                     @php

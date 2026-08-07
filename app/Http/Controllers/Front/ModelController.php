@@ -72,7 +72,6 @@ class ModelController extends Controller
             $city === null ? session()->put('SeoType', 'worldwide') : null;
             $locationSeoCity = $city;
         }
-
         if ($request->filled('state_id')) {
             session()->put('SeoType', 'state');
             $locationSeoCity = (int)$request->state_id;
@@ -343,11 +342,7 @@ class ModelController extends Controller
             return response()->json($output);
         }
         $url = route('model.search', ['city' => $city ?? ""]);
-        $metaContent = [
-            "title" => "Affordable Luxury Escorts Near Me | Book Escort Online",
-            "description" => "Find affordable luxury escorts near you. Browse independent listings and agencies across UK, Colombia & Germany. Book escort online and connect instantly."
-        ];
-        return view('front.model-list', compact('results', 'city', 'favorite_users', 'url', 'boost_profiles', 'all_request', 'locationSeoContent', 'metaContent'));
+        return view('front.model-list', compact('results', 'city', 'favorite_users', 'url', 'boost_profiles', 'all_request', 'locationSeoContent'));
     }
 
 
@@ -560,11 +555,8 @@ class ModelController extends Controller
             return response()->json($output);
         }
         $url = route('new.escorts', ['city' => $city ?? ""]);
-        $metaContent = [
-            "title" => "New Escorts UK, Colombia & Germany | Sexy Devil Escorts",
-            "description" => "Discover new escorts in the UK, Colombia & Germany. Explore updated listings from independent girls and agencies on our global directory platform."
-        ];
-        return view('front.model-list', compact('results', 'favorite_users', 'city', 'url', 'locationSeoContent', 'metaContent'));
+
+        return view('front.model-list', compact('results', 'favorite_users', 'city', 'url', 'locationSeoContent'));
     }
 
 
@@ -800,14 +792,26 @@ class ModelController extends Controller
             ->unique()
             ->values()
             ->toArray();
+        $locationSeoCity = (int)null;
+        if($request->has('country_id') && $request->country_id) {
+            $locationSeoCity = (int)$request->country_id;
+        } else if($request->has('state_id') && $request->state_id) {
+            $locationSeoCity = (int)$request->state_id;
+        } else if($request->has('city_id') && $request->city_id) {
+            $locationSeoCity = (int)$request->city_id;
+        } else {
+            $locationSeoCity = $city;
+        }
+        $locationSeoContent = $this->userServices->getLocationSeoContent($locationSeoCity, "Active Escorts");
         if ($request->ajax()) {
             // Convert paginated data to a collection and shuffle it
             $output["list"] = view('partials.model_cards', compact('results', 'favorite_users'))->render();
             $output["page"] = $page + 1;
+            $output["content"] = $locationSeoContent['data']->content ?? null;
             return response()->json($output);
         }
         $url = route('active.escorts', ['city' => $city ?? "home"]);
-        return view('front.model-list', compact('results', 'url', 'favorite_users', 'city'));
+        return view('front.model-list', compact('results', 'url', 'favorite_users', 'city', 'locationSeoContent'));
     }
 
 
@@ -1003,14 +1007,26 @@ class ModelController extends Controller
             ->values()
             ->toArray();
         // dd($results);
+        $locationSeoCity = (int)null;
+        if($request->has('country_id') && $request->country_id) {
+            $locationSeoCity = (int)$request->country_id;
+        } else if($request->has('state_id') && $request->state_id) {
+            $locationSeoCity = (int)$request->state_id;
+        } else if($request->has('city_id') && $request->city_id) {
+            $locationSeoCity = (int)$request->city_id;
+        } else {
+            $locationSeoCity = $city;
+        }
+        $locationSeoContent = $this->userServices->getLocationSeoContent($locationSeoCity, "Lowcost Escorts");
         if ($request->ajax()) {
             // Convert paginated data to a collection and shuffle it
             $output["list"] = view('partials.model_cards', compact('results', 'favorite_users'))->render();
             $output["page"] = $page + 1;
+            $output["content"] = $locationSeoContent['data']->content ?? null;
             return response()->json($output);
         }
         $url = route('lowcost.escorts', ['city' => $city ?? "home"]);
-        return view('front.model-list', compact('results', 'url', 'favorite_users', 'city'));
+        return view('front.model-list', compact('results', 'url', 'favorite_users', 'city', 'locationSeoContent'));
     }
     public function recommendEscort(Request $request, $city = null)
     {
@@ -1203,13 +1219,25 @@ class ModelController extends Controller
             ->unique()
             ->values()
             ->toArray();
+        $locationSeoCity = (int)null;
+        if($request->has('country_id') && $request->country_id) {
+            $locationSeoCity = (int)$request->country_id;
+        } else if($request->has('state_id') && $request->state_id) {
+            $locationSeoCity = (int)$request->state_id;
+        } else if($request->has('city_id') && $request->city_id) {
+            $locationSeoCity = (int)$request->city_id;
+        } else {
+            $locationSeoCity = $city;
+        }
+        $locationSeoContent = $this->userServices->getLocationSeoContent($locationSeoCity, "Recommend Escorts");
         if ($request->ajax()) {
             // Convert paginated data to a collection and shuffle it
             $output["list"] = view('partials.model_cards', compact('results', 'favorite_users'))->render();
             $output["page"] = $page + 1;
+            $output["content"] = $locationSeoContent['data']->content ?? null;
             return response()->json($output);
         }
         $url = route('recommend.escorts', ['city' => $city ?? "home"]);
-        return view('front.model-list', compact('results', 'url', 'favorite_users', 'city'));
+        return view('front.model-list', compact('results', 'url', 'favorite_users', 'city', 'locationSeoContent'));
     }
 }

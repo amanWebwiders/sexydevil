@@ -215,7 +215,7 @@
                     <div class="container-lg-fluid py-4 editprof-container">
                         <div class="row mx-0 px-md-2">
                             <div class="col-12">
-                                <h2 class="mb-4 text-left">Edit Profile</h2>
+                                <h1 class="mb-4 text-left">Edit Profile</h1>
                             </div>
                             @include('front.component.plan_notification')
                             <form method="POST" action="javascript:void(0)" id="EditProfile" enctype="multipart/form-data">

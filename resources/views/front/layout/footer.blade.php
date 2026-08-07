@@ -169,7 +169,7 @@
     
     <div class="popup-modal-content">
         <div class="popup-adult-notice">
-            <h2>Adults Only!</h2>
+            <h3>Adults Only!</h3>
             <p>Please read carefully before continuing.</p>
             <p>This website contains adult-oriented advertising content intended exclusively for individuals who are 18 years of age or older.</p>
             
@@ -1083,15 +1083,7 @@ function denyConsent() {
         startAutoplay();
     });
 </script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F1YW075L2E"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
 
-    gtag('config', 'G-F1YW075L2E');
-</script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script type="text/javascript">
   function googleTranslateElementInit() {

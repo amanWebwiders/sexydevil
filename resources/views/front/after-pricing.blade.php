@@ -45,7 +45,7 @@
                                         <div class="col-12">
                                             <!-- tabs start -->
                                             <div class="container-fluid">
-                                                <h2 class="mt-4">Membership Plan</h2>
+                                                <h1 class="mt-4">Membership Plan</h1>
                                                 @php
                                                     $user = Auth::user();
                                                     $plan = $user->plan_id ? \App\Models\Plan::find($user->plan_id) : null;

@@ -20,17 +20,14 @@ class CommonRepository
     public function setModel($model)
     {
         if (is_string($model)) {
-            $modelClass = class_exists($model) ? $model : "App\\Models\\$model";
-    
+            $modelClass = "App\\Models\\$model";
             if (!class_exists($modelClass)) {
                 throw new \Exception("Model $modelClass does not exist.");
             }
-    
             $model = new $modelClass;
         }
-    
+
         $this->model = $model;
-    
         return $this;
     }
     public function create($allData)

@@ -283,7 +283,7 @@
                     <div class="p-5 mx-lg-0 mx-md-0 mx-2 setavailabilty-main">
                         <div class="row justify-content-center">
                             <div class="d-md-flex justify-content-between w-100 px-md-3  mb-3">
-                                <h2 class="heading mb-0">News Stories</h2>
+                                <h1 class="heading mb-0">News Stories</h1>
 
                                 <div>
                                     <button class="btn " data-toggle="modal" data-target="#addNewsModal">
@@ -529,7 +529,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-<script src="https://cdn.tiny.cloud/1/jaa9c6t7n255qwruis8bo6x87nxj39aqrhr4w323i4hd2f9k/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/ch5pmlepunlexj43wxoruq2la907wyc7lmptlzlrljoffgh4/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 <script>

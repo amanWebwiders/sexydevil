@@ -158,6 +158,7 @@
                 <div class="col-lg-10">
                     <section class="ds s-pt-70 s-pb-50 s-pb-sm-50 s-py-lg-100 s-py-xl-150 c-gutter-60 content-area">
                         <div class="p-5 mx-lg-0 mx-md-0 mx-2 setavailabilty-main">
+                            <h1 class="mb-4 text-left fs-28">Set Rates</h1>
 
 
 

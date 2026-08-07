@@ -9,7 +9,7 @@
         </div>
 
         <div class="about-section">
-            <h2 class="section-title">About Us</h2>
+            <h1 class="section-title">About Us</h1>
 
             <p class="about-content">
                 <span class="highlight">Sexy Devil</span> is an <span class="highlight">online digital advertising directory</span> intended exclusively for adults.

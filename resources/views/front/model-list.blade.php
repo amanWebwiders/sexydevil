@@ -13,12 +13,12 @@
                         $isNewEscorts = request()->routeIs('new.escorts');
                     @endphp
                     @if($isNewEscorts)
-                        <h2 class="heading"><span>New</span> Escorts</h2>
+                        <h1 class="heading"><span>New</span> Escorts</h1>
 
-                        <h6 class="heading">They’re new, hot as hell, and ready to make you sin. Meet the latest additions to
-                            the Sexy Devil experience — each one freshly summoned for your pleasure.</h6>
+                        <h2 class="heading">They’re new, hot as hell, and ready to make you sin. Meet the latest additions to
+                            the Sexy Devil experience — each one freshly summoned for your pleasure.</h2>
                     @else
-                        <h2 class="heading"><span>All</span> Escorts</h2>
+                        <h1 class="heading"><span>All</span> Escorts</h1>
                     @endif
                     <div class="row featured-devils-cards resultsContainer" id="resultsContainer">
                         @include('partials.model_cards')

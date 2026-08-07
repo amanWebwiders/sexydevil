@@ -91,14 +91,14 @@ $authUser = Auth::guard('web')->user();
                             @if(count($escort->images) == 0)
                             <div class="slide">
                                 <img src="{{ asset('storage/profile_image/default-profile.png') }}"
-                                    alt="Default profile">
+                                    alt="{{ $escort->nickname ?? ($seoImageAlt ?? 'SexyDevil Escort') }}">
                             </div>
                             @endif
                             @if($escort->images)
                             @foreach($escort->images as $image)
                             @if($image->is_approved == 1)
                             <div class="slide">
-                                <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $escort->nickname }}">
+                                <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $escort->nickname ?? ($seoImageAlt ?? 'SexyDevil Escort') }}">
                             </div>
                             @endif
                             @endforeach

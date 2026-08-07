@@ -48,7 +48,7 @@
                     <img src="{{ asset('images/escort_logo1.png') }}" alt="">
                 </div>
                 <div class="col-lg-6">
-                    <h2 class="mx-auto mb-5 text-center">Sign Up</h2>
+                    <h1 class="mx-auto mb-5 text-center">Sign Up</h1>
 
                     <form class="contact-form c-mb-20 c-gutter-20" id="addUserForm" method="POST"
                         action="{{ route('user.register') }}">

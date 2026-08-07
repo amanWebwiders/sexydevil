@@ -207,7 +207,7 @@ button.swal2-cancel.swal2-styled {
                                     <div class="col-12">
                                         <!-- tabs start -->
                                         <div class="container-fluid">
-                                            <h2 class="mb-4 text-left">Add Video</h2>
+                                            <h1 class="mb-4 text-left">Add Video</h1>
                                             <p>Only videos up to 5 MB in size and in MP4, WebM, AVI, or OGG format are accepted. <a href="{{ $globalData->video_convert_url }}" target="_blank">Click here</a> to converter video and ensure your file meets the requirements. If you are experiencing any issues, please contact our support team for assistance.</p>
                                             @include('front.component.plan_notification')
                                             <form method="POST" id="VideoUploadForm" enctype="multipart/form-data">
@@ -229,7 +229,7 @@ button.swal2-cancel.swal2-styled {
 
                                             <hr>
 
-                                            <h4>Uploaded Videos</h4>
+                                            <h2>Uploaded Videos</h2>
                                             <div id="existing-videos" class="d-flex flex-wrap gap-2">
                                                 @if ($uploadedVideos->isNotEmpty())
                                                 @foreach ($uploadedVideos as $video)

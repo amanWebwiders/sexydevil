@@ -270,7 +270,7 @@
                     <section class="ds s-pt-70 s-pb-50 s-pb-sm-50 s-py-lg-100 s-py-xl-150 c-gutter-60 content-area">                   
                                                 <!-- tabs start -->
                                             
-                                                <h2 class="mb-4 text-left">Add Photos</h2>
+                                                <h1 class="mb-4 text-left">Add Photos</h1>
                                                 @include('front.component.plan_notification')
                                                 <form method="POST" id="EditProfile" enctype="multipart/form-data">
                                                     @csrf
@@ -289,7 +289,7 @@
 
                                                 <hr>
 
-                                                <h4>Uploaded Images</h4>
+                                                <h2>Uploaded Images</h2>
                                                 <div id="existing-photos" class="row">
                                                     @if ($uploadedPhotos->isNotEmpty())
                                                         @foreach ($uploadedPhotos as $photo)

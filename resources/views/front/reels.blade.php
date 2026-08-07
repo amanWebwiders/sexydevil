@@ -453,6 +453,7 @@
 
   <div class="reels-main-box">
     <div class="container-fluid">
+      <h1 class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Hot Stories</h1>
 
 
       <button type="button" class="filter-btn-float" data-toggle="modal" data-target="#exampleModal">

@@ -48,17 +48,16 @@ class DashboardController extends Controller
     public function profile()
     {
         try {
-         
             $user = Auth::guard('web')->user();
             $countries = Country::orderBy('name')->get();
 
             $countryCodes = $this->AdminRepository->getCountryCode();
             $gender = $this->GenderRepository->getAll();
             $ethnicity = $this->CommonRepository->setModel(new \App\Models\Ethnicity())->getAll();
-           
             $nationality = $this->CommonRepository->setModel(new \App\Models\Nationality())->getAll();
             $language = $this->CommonRepository->setModel(new \App\Models\Language())->getAll();
-            $state = $this->CommonRepository->setModel(new \App\Models\State())->getAll();                        
+            $state = $this->CommonRepository->setModel(new \App\Models\State())->getAll();
+            $city = $this->CommonRepository->setModel(new \App\Models\City())->getAll();
             $bodyType = $this->CommonRepository->setModel(new \App\Models\BodyType())->getAll();
             $hairColor = $this->CommonRepository->setModel(new \App\Models\HairColor())->getAll();
             $hairLength = $this->CommonRepository->setModel(new \App\Models\HairLength())->getAll();
@@ -76,7 +75,7 @@ class DashboardController extends Controller
             $mediaVirtualOption = $this->CommonRepository->setModel(new \App\Models\MediaVirtualOption())->getAll();
             $experience = $this->CommonRepository->setModel(new \App\Models\Experience())->getAll();
             $categories = EscortServiceCategory::with('services.selections')->get();
-          
+            // dd($categories);
             $selectedServices = UserEscortService::where('user_id', $user->id)
                 ->whereNull('selection_id')
                 ->pluck('service_id')
@@ -87,7 +86,7 @@ class DashboardController extends Controller
                 ->pluck('selection_id')
                 ->toArray();
 
-            return view('front.edit_profile', compact('categories', 'selectedServices', 'selectedSelections', 'nationality', 'countryCodes', 'countries', 'gender', 'ethnicity', 'language', 'state', 'bodyType', 'hairColor', 'hairLength', 'hairType', 'eyeColor', 'tattoo', 'pubicHair', 'oralkissing', 'analRelatedOption', 'cumBodyPlay', 'manualFingering', 'groupSpecialExperience', 'massageSensualTouch', 'fetishBdsm', 'mediaVirtualOption', 'experience'));
+            return view('front.edit_profile', compact('categories', 'selectedServices', 'selectedSelections', 'nationality', 'countryCodes', 'countries', 'gender', 'ethnicity', 'language', 'state', 'city', 'bodyType', 'hairColor', 'hairLength', 'hairType', 'eyeColor', 'tattoo', 'pubicHair', 'oralkissing', 'analRelatedOption', 'cumBodyPlay', 'manualFingering', 'groupSpecialExperience', 'massageSensualTouch', 'fetishBdsm', 'mediaVirtualOption', 'experience'));
         } catch (Exception $e) {
             Log::error("HomeController:profile()" . $e->getLine() . " " . $e->getMessage());
             return response()->json(['status' => 0, 'message' => __('message.statusZero')]);

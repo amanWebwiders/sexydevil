@@ -22,7 +22,7 @@
                     <a href="{{route('home')}}"><img src="{{ asset('images/escort_logo1.png') }}" alt=""></a>
                 </div>
                 <div class="col-lg-6">
-                    <h2 class="mx-auto mb-5 text-center">Login</h2>
+                    <h1 class="mx-auto mb-5 text-center">Login</h1>
 
 
                     <form class="contact-form c-mb-20 c-gutter-20" method="POST" id="loginForm">

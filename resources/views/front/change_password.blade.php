@@ -33,7 +33,7 @@
                                         <!-- tabs start -->
                                         <div class="container-fluid">
                                         <div class="col-12">
-                                                <h2 class="mb-4 text-left">Change Password</h2>
+                                                <h1 class="mb-4 text-left">Change Password</h1>
                                         </div>
                                         @include('front.component.plan_notification')
                                             <form method="POST" action="javascript:void(0)" id="ChangePassword">
