@@ -163,7 +163,7 @@
         </div>
 @endsection      
 @push('js')
-<script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey=co28qhp8nt6ngdu0nll8794xsuqln9ixriojfr2wwom92b6w"></script>
+<script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey=70zrqlunpeatc3chj9gyv1c402onuazqjja23fycby00x1ln"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
