@@ -89,7 +89,7 @@
                                         <ul class="nav ">
 
                                             <li class=" profile">
-                                                <a href="index.php"><img src="images/team/face_1.jpg"
+                                                <a href="index.php"><img src="{{ asset('images/team/face_1.jpg') }}"
                                                         alt=""></a>
                                                 <ul>
                                                     <li>
