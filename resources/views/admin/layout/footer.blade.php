@@ -8,30 +8,23 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <!-- ================== BEGIN core-js ================== -->
-<script data-cfasync="false" src="./cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="{{ asset('admin/assets/js/vendor.min.js ')}}" type="a6be0a9a4afc030152a2c45b-text/javascript "></script>
-<script src="{{ asset('admin/assets/js/app.min.js ')}}" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
+<script src="{{ asset('admin/assets/js/vendor.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/app.min.js') }}"></script>
 <!-- ================== END core-js ================== -->
 
 <!-- ================== BEGIN page-js ================== -->
-<script src="{{ asset('admin/assets/plugins/jvectormap-next/jquery-jvectormap.min.js')}}" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
-<script src="{{ asset('admin/assets/plugins/jvectormap-content/world-mill.js')}}" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
-<script src="{{ asset('admin/assets/plugins/apexcharts/dist/apexcharts.min.js')}}" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
-<script src="{{ asset('admin/assets/plugins/moment/min/moment.min.js')}}" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
-<script src="{{ asset('admin/assets/plugins/bootstrap-daterangepicker/daterangepicker.js')}}" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
-<script src="{{ asset('admin/assets/js/demo/dashboard.demo.js')}}" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
+<script src="{{ asset('admin/assets/plugins/jvectormap-next/jquery-jvectormap.min.js') }}"></script>
+<script src="{{ asset('admin/assets/plugins/jvectormap-content/world-mill.js') }}"></script>
+<script src="{{ asset('admin/assets/plugins/apexcharts/dist/apexcharts.min.js') }}"></script>
+<script src="{{ asset('admin/assets/plugins/moment/min/moment.min.js') }}"></script>
+<script src="{{ asset('admin/assets/plugins/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
+<script src="{{ asset('admin/assets/js/demo/dashboard.demo.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- ================== END page-js ================== -->
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q0VGQKY3"></script>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q0VGQKY3" type="a6be0a9a4afc030152a2c45b-text/javascript"></script>
-<script type="a6be0a9a4afc030152a2c45b-text/javascript">
-
-</script>
-<script src="./cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="a6be0a9a4afc030152a2c45b-|49" defer></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"926c5eed0ec39191","version":"2025.1.0","r":1,"serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"4db8c6ef997743fda032d4f73cfeff63","b":1}' crossorigin="anonymous"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-HO3dJGyz6cC6B/..." crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
