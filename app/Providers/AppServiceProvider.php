@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 use App\Models\Country;
 use App\Repository\Eloquent\{GenderRepository, CommonRepository,CountryRepository};
 use App\Models\EscortServiceCategory;
@@ -16,6 +17,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (config('app.env') === 'production' || str_starts_with(config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
         view()->composer('*', function ($view) {
              $countryRepo = app(CountryRepository::class);
             $view->with('country', $countryRepo->getCountryWithUserCount());
