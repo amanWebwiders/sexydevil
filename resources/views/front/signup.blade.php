@@ -106,7 +106,7 @@
                                 <div class="form-group mx-auto form-check w-75 pl-0 mb-3">
                                     <input type="checkbox" class="form-check-input" id="termsCheckbox" name="terms">
                                     <label class="form-check-label" for="termsCheckbox">
-                                        I agree to the <a href="/terms-and-conditions" target="_blank">Terms and
+                                        I agree to the <a href="{{ route('terms') }}" target="_blank">Terms and
                                             Conditions</a>
                                     </label>
                                 </div>

@@ -145,6 +145,12 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::match(['get', 'post'], '/lowcost-escorts/{city?}', 'ModelController@lowcostEscort')->name('lowcost.escorts');
     Route::match(['get', 'post'], '/recommend-escorts/{city?}', 'ModelController@recommendEscort')->name('recommend.escorts');
     Route::get('/sitemap.xml', 'SitemapController@index')->name('sitemap');
+
+    // Legacy & Alias 301 Redirects for Technical SEO & GSC
+    Route::get('/home', fn() => redirect()->to(url('/'), 301));
+    Route::get('/terms-and-conditions', fn() => redirect()->to(route('terms'), 301));
+    Route::get('/terms-conditions', fn() => redirect()->to(route('terms'), 301));
+    Route::get('/gallery', fn() => redirect()->to(route('reels'), 301));
 });
 
 Route::get('/user-email-verify', 'App\Http\Controllers\Front\UserAuthController@userEmailVerify')->name('user-email-verify');
