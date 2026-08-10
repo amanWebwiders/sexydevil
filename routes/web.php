@@ -144,6 +144,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::match(['get', 'post'], '/active-escorts/{city?}', 'ModelController@activeEscort')->name('active.escorts');
     Route::match(['get', 'post'], '/lowcost-escorts/{city?}', 'ModelController@lowcostEscort')->name('lowcost.escorts');
     Route::match(['get', 'post'], '/recommend-escorts/{city?}', 'ModelController@recommendEscort')->name('recommend.escorts');
+    Route::get('/sitemap.xml', 'SitemapController@index')->name('sitemap');
 });
 
 Route::get('/user-email-verify', 'App\Http\Controllers\Front\UserAuthController@userEmailVerify')->name('user-email-verify');
