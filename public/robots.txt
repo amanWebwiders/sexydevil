@@ -3,6 +3,8 @@ User-agent: *
 # Disallow Admin & System Paths
 Disallow: /admin/
 Disallow: /admin
+Disallow: /login
+Disallow: /login/
 
 # Disallow Authentication & Registration Pages
 Disallow: /user-login

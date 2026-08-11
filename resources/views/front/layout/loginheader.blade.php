@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="{{ asset('css/font-awesome.css')}}">
     <link rel="stylesheet" href="{{ asset('css/main.css')}}" class="color-switcher-link">
     <script src="{{ asset('js/vendor/modernizr-custom.js')}}"></script>
-    <link rel="icon" type="image/x-icon" href="{{ asset('images/escort_favicon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/escort_favicon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
