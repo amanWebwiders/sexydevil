@@ -32,7 +32,11 @@ class ImageVideoApprovalController extends Controller {
                     ->addColumn('image', function($row){
                         return '<img src="'.config('app.img_url').$row["orignal_file_path"].'"  width="100" />';
                     })
-                    ->rawColumns(['action', 'status', 'image'])
+                    ->addColumn('alt_text', function($row){
+                        $val = htmlspecialchars($row["custom_alt_text"] ?? '');
+                        return '<div class="d-flex gap-1"><input type="text" class="form-control form-control-sm alt-input-'.$row["id"].'" value="'.$val.'" placeholder="Custom Alt Text..." /><button class="btn btn-sm btn-primary saveAltBtn" data-id="'.$row["id"].'">Save</button></div>';
+                    })
+                    ->rawColumns(['action', 'status', 'image', 'alt_text'])
                     ->make(true);
             }
         

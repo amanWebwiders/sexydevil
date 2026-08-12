@@ -346,6 +346,13 @@
 
 <section class="main-area">
     <div class="container-fluid">
+        @php
+            $breadcrumbs = [
+                ['title' => $user->city ?? 'Escorts', 'url' => !empty($user->city) ? route('model.search', ['city' => Str::slug($user->city)]) : route('model.search')],
+                ['title' => $user->listing_title ?? $user->nickname ?? $user->name ?? 'Profile', 'url' => '']
+            ];
+        @endphp
+        @include('partials.breadcrumbs', ['breadcrumbs' => $breadcrumbs])
         @include('front.component.stories')
         <div class="row model_detail">
             <div class=" col-lg-8 mb-5">
@@ -440,7 +447,7 @@
                                         @if($image->path !== $user->profile_image && $image->is_approved == 1)
                                             <div class="swiper-slide">
                                             <a data-fancybox="gallery" href="{{ config('app.img_url').$image->file_path }}">
-                                                <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $user->nickname }}">
+                                                <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $image->alt_text }}">
                                             </a>
                                             </div>
                                         @endif
@@ -481,7 +488,7 @@
                                 @foreach ($user->images as $image)
                                     @if($image->file_path !== $user->profile_image && $image->is_approved == 1)
                                         <div class="swiper-slide">
-                                            <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $user->nickname }}">
+                                            <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $image->alt_text }}">
                                         </div>
                                     @endif
                                 @endforeach
@@ -942,25 +949,25 @@
                                                         {{ !empty($breastSizes) ? implode(', ', $breastSizes) : '-' }}
                                                     </p>
                                                     <p><strong class="notranslate" translate="no">OnlyFans : </strong> @if (!empty($user->onlyfans_link))
-                                                        <a href="{{ $user->onlyfans_link }}" target="_blank">{{ $user->onlyfans_link }}</a>
+                                                        <a href="{{ $user->onlyfans_link }}" target="_blank" rel="nofollow noopener">{{ $user->onlyfans_link }}</a>
                                                         @else
                                                         -
                                                         @endif
                                                     </p>
                                                     <p><strong>Instagram : </strong>@if (!empty($user->instagram_link))
-                                                        <a href="{{ $user->instagram_link }}" target="_blank">{{ $user->instagram_link }}</a>
+                                                        <a href="{{ $user->instagram_link }}" target="_blank" rel="nofollow noopener">{{ $user->instagram_link }}</a>
                                                         @else
                                                         -
                                                         @endif
                                                     </p>
                                                     <p><strong class="notranslate" translate="no">Telegram : </strong>@if (!empty($user->telegram_link))
-                                                        <a href="{{ $user->telegram_link }}" target="_blank">{{ $user->telegram_link }}</a>
+                                                        <a href="{{ $user->telegram_link }}" target="_blank" rel="nofollow noopener">{{ $user->telegram_link }}</a>
                                                         @else
                                                         -
                                                         @endif
                                                     </p>
                                                     <p><strong>TikTok : </strong>@if (!empty($user->tiktok_link))
-                                                        <a href="{{ $user->tiktok_link }}" target="_blank">{{ $user->tiktok_link }}</a>
+                                                        <a href="{{ $user->tiktok_link }}" target="_blank" rel="nofollow noopener">{{ $user->tiktok_link }}</a>
                                                         @else
                                                         -
                                                         @endif

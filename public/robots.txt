@@ -1,2 +1,66 @@
 User-agent: *
-Disallow:
+
+# Disallow Admin & System Paths
+Disallow: /admin/
+Disallow: /admin
+Disallow: /login
+Disallow: /login/
+
+# Disallow Authentication & Registration Pages
+Disallow: /user-login
+Disallow: /user-signup
+Disallow: /user-signupadvertiser
+Disallow: /user-forgot-password
+Disallow: /user-email-verify
+Disallow: /choose
+Disallow: /resend-verification
+Disallow: /user/login
+Disallow: /user/send-password
+Disallow: /user/logout
+Disallow: /user/email-verification
+
+# Disallow Private User Dashboard & Account Pages
+Disallow: /user/dashboard
+Disallow: /user/edit-profile
+Disallow: /user/my-application
+Disallow: /user/update-password
+Disallow: /user/pricing
+Disallow: /user/pricing-af
+Disallow: /user/waiting
+Disallow: /user/photo
+Disallow: /user/video
+Disallow: /user/availabilities
+Disallow: /user/rate
+Disallow: /user/favourite-list
+Disallow: /user/manually-boost
+Disallow: /user/boost-my-profile
+Disallow: /user/news-stories
+
+# Disallow Internal AJAX & Action Endpoints
+Disallow: /get-states/
+Disallow: /get-cities/
+Disallow: /get-citiesbycountry/
+Disallow: /getcurrency/
+Disallow: /getsubcategory/
+Disallow: /review/store
+Disallow: /chunk-upload
+Disallow: /comments
+Disallow: /toggle-like
+
+# Explicitly Allow Public SEO Pages
+Allow: /
+Allow: /about-us
+Allow: /contact-us
+Allow: /terms-condition
+Allow: /reels
+Allow: /model-search
+Allow: /new-escorts
+Allow: /active-escorts
+Allow: /lowcost-escorts
+Allow: /recommend-escorts
+Allow: /user/profile/
+Allow: /user/agencies
+Allow: /user/agency-detail/
+
+# XML Sitemap Location
+Sitemap: https://sexydevilescorts.com/sitemap.xml

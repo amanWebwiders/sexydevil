@@ -9,7 +9,8 @@
     $seoImageAlt = !empty($seoObj->image_alt_text) ? $seoObj->image_alt_text : env('APP_NAME', 'SexyDevil Escorts');
     
     $metaKeywords = !empty($seoObj->meta_keywords) ? $seoObj->meta_keywords : '';
-    $canonicalUrl = !empty($seoObj->canonical_url) ? $seoObj->canonical_url : ($seoCanonicalUrl ?? url()->current());
+    $rawCanonical = !empty($seoObj->canonical_url) ? $seoObj->canonical_url : ($seoCanonicalUrl ?? url()->current());
+    $canonicalUrl = strtok($rawCanonical, '?');
     $robotsSetting = !empty($seoObj->robots_setting) ? $seoObj->robots_setting : 'index, follow';
     
     $ogTitle = !empty($seoObj->og_title) ? $seoObj->og_title : $metaTitle;
@@ -51,7 +52,10 @@
 	<link rel="stylesheet" href="{{ asset('css/font-awesome.css')}}">
 	<link rel="stylesheet" href="{{ asset('css/main.css')}}" class="color-switcher-link">
 	<script src="{{ asset('js/vendor/modernizr-custom.js')}}"></script>
-	<link rel="icon" type="image/x-icon" href="{{ asset('images/escort_favicon.png')}}">
+	<!-- Favicon Tags -->
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/escort_favicon.png') }}">
+	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+	<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 

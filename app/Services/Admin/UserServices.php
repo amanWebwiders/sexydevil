@@ -588,8 +588,14 @@ class UserServices
     public function updatedUploadedImages($inputs)  {
         try {
             $where = ["id" => $inputs->id];
-            $update = ["is_approved" => $inputs->is_approved];
-           $run = $this->userUploadImageRepository->updateRecord($where, $update);
+            $update = [];
+            if (isset($inputs->is_approved)) {
+                $update["is_approved"] = $inputs->is_approved;
+            }
+            if (isset($inputs->custom_alt_text)) {
+                $update["custom_alt_text"] = $inputs->custom_alt_text;
+            }
+            $run = $this->userUploadImageRepository->updateRecord($where, $update);
 
            if(isset($run)) {
                 $user = $this->userUploadImageRepository->getUserData(['uploaded_photos.id' => $inputs->id ]);

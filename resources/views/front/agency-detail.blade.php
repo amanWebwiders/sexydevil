@@ -296,7 +296,7 @@
                                                     <p class="reviewer_name_review_count">
                                                         <span>
                                                             <b>
-                                                                <a href="/visitor/18">
+                                                                <a href="javascript:void(0);">
                                                                     shivani agrawals
                                                                 </a>
                                                             </b>

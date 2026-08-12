@@ -33,6 +33,7 @@
                                     <th>Sl. No.</th>
                                     <th>Name</th>
                                     <th>Image</th>
+                                    <th>Custom ALT Text</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -96,23 +97,58 @@
                     url: "{{ route('admin.image-approval') }}",
                     type: "POST",
                     data: function (d) {
-                        // You can send additional parameters here if needed
-                        d._token = "{{ csrf_token() }}"; // very important for POST in Laravel
+                        d._token = "{{ csrf_token() }}";
                     }
                 },
                 columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false}, // 👈 add this
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {
-                        data: null, // no direct field — we'll combine name + email manually
+                        data: null,
                         name: 'name',
                         render: function (data, type, row) {
                             return `<strong>${row.name}</strong><br><small>${row.email}</small>`;
                         }
                     },
                     {data: 'image', name: 'image'},
+                    {data: 'alt_text', name: 'alt_text', orderable: false, searchable: false},
                     {data: 'status', name: 'status'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
+            });
+        });
+
+        $(document).on('click', '.saveAltBtn', function(){
+            var id = $(this).data('id');
+            var custom_alt_text = $('.alt-input-' + id).val();
+            var thiss = $(this);
+            $.ajax({
+                url : "{{ route('admin.image-approval-action') }}",
+                method : "get",
+                data : {
+                    id: id,
+                    custom_alt_text: custom_alt_text
+                },
+                beforeSend : function () {
+                    thiss.text("Saving...");
+                    thiss.prop('disabled', true);
+                },
+                success : function(data) {
+                    thiss.text("Save");
+                    thiss.prop('disabled', false);
+                    if(data.status == 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Saved!',
+                            text: 'ALT text updated successfully'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                }
             });
         });
 

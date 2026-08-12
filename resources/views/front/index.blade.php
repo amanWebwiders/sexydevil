@@ -192,6 +192,7 @@
                 <!-- for mobile end  -->
 
                 <div class="col-lg-10">
+                    <h1 class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">{{ !empty($locationSeo['data']->meta_title) ? $locationSeo['data']->meta_title : (!empty($city) ? ucfirst($city) . ' Escorts' : 'SexyDevil Escorts - Premium Escort Directory') }}</h1>
                     <section class="s-pt-80 s-pb-30 s-pb-md-70 s-pt-md-90 s-pb-xl-120 s-pt-xl-180">
                         @include('front.component.filters')
                     </section>

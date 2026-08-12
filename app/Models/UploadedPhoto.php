@@ -11,6 +11,7 @@ class UploadedPhoto extends Model
     protected $fillable = [
         'user_id',
         'file_path',
+        'custom_alt_text',
         'is_approved',
         'orignal_file_path'
     ];
@@ -21,5 +22,24 @@ class UploadedPhoto extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get auto-generated or custom alt text for the photo.
+     */
+    public function getAltTextAttribute()
+    {
+        if (!empty($this->custom_alt_text)) {
+            return $this->custom_alt_text;
+        }
+
+        $user = $this->user;
+        if ($user) {
+            $name = $user->listing_title ?? $user->nickname ?? $user->name ?? 'SexyDevil Escort';
+            $city = $user->city ?? '';
+            return trim($name . ($city ? ' Escort in ' . $city : ' Escort Photo'));
+        }
+
+        return 'SexyDevil Escort Photo';
     }
 }

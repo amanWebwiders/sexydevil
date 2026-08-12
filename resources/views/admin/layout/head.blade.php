@@ -15,7 +15,9 @@
 	<link href="{{ asset('admin/assets/css/app.min.css')}}" rel="stylesheet">
 	<!-- ================== END core-css ================== -->
 
-	<link rel="icon" type="image/x-icon" href="{{ asset('images/escort_favicon.png')}}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/escort_favicon.png') }}">
+	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+	<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 	
 	<!-- ================== BEGIN page-css ================== -->
 	<link href="{{ asset('admin/assets/plugins/jvectormap-next/jquery-jvectormap.css')}}" rel="stylesheet">

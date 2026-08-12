@@ -98,7 +98,7 @@ $authUser = Auth::guard('web')->user();
                             @foreach($escort->images as $image)
                             @if($image->is_approved == 1)
                             <div class="slide">
-                                <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $escort->nickname ?? ($seoImageAlt ?? 'SexyDevil Escort') }}">
+                                <img src="{{ config('app.img_url').$image->file_path }}" alt="{{ $image->alt_text }}">
                             </div>
                             @endif
                             @endforeach
