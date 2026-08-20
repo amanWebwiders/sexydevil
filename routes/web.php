@@ -145,6 +145,15 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::match(['get', 'post'], '/lowcost-escorts/{city?}', 'ModelController@lowcostEscort')->name('lowcost.escorts');
     Route::match(['get', 'post'], '/recommend-escorts/{city?}', 'ModelController@recommendEscort')->name('recommend.escorts');
     Route::get('/sitemap.xml', 'SitemapController@index')->name('sitemap');
+    Route::get('/robots.txt', function () {
+        $robotsPath = public_path('robots.txt');
+        if (file_exists($robotsPath)) {
+            return response(file_get_contents($robotsPath), 200)
+                ->header('Content-Type', 'text/plain');
+        }
+        return response("User-agent: *\nDisallow: /admin\nSitemap: " . url('/sitemap.xml'), 200)
+            ->header('Content-Type', 'text/plain');
+    })->name('robots');
 
     // Legacy & Alias 301 Redirects for Technical SEO & GSC
     Route::get('/home', fn() => redirect()->to(url('/'), 301));
