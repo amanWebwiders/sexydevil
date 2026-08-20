@@ -811,22 +811,27 @@ class UserServices
                 }
             }
 
-            // 4. Fallback to Worldwide
+            // 4. Fallback to Worldwide / Global Page SEO
             if (!$run) {
-                $run = $this->locationSeoContentRepository->getSingleRecordWhere([
-                    'country' => 'worldwide',
-                    'state_id' => null,
-                    'city_id' => null,
-                    'title' => $pageType
-                ]);
-                if (!$run) {
-                    $run = $this->locationSeoContentRepository->getSingleRecordWhere([
-                        'country_id' => 0,
-                        'state_id' => null,
-                        'city_id' => null,
-                        'title' => $pageType
-                    ]);
+                $titles = [$pageType];
+                if (in_array(strtolower($pageType), ['home', 'entry page'])) {
+                    $titles = ['Home', 'Entry Page', 'home', 'entry page'];
                 }
+
+                $run = \App\Models\LocationSeoContent::whereIn('title', $titles)
+                    ->where(function($q) {
+                        $q->where('country', 'worldwide')
+                          ->orWhere('country', 'Worldwide')
+                          ->orWhere('country_id', 0)
+                          ->orWhereNull('country_id');
+                    })
+                    ->where(function($q) {
+                        $q->whereNull('city_id')->orWhere('city_id', 0)->orWhere('city_id', '');
+                    })
+                    ->where(function($q) {
+                        $q->whereNull('state_id')->orWhere('state_id', 0)->orWhere('state_id', '');
+                    })
+                    ->first();
             }
 
             return [ "status" => $run ? 200 : 400, "data" => $run ];
