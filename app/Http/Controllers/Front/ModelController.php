@@ -40,7 +40,7 @@ class ModelController extends Controller
             $mycity = urlencode($request->city);
             return redirect()->route('model.search', ["city" => $mycity] );
         }
-        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "terms-conditions", "terms-and-conditions", "favourite-list", "news-stories", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "gallery", "sitemap.xml", "home"];
+        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "terms-conditions", "terms-and-conditions", "favourite-list", "news-stories", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "gallery", "sitemap.xml", "robots.txt", "home"];
         if($city && in_array(strtolower($city), $invalid_route)) {
             return redirect()->route('model.search', ["city" => 'home'] );
         }
