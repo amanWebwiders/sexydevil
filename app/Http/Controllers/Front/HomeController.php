@@ -64,6 +64,9 @@ class HomeController extends Controller
         $NewUser = []; //$this->userRepository->getNewFaces();
         $city = isset($city) && $city != "home" ? $city:null;
         $locationSeo = $this->userServices->getLocationSeoContent($city, "Home");
+        if (empty($locationSeo['data'])) {
+            $locationSeo = $this->userServices->getLocationSeoContent($city, "Entry Page");
+        }
         $topRatedUsers = $this->userRepository->getTopRatedUsers($city);
 
         $bestUsers = []; //$this->userRepository->getBestUsers();
@@ -434,6 +437,9 @@ class HomeController extends Controller
         $MyCity = $this->cityRepository->getAllRecordWhere(["state_id" => $Mystate[0]->id ?? 1], ["id", "name"], 6);
         $allCountry = $this->countryRepository->getCountryWithUserCount([]);
         $locationSeo = $this->userServices->getLocationSeoContent("home", "Entry Page");
+        if (empty($locationSeo['data'])) {
+            $locationSeo = $this->userServices->getLocationSeoContent("home", "Home");
+        }
 
         //dd($allCountry); 
                     /* $allCountry->map(function ($country) {
