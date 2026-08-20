@@ -819,6 +819,14 @@ class UserServices
                     'city_id' => null,
                     'title' => $pageType
                 ]);
+                if (!$run) {
+                    $run = $this->locationSeoContentRepository->getSingleRecordWhere([
+                        'country_id' => 0,
+                        'state_id' => null,
+                        'city_id' => null,
+                        'title' => $pageType
+                    ]);
+                }
             }
 
             return [ "status" => $run ? 200 : 400, "data" => $run ];

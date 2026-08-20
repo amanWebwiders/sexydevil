@@ -42,24 +42,31 @@ class ContentSettingsServices {
 
     public function updateLocationSeoContent($inputs) {
         try {
+            $countryId = (isset($inputs["country"]) && $inputs["country"] == "worldwide") ? 0 : ($inputs["country"] ?? 0);
+            $stateId = !empty($inputs["state"]) ? $inputs["state"] : null;
+            $cityId = !empty($inputs["city"]) ? $inputs["city"] : null;
+            $title = $inputs["title"] ?? null;
+
             $where = [
-                "country_id" => $inputs["country"] == "worldwide" ? 0 : $inputs["country"],
-                "state_id" => $inputs["state"] ?? null,
-                "city_id" => $inputs["city"] ?? null
+                "country_id" => $countryId,
+                "state_id" => $stateId,
+                "city_id" => $cityId,
+                "title" => $title
             ];
-            $country = $this->countryRepository->getSingleRecordWhere(["id" => $inputs["country"] ?? 0]);
-            $state = $this->stateRepository->getSingleRecordWhere(["id" => $inputs["state"] ?? null]);
-            $city = null;
-            if(isset($inputs["city"]) && $inputs["city"] != null) {
-                $where["city_id"] = $inputs["city"];
-                $city = $this->cityRepository->getSingleRecordWhere(["id" => $inputs["city"] ?? null]);
-            }
+
+            $country = $this->countryRepository->getSingleRecordWhere(["id" => $countryId]);
+            $state = $stateId ? $this->stateRepository->getSingleRecordWhere(["id" => $stateId]) : null;
+            $city = $cityId ? $this->cityRepository->getSingleRecordWhere(["id" => $cityId]) : null;
+
             $data = [
-                "country" => $inputs["country"] == "worldwide" ? 'worldwide' : ($country["name"] ?? 'worldwide'),
+                "country_id" => $countryId,
+                "state_id" => $stateId,
+                "city_id" => $cityId,
+                "country" => ($inputs["country"] ?? '') == "worldwide" ? 'worldwide' : ($country["name"] ?? 'worldwide'),
                 "state" => $state["name"] ?? null,
                 "city" => $city["name"] ?? null,
                 "content" => $inputs["content"] ?? "",
-                "title" => $inputs["title"] ?? null,
+                "title" => $title,
                 "meta_title" => $inputs["meta_title"] ?? null,
                 "meta_description" => $inputs["meta_description"] ?? null,
                 "image_alt_text" => $inputs["image_alt_text"] ?? null,
@@ -97,22 +104,26 @@ class ContentSettingsServices {
 
     public function getLocationSeoContent($inputs) {
         try {
+            $countryId = (isset($inputs["country"]) && $inputs["country"] == "worldwide") ? 0 : ($inputs["country"] ?? 0);
+            $stateId = !empty($inputs["state"]) ? $inputs["state"] : null;
+            $cityId = !empty($inputs["city"]) ? $inputs["city"] : null;
+            $title = $inputs["title"] ?? null;
 
-            if(isset($inputs["country"]) && $inputs["country"] == "worldwide") {
-                $where = [ "country" => $inputs["country"] ];
+            $where = [
+                "state_id" => $stateId,
+                "city_id" => $cityId,
+                "title" => $title
+            ];
+
+            if (isset($inputs["country"]) && $inputs["country"] == "worldwide") {
+                $run = $this->locationSeoContentRepository->getSingleRecordWhere(array_merge($where, ["country" => "worldwide"]));
+                if (!$run) {
+                    $run = $this->locationSeoContentRepository->getSingleRecordWhere(array_merge($where, ["country_id" => 0]));
+                }
             } else {
-                $where = [ "country_id" => $inputs["country"] ];
+                $run = $this->locationSeoContentRepository->getSingleRecordWhere(array_merge($where, ["country_id" => $countryId]));
             }
-            $where["state_id"] = null;
-            $where["city_id"] = null;
-            if(isset($inputs["state"]) && $inputs["state"] != null) {
-                $where["state_id"] = $inputs["state"];
-            }
-            if(isset($inputs["city"]) && $inputs["city"] != null) {
-                $where["city_id"] = $inputs["city"];
-            }
-            $where["title"] = $inputs["title"];
-            $run = $this->locationSeoContentRepository->getSingleRecordWhere($where);
+
             return ["status" => $run ? 200 : 400, "message" => $run ];
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
