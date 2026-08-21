@@ -581,7 +581,7 @@
 
                         </div>
                         <div class="contact-buttons">
-                            <a href="https://wa.me/{{ $user->phone_code }}{{ $user->phone }}?text=Hi%20I%20found%20your%20profile%20on%20the%20site" target="_blank" class="btn btn-success profileWhatsApp">
+                            <a href="https://wa.me/{{ $user->phone_code }}{{ $user->phone }}?text=Hi%20I%20found%20your%20profile%20on%20the%20site" target="_blank" rel="nofollow noopener" class="btn btn-success profileWhatsApp">
                                 <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
                             </a>
 

@@ -237,7 +237,7 @@ $authUser = Auth::guard('web')->user();
             </div>
             <div class="card_btn_group">
                 @php $whatsappNumber = $escort->phone_code . $escort->phone; @endphp
-                <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank">
+                <a href="https://wa.me/{{ $whatsappNumber }}" target="_blank" rel="nofollow noopener">
                     <div class="btn btn-maincolor cards-btn w-100">Book Now</div>
                 </a>
                 <a href="{{ route('user.profile.show', $escort->id) }}">

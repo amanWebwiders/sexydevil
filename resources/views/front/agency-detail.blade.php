@@ -55,7 +55,7 @@
 
                         {{-- Website Button (Click to Visit) --}}
                         @if(!empty($agency->website))
-                        <a href="{{ $agency->website }}" target="_blank" class="btn btn-outline-secondary w-100 text-white">
+                        <a href="{{ $agency->website }}" target="_blank" rel="nofollow noopener" class="btn btn-outline-secondary w-100 text-white">
                             <i class="fa-solid fa-globe"></i> Visit Website
                         </a>
                         @else
@@ -158,7 +158,7 @@
                                             <ul class="list-inline social-icon-detail">
                                                 @if($agency->telegram)
                                                 <li class="list-inline-item">
-                                                    <a href="{{ $agency->telegram }}" target="_blank" class="btn btn-outline-primary rounded-circle">
+                                                    <a href="{{ $agency->telegram }}" target="_blank" rel="nofollow noopener" class="btn btn-outline-primary rounded-circle">
                                                         <i class="fab fa-telegram"></i>
                                                     </a>
                                                 </li>
@@ -166,7 +166,7 @@
 
                                                 @if($agency->facebook)
                                                 <li class="list-inline-item">
-                                                    <a href="{{ $agency->facebook }}" target="_blank" class="btn btn-outline-primary rounded-circle">
+                                                    <a href="{{ $agency->facebook }}" target="_blank" rel="nofollow noopener" class="btn btn-outline-primary rounded-circle">
                                                         <i class="fab fa-facebook-f"></i>
                                                     </a>
                                                 </li>
@@ -174,7 +174,7 @@
 
                                                 @if($agency->instagram)
                                                 <li class="list-inline-item">
-                                                    <a href="{{ $agency->instagram }}" target="_blank" class="btn btn-outline-danger rounded-circle">
+                                                    <a href="{{ $agency->instagram }}" target="_blank" rel="nofollow noopener" class="btn btn-outline-danger rounded-circle">
                                                         <i class="fab fa-instagram"></i>
                                                     </a>
                                                 </li>
@@ -182,7 +182,7 @@
 
                                                 @if($agency->linkedin)
                                                 <li class="list-inline-item">
-                                                    <a href="{{ $agency->linkedin }}" target="_blank" class="btn btn-outline-info rounded-circle">
+                                                    <a href="{{ $agency->linkedin }}" target="_blank" rel="nofollow noopener" class="btn btn-outline-info rounded-circle">
                                                         <i class="fab fa-linkedin-in"></i>
                                                     </a>
                                                 </li>
