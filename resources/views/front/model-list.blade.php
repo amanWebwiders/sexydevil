@@ -6,6 +6,23 @@
             <div class="row">
                 @include('front.component.category_sidebar')
                 <div class="col-lg-10">
+                    @php
+                        $isNewEscorts = request()->routeIs('new.escorts');
+                        $isActiveEscorts = request()->routeIs('active.escorts');
+                        $isLowcostEscorts = request()->routeIs('lowcost.escorts');
+                        $isRecommendEscorts = request()->routeIs('recommend.escorts');
+                        
+                        $pageTitleCrumb = 'All Escorts';
+                        if ($isNewEscorts) $pageTitleCrumb = 'New Escorts';
+                        elseif ($isActiveEscorts) $pageTitleCrumb = 'Active Escorts';
+                        elseif ($isLowcostEscorts) $pageTitleCrumb = 'Lowcost Escorts';
+                        elseif ($isRecommendEscorts) $pageTitleCrumb = 'Recommend Escorts';
+
+                        $listCrumbs = [
+                            ['title' => $pageTitleCrumb, 'url' => url()->current()]
+                        ];
+                    @endphp
+                    @include('partials.breadcrumbs', ['breadcrumbs' => $listCrumbs])
                     <section class="s-pt-80 s-pb-30 s-pb-md-70 s-pt-md-90 s-pb-xl-120 s-pt-xl-180">
                         @include('front.component.filters')
                     </section>
