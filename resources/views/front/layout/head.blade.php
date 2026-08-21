@@ -53,11 +53,11 @@
 	<link rel="stylesheet" href="{{ asset('css/main.css')}}" class="color-switcher-link">
 	<script src="{{ asset('js/vendor/modernizr-custom.js')}}"></script>
 	<!-- Favicon Tags (Google Search Engine Compliant - Absolute URLs, Square PNG >= 48x48px) -->
-	<link rel="icon" type="image/png" sizes="48x48" href="{{ url('images/escort_favicon.png') }}">
-	<link rel="icon" type="image/png" sizes="96x96" href="{{ url('images/escort_favicon.png') }}">
-	<link rel="icon" type="image/png" sizes="192x192" href="{{ url('images/escort_favicon.png') }}">
-	<link rel="apple-touch-icon" sizes="180x180" href="{{ url('images/escort_favicon.png') }}">
-	<link rel="shortcut icon" type="image/x-icon" href="{{ url('favicon.ico') }}">
+	<link rel="icon" type="image/png" sizes="48x48" href="{{ asset('images/escort_favicon.png') }}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('images/escort_favicon.png') }}">
+	<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/escort_favicon.png') }}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/escort_favicon.png') }}">
+	<link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
