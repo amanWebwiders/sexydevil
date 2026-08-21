@@ -160,6 +160,12 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::get('/terms-and-conditions', fn() => redirect()->to(route('terms'), 301));
     Route::get('/terms-conditions', fn() => redirect()->to(route('terms'), 301));
     Route::get('/gallery', fn() => redirect()->to(route('reels'), 301));
+    Route::get('/login', fn() => redirect()->to(route('user-login'), 301));
+    Route::get('/signup', fn() => redirect()->to(route('choose'), 301));
+    Route::get('/register', fn() => redirect()->to(route('choose'), 301));
+    Route::get('/stories', fn() => redirect()->to(route('reels'), 301));
+    Route::get('/all-escorts', fn() => redirect()->to(route('model.search'), 301));
+    Route::get('/escorts', fn() => redirect()->to(route('model.search'), 301));
 });
 
 Route::get('/user-email-verify', 'App\Http\Controllers\Front\UserAuthController@userEmailVerify')->name('user-email-verify');
