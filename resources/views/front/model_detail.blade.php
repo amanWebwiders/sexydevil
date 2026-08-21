@@ -347,8 +347,27 @@
 <section class="main-area">
     <div class="container-fluid">
         @php
+            $cityName = '';
+            if (is_object($user->city)) {
+                $cityName = $user->city->name ?? '';
+            } elseif (is_array($user->city)) {
+                $cityName = $user->city['name'] ?? '';
+            } else {
+                $rawCity = (string) $user->city;
+                if (!empty($rawCity) && str_starts_with(trim($rawCity), '{')) {
+                    $jsonCity = json_decode($rawCity, true);
+                    $cityName = $jsonCity['name'] ?? '';
+                } else {
+                    $cityName = $rawCity;
+                }
+            }
+            if (empty($cityName) && isset($user->userCity)) {
+                $cityName = $user->userCity->name ?? '';
+            }
+            $cityName = !empty($cityName) ? $cityName : 'Escorts';
+
             $breadcrumbs = [
-                ['title' => $user->city ?? 'Escorts', 'url' => !empty($user->city) ? route('model.search', ['city' => Str::slug($user->city)]) : route('model.search')],
+                ['title' => $cityName, 'url' => ($cityName !== 'Escorts') ? route('model.search', ['city' => Str::slug($cityName)]) : route('model.search')],
                 ['title' => $user->listing_title ?? $user->nickname ?? $user->name ?? 'Profile', 'url' => '']
             ];
         @endphp
