@@ -60,23 +60,23 @@
                         <div class="language-box">
                             <div class="top-socials pt-0 mb-0">
                                 @if ($globalData->telegram_active == 1)
-                                    <a href="{{ $globalData->telegram }}" target="_blank" class="" title="telegram">
+                                    <a href="{{ $globalData->telegram }}" target="_blank" rel="nofollow noopener" class="" title="telegram">
                                         <i class="fa-brands fa-telegram"></i>
                                     </a>
                                 @endif
                                 @if ($globalData->facebook_active == 1)
-                                    <a href="{{ $globalData->facebook }}" target="_blank" class="" title="facebook">
+                                    <a href="{{ $globalData->facebook }}" target="_blank" rel="nofollow noopener" class="" title="facebook">
                                         <i class="fa-brands fa-facebook"></i>
                                     </a>
                                 @endif
                                 @if ($globalData->instagram_active == 1)
-                                    <a href="{{ $globalData->intagram }}" target="_blank" class="" title="instagram">
+                                    <a href="{{ $globalData->intagram }}" target="_blank" rel="nofollow noopener" class="" title="instagram">
                                         <i class="fa-brands fa-instagram"></i>
                                     </a>
                                 @endif
                                 <a href="https://api.whatsapp.com/send/?phone={{ $globalData->whatsApp_no }}&text=hi&type=phone_number&app_absent=0"
-                                    target="_blank" class="" title="whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
-                                <a href="mailto:{{ $globalData->email }}" class="" title="whatsapp">
+                                    target="_blank" rel="nofollow noopener" class="" title="whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                                <a href="mailto:{{ $globalData->email }}" class="" title="email">
                                     <i class="fa-solid fa-envelope"></i>
                                 </a>
                             </div>
