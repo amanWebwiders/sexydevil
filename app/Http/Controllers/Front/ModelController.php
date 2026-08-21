@@ -40,11 +40,14 @@ class ModelController extends Controller
             $mycity = urlencode($request->city);
             return redirect()->route('model.search', ["city" => $mycity] );
         }
-        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "terms-conditions", "terms-and-conditions", "favourite-list", "news-stories", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "gallery", "sitemap.xml", "robots.txt", "home"];
-        if($city && in_array(strtolower($city), $invalid_route)) {
-            return redirect()->route('model.search', ["city" => 'home'] );
+        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "terms-conditions", "terms-and-conditions", "favourite-list", "news-stories", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "gallery", "sitemap.xml", "robots.txt"];
+        if ($city && strtolower($city) === 'home') {
+            return redirect()->route('model.search');
         }
-        $city = isset($city) && $city != "home" ? $city:null;
+        if ($city && in_array(strtolower($city), $invalid_route)) {
+            return redirect()->route('model.search');
+        }
+        $city = isset($city) && $city != "home" ? $city : null;
         $filters = [];
         if ($request->filled('name')) {
             $filters['search_term'] = $request->name;
@@ -354,7 +357,7 @@ class ModelController extends Controller
         }
         $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
         if($city && in_array($city, $invalid_route)) {
-            return redirect()->route('new.escorts', ["city" => 'home'] );
+            return redirect()->route('new.escorts');
         }
         $city = $locationSeoCity = isset($city) && $city != "home" ? $city:null;
         
@@ -607,7 +610,7 @@ class ModelController extends Controller
         }
         $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
         if($city && in_array($city, $invalid_route)) {
-            return redirect()->route('active.escorts', ["city" => 'home'] );
+            return redirect()->route('active.escorts');
         }
         $city = isset($city) && $city != "home" ? $city:null;
 
@@ -823,7 +826,7 @@ class ModelController extends Controller
         }
         $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
         if($city && in_array($city, $invalid_route)) {
-            return redirect()->route('lowcost.escorts', ["city" => 'home'] );
+            return redirect()->route('lowcost.escorts');
         }
         $city = isset($city) && $city != "home" ? $city:null;
 
@@ -1036,7 +1039,7 @@ class ModelController extends Controller
         }
         $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
         if($city && in_array($city, $invalid_route)) {
-            return redirect()->route('recommend.escorts', ["city" => 'home'] );
+            return redirect()->route('recommend.escorts');
         }
         $city = isset($city) && $city != "home" ? $city:null;
 
