@@ -47,8 +47,10 @@ Disallow: /chunk-upload
 Disallow: /comments
 Disallow: /toggle-like
 
-# Explicitly Allow Public SEO Pages
+# Explicitly Allow Public SEO Pages & Assets
 Allow: /
+Allow: /images/
+Allow: /favicon.ico
 Allow: /about-us
 Allow: /contact-us
 Allow: /terms-condition
@@ -61,6 +63,11 @@ Allow: /recommend-escorts
 Allow: /user/profile/
 Allow: /user/agencies
 Allow: /user/agency-detail/
+
+# Googlebot-Image Directive
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /favicon.ico
 
 # XML Sitemap Location
 Sitemap: https://sexydevilescorts.com/sitemap.xml
