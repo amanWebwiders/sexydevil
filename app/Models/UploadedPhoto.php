@@ -36,7 +36,7 @@ class UploadedPhoto extends Model
         $user = $this->user;
         if ($user) {
             $name = $user->listing_title ?? $user->nickname ?? $user->name ?? 'SexyDevil Escort';
-            $city = $user->city ?? '';
+            $city = $user->city->name ?? '';
             return trim($name . ($city ? ' Escort in ' . $city : ' Escort Photo'));
         }
 
