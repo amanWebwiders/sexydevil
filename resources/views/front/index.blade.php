@@ -117,12 +117,11 @@
         .owl-nav{
             display:none;
         } */
-
-        .owl-carousel .owl-item {
-            opacity: 1;
-            /* transition: opacity 0.2s ease 0.1s; */
+        .owl-carousel .owl-stage {
+            display: flex !important;
+            justify-content: center;
+            margin: 0 auto;
         }
-
 
         .owl-nav {
             display: flex !important;
@@ -1782,13 +1781,13 @@ $(document).ready(function(){
         $carousel.owlCarousel({
             loop: itemCount > 4,
             margin: 20,
-            nav: true,
+            nav: itemCount > 4,
             navText: ["<", ">"],
             dots: false,
             responsive:{
-                0:{ items: 2, loop: itemCount > 2 },
-                768:{ items: 3, loop: itemCount > 3 },
-                1200:{ items: 4, loop: itemCount > 4 }
+                0:{ items: Math.min(itemCount, 2) || 2, loop: itemCount > 2, nav: itemCount > 2 },
+                768:{ items: Math.min(itemCount, 3) || 3, loop: itemCount > 3, nav: itemCount > 3 },
+                1200:{ items: Math.min(itemCount, 4) || 4, loop: itemCount > 4, nav: itemCount > 4 }
             }
         });
     });
