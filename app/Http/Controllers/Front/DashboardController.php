@@ -60,8 +60,8 @@ class DashboardController extends Controller
             $ethnicity = $this->CommonRepository->setModel(new \App\Models\Ethnicity())->getAll();
             $nationality = $this->CommonRepository->setModel(new \App\Models\Nationality())->getAll();
             $language = $this->CommonRepository->setModel(new \App\Models\Language())->getAll();
-            $state = $this->CommonRepository->setModel(new \App\Models\State())->getAll();
-            $city = $this->CommonRepository->setModel(new \App\Models\City())->getAll();
+            $state = collect();
+            $city = collect();
             $bodyType = $this->CommonRepository->setModel(new \App\Models\BodyType())->getAll();
             $hairColor = $this->CommonRepository->setModel(new \App\Models\HairColor())->getAll();
             $hairLength = $this->CommonRepository->setModel(new \App\Models\HairLength())->getAll();
