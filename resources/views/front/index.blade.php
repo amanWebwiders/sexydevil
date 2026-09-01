@@ -1607,10 +1607,11 @@
             ];
 
             sliderClasses.forEach(selector => {
-                const sliderElement = document.querySelector(selector);
-                if (sliderElement) {
-                    new Swiper(selector, {
-                        loop: true,
+                const sliderElements = document.querySelectorAll(selector);
+                sliderElements.forEach(sliderElement => {
+                    const slideCount = sliderElement.querySelectorAll('.item, .product_card, .swiper-slide').length;
+                    new Swiper(sliderElement, {
+                        loop: slideCount > 4,
                         slidesPerView: 4,
                         slidesPerGroup: 1,
                         spaceBetween: 20,
@@ -1750,17 +1751,21 @@
 
 <script>
 $(document).ready(function(){
-    $(".owl-carousel").owlCarousel({
-        loop: true,
-        margin: 20,
-        nav: true,
-        navText: ["<", ">"],
-        dots: false,
-        responsive:{
-            0:{ items:2 },       // Mobile
-            768:{ items:3 },     // Tablet
-            1200:{ items:4     }     // Desktop
-        }
+    $(".owl-carousel").each(function(){
+        var $carousel = $(this);
+        var itemCount = $carousel.find('.item').length;
+        $carousel.owlCarousel({
+            loop: itemCount > 4,
+            margin: 20,
+            nav: true,
+            navText: ["<", ">"],
+            dots: false,
+            responsive:{
+                0:{ items: 2, loop: itemCount > 2 },
+                768:{ items: 3, loop: itemCount > 3 },
+                1200:{ items: 4, loop: itemCount > 4 }
+            }
+        });
     });
 });
 </script>
