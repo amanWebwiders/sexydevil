@@ -47,7 +47,7 @@
 
                       <td align="left" valign="top" style="color:#444;font-size:14px">
 
-                        <?= $mailData['body'] ;?>
+                        {!! $mailData['body'] !!}
 
                         <p style="margin:0;padding:10px 0px">Kind regards,<br>{{ env('APP_NAME') }} Team</p>
 
@@ -75,7 +75,7 @@
 
                       <td align="center" valign="top" width="80%">
 
-                        <div style="margin:0;padding:0;color:#fff;font-size:13px">Copyright © <?=date("Y");?> <a href="#" style="color:white;text-decoration:none"> {{ env('APP_NAME') }} </a>. All rights reserved.</div>
+                        <div style="margin:0;padding:0;color:#fff;font-size:13px">Copyright © {{ date('Y') }} <a href="#" style="color:white;text-decoration:none"> {{ env('APP_NAME') }} </a>. All rights reserved.</div>
 
                       </td>
 

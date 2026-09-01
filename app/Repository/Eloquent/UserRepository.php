@@ -525,7 +525,9 @@ class UserRepository extends BaseRepository
             return $query->orderByDesc('reviews_received_avg_rating') // order by average rating
             ->inRandomOrder() // random tie-breaker
             ->take($limit)
-            ->get();
+            ->get()
+            ->unique('id')
+            ->values();
     }
     public function getBestUsers($limit = 6)
     {
@@ -535,8 +537,11 @@ class UserRepository extends BaseRepository
             ->where('user_status', 0)
             ->where('admin_status', 'approved')
             ->inRandomOrder()
+            ->take($limit * 2)
+            ->get()
+            ->unique('id')
             ->take($limit)
-            ->get();
+            ->values();
     }
 
 
@@ -753,12 +758,15 @@ class UserRepository extends BaseRepository
             }
            $query->orderByDesc(DB::raw('bup.boosted_from'))->orderByDesc('is_my_boosted')->orderBy('plans.visibility', 'desc')->orderBy('rotation_pos', 'asc');
            if($page != "model-search") {
-               $query->take($perPage);
+               $query->take($perPage * 2);
            }
-           return $query->get();
-            //return $query->paginate($perPage, ['*'], 'page', $page);
+           $results = $query->get()->unique('id')->values();
+           if($page != "model-search") {
+               return $results->take($perPage);
+           }
+           return $results;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Error in UserRepository.getByWhereSearch(): " . $e->getMessage());
             return response()->json(['status' => '0', 'message' => __('message.statusZero')]);
         }
@@ -1101,14 +1109,6 @@ class UserRepository extends BaseRepository
 
     public function getFeaturedModels(array $where, $keywords = null) {
         try {
-            /* $cityId = $this->cityRepository->getCityWhereUserExist(['cities.name' => $keywords], ['cities.*'], "feature", ["date" => $where['feature_devils.date'] ?? now()->format('Y-m-d')]);
-            dd($cityId);
-            $query = $this->model->select('users.*')->with('images')
-            ->join("feature_devils", "users.id", "feature_devils.user_id")->where($where);
-            if($cityId && isset($cityId->id)) {
-                $query->where('feature_devils.city_id', $cityId["id"])->where('feature_devils.city_id', '!=', 0);
-            } */
-           
             $query = $this->model->select('users.*')->with([
                 'reviewsReceived',  'images'    
             ])
@@ -1125,15 +1125,18 @@ class UserRepository extends BaseRepository
                     ->orWhere('cities.name', 'like', "%{$keywords}%");
                 });
             }
-            return $query->distinct('users.id')->inRandomOrder()->limit(6)->get();
-        } catch (\Exception $exception) {
+            return $query->inRandomOrder()->limit(12)->get()->unique('id')->take(6)->values();
+        } catch (\Throwable $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
             return collect();
         }        
     }
 
-    public function devilForYou(array $where,  $keywords = null, $current_date) {
+    public function devilForYou(array $where, $keywords = null, $current_date = null) {
         try {
+            if (!$current_date) {
+                $current_date = now()->format('Y-m-d');
+            }
             $query = $this->model->select('users.*')->with('images')
             ->leftJoin('feature_devils', 'users.id', '=', 'feature_devils.user_id')
             ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
@@ -1152,8 +1155,8 @@ class UserRepository extends BaseRepository
                     ->orWhere('cities.name', 'like', "%{$keywords}%");
                 });
             }
-            return $query->distinct('users.id')->inRandomOrder()->limit(6)->get();
-        } catch (\Exception $exception) {
+            return $query->inRandomOrder()->limit(12)->get()->unique('id')->take(6)->values();
+        } catch (\Throwable $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
             return collect();
         }
@@ -1162,7 +1165,6 @@ class UserRepository extends BaseRepository
 
     public function top3User(array $where, array $select = ['users.*'], $keywords = null, $limit = 3, $userType = "weekly") {
         try {        
-            //$cityId = $this->cityRepository->getSingleRecordWhere(['name' => $keywords]);
             $currentWeek = Carbon::now()->format('o-W');
             $current_date = now()->format('Y-m-d');
 
@@ -1186,7 +1188,6 @@ class UserRepository extends BaseRepository
             if(isset($keywords)) {
                 
                 $parts = str_replace("+", " ", $keywords);
-                    //explode("+", $keywords);
                 if(!empty($parts)) {                    
                     $query->join('cities', 'users.city_id', '=', 'cities.id')->where(function($q) use($parts) {
                             $q->where('cities.name', 'like', "%{$parts}%");
@@ -1201,67 +1202,30 @@ class UserRepository extends BaseRepository
                             $subquery->select('user_id')
                                     ->from('feature_devils')
                                     ->where('date', $current_date);
-                        })->distinct()->limit($limit)->inRandomOrder()->get();
+                        })->inRandomOrder()->limit($limit * 3)->get()->unique('id')->take($limit)->values();
             }
-            $existingUsers = $existingUsers->where('users.week_assigned', $currentWeek)->limit($limit)->inRandomOrder()->get();
+            $existingUsers = $existingUsers->where('users.week_assigned', $currentWeek)->inRandomOrder()->limit($limit * 3)->get()->unique('id')->take($limit)->values();
             
             // Check if current week already has assigned users
             if ($existingUsers->count() > 0) {
-                // ✅ Return same users for this week
                 return $existingUsers;
             }
             $newUsers = clone $query;
-                /* $current_date = now()->format('Y-m-d');
-                if(!isset($where["plan_start_date"]) && !isset($where["plan_end_date"])) {
-                    $query->where([
-                        ['users.plan_start_date', '<=', $current_date],
-                        ['users.plan_end_date', '>=', $current_date]
-                    ]);                    
-                } */
-
-                         
-            /* $viewerId = auth()->id();  // current viewer
-            if(auth()->check()) {
-                $today = now()->toDateString();
-                $query->join('plans', 'users.plan_id', '=', 'plans.id')
-                        ->leftJoin('user_visibility_logs', function($join) use ($today, $viewerId) {
-                        $join->on('users.id', '=', 'user_visibility_logs.user_id')
-                        ->whereDate('user_visibility_logs.shown_date', '=', $today)
-                        ->where('user_visibility_logs.viewer_id', $viewerId);
-                });
-                // only users who haven’t reached their visibility limit
-                $query->whereRaw('(COALESCE(user_visibility_logs.shown_count, 0) < plans.visibility)');
-            } */
             $weekly_users = $newUsers->leftJoin('feature_devils', 'users.id', '=', 'feature_devils.user_id')
                             ->whereNotIn('users.id', function($subquery) use ($current_date) {
                             $subquery->select('user_id')
                                     ->from('feature_devils')
                                     ->where('date', $current_date);
-                        })->distinct()->limit($limit)->inRandomOrder()->get();
-            /* if (auth()->check() && isset($newUsers) && $newUsers->isNotEmpty()) {
+                        })->inRandomOrder()->limit($limit * 3)->get()->unique('id')->take($limit)->values();
 
-                foreach ($newUsers as $user) {
-                    $this->userVisibilityLog->updateOrInsert(
-                        [
-                            'user_id' => $user->id,
-                            'shown_date' => $today,
-                            'viewer_id' => $viewerId,
-                        ],
-                        [
-                            'shown_count' => DB::raw('COALESCE(shown_count, 0) + 1'),
-                            'updated_at' => now(),
-                        ]
-                    );
-                }
-            } */
-           // Assign week to those users
             foreach ($weekly_users as $user) {
                 $this->model->where('id', $user->id)
                     ->update(['week_assigned' => $currentWeek]);
             }
             return $weekly_users;
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
+            return collect();
         } 
     }
 
