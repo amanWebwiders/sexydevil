@@ -2,6 +2,9 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
+
+    DirectoryIndex public/index.php index.php
+
 # Block access to .env and other hidden files
 <FilesMatch "^\.">
     Order allow,deny
@@ -23,6 +26,9 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
+
+    # Handle root directory requests
+    RewriteRule ^$ public/index.php [L]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
