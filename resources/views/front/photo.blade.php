@@ -309,7 +309,7 @@
                                                                 <div class="options-btn flex-column flex-lg-row">
                                                                     @if ($photo->is_approved == 1)
                                                                         <a href="javascript:void(0)" class="mark-profile w-100 text-center new-opt-btn">Mark as Profile</a>
-                                                                        <a href="javascript:void(0)" class="lock-img new-opt-btn w-100 text-center HideShowImage"><?= $photo->hide_show == 1 ? "Hide":"Show"; ?> Image</a>                                                                    
+                                                                        <a href="javascript:void(0)" class="lock-img new-opt-btn w-100 text-center HideShowImage">{{ $photo->hide_show == 1 ? "Hide" : "Show" }} Image</a>                                                                    
                                                                     @endif
                                                                 </div>
                                                                 <div class="options-btn">

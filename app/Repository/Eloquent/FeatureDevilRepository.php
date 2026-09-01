@@ -25,7 +25,7 @@ class FeatureDevilRepository {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
         }
     }
-    public function getAllRecordByDate(array $where = [], array $select = ['feature_devils.*', 'users.name', 'users.email'], array $whereInUsers) {
+    public function getAllRecordByDate(array $where = [], array $select = ['feature_devils.*', 'users.name', 'users.email'], array $whereInUsers = []) {
         try {
                 $query = $this->model->select($select);
             if(!empty($where)) {

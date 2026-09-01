@@ -34,7 +34,7 @@ class TimezoneMiddleware
         $tz = '[{"zoneName":"'.$current_timezone.'"}]';
         if ($request->country_id) {
             $countryData = Country::select('countries.*')->where('id', $request->country_id)->first();
-            $tz = $countryData->timezones ?? '[{"zoneName":"'.$current_timezone.'"}]';
+            $tz = $countryData?->timezones ?? '[{"zoneName":"'.$current_timezone.'"}]';
         } else if ($extraValue && !in_array($extraValue, ["home", "edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "model-search", "manually-boost"])) {
             // Lookup country by name or city
            $query = Country::join('cities', 'countries.id', 'cities.country_id');
@@ -46,7 +46,7 @@ class TimezoneMiddleware
                 });
             }
             $countryData = $query->select('countries.*')->first();
-            $tz = $countryData->timezones ?? '[{"zoneName":"'.$current_timezone.'"}]';
+            $tz = $countryData?->timezones ?? '[{"zoneName":"'.$current_timezone.'"}]';
         } 
 
         

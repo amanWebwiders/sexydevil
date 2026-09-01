@@ -31,12 +31,14 @@ class UserMiddleware
                 'email' => 'Your account has been blocked by the admin.',
             ]);
         } else {
-            if($user->country_id) {
+            if(!empty($user->country_id)) {
                 $country = Country::where("id", $user->country_id)->first();
-                $time_zone = json_decode($country->timezones, true);
+                if ($country && !empty($country->timezones)) {
+                    $time_zone = json_decode($country->timezones, true);
 
-                if(isset($time_zone[0]["zoneName"])) {
-                    config(['app.timezone' => $time_zone[0]["zoneName"]]);
+                    if(isset($time_zone[0]["zoneName"])) {
+                        config(['app.timezone' => $time_zone[0]["zoneName"]]);
+                    }
                 }
             }
         }

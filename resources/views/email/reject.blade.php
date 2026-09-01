@@ -64,7 +64,7 @@
                                             <tr>
                                                 <td align="center" valign="top" width="80%">
                                                     <div style="margin:0;padding:0;color:#fff;font-size:13px">
-                                                        Copyright © <?= date("Y"); ?> <a href="#"
+                                                        Copyright © {{ date('Y') }} <a href="#"
                                                             style="color:white;text-decoration:none">
                                                             {{ config('app.name') }} </a>. All rights reserved.
                                                     </div>
