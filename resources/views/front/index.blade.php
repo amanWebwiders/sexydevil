@@ -124,21 +124,44 @@
         }
 
 
-        .owl-nav, .owl-nav.disabled {
-            display: block !important;
+        .owl-nav {
             display: flex !important;
             justify-content: space-between;
             align-items: center;
             position: absolute !important;
-            top: 30% !important;
-            left: -8px !important;
+            top: 35% !important;
+            left: -15px !important;
+            width: calc(100% + 30px) !important;
+            pointer-events: none;
+            z-index: 10;
         }
 
-        .owl-nav>button.owl-prev, .owl-nav.disabled >button.owl-prev, .owl-nav>button.owl-next, .owl-nav.disabled >button.owl-next {
+        .owl-nav button.owl-prev,
+        .owl-nav button.owl-next {
+            pointer-events: auto;
             border-radius: 50px;
-            padding: 10px;
-            width: 50px;
-            font-size: 24px;
+            padding: 0px;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            background: #bc1212 !important;
+            color: #ffffff !important;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .owl-nav button.owl-prev:hover,
+        .owl-nav button.owl-next:hover {
+            background: #e60000 !important;
+            transform: scale(1.1);
+        }
+
+        .owl-nav.disabled, .owl-nav .disabled {
+            display: none !important;
         }
 
         @media (max-width:576px){
@@ -151,14 +174,16 @@
                 padding-left: 8px;
             }
 
-            .owl-nav, .owl-nav.disabled {
-                transform: translate(6px, 10px);
+            .owl-nav {
+                left: -8px !important;
+                width: calc(100% + 16px) !important;
             }
 
-            .owl-nav>button.owl-prev, .owl-nav.disabled >button.owl-prev, .owl-nav>button.owl-next, .owl-nav.disabled >button.owl-next {
-                padding: 5px;
-                width: 40px;
-                font-size: 20px;
+            .owl-nav button.owl-prev,
+            .owl-nav button.owl-next {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
             }
         }
     </style>
