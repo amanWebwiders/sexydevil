@@ -31,7 +31,7 @@
     
 @endsection
 @push('js')
-<script src="https://cloud.tinymce.com/5/tinymce.min.js?apiKey=co28qhp8nt6ngdu0nll8794xsuqln9ixriojfr2wwom92b6w"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.9/tinymce.min.js"></script>
 <script>
 tinymce.init({
   selector: '.textarea',

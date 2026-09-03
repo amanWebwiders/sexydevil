@@ -49,11 +49,20 @@
                       +{{ $data->country->code }} {{ $data->phone }}
                     </td>
                     <td>{{ $data->nationality->country ?? '-' }}</td>
-                    <td class="d-lg-flex gap-2">
-                      <button class="btn btn-success accept-btn" data-id="{{ $data->id }}">Approve</button>
-                      <button class="btn btn-danger reject-btn" data-id="{{ $data->id }}">Reject</button>
-                      <a href="{{ route('admin.userdetail', $data->id) }}" class="btn btn-primary">View</a>
-
+                    <td class="d-lg-flex gap-1 flex-wrap">
+                      <button class="btn btn-sm btn-success accept-btn" data-id="{{ $data->id }}">Approve</button>
+                      <button class="btn btn-sm btn-danger reject-btn" data-id="{{ $data->id }}">Reject</button>
+                      <a href="{{ route('admin.userdetail', $data->id) }}" class="btn btn-sm btn-primary">View</a>
+                      <a href="{{ route('admin.edit-user', $data->id) }}" class="btn btn-sm btn-info text-white" title="Edit Ad Content">Edit</a>
+                      <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $data->id }}" data-name="{{ $data->name }}" data-email="{{ $data->email }}" title="Manage Password">
+                        <i class="fa-solid fa-key"></i> Password
+                      </button>
+                      @if($data->user_status == 0)
+                      <button class="btn btn-sm btn-warning block-btn" data-id="{{ $data->id }}">Block</button>
+                      @elseif($data->user_status == 1)
+                      <button class="btn btn-sm btn-success unblock-btn" data-id="{{ $data->id }}">Unblock</button>
+                      @endif
+                      <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $data->id }}">Delete</button>
                     </td>
                   </tr>
                   @endforeach
@@ -89,124 +98,214 @@
     });
 
 
-    $('.accept-btn').on('click', function() {
+    // Delegated Accept button
+    $(document).on('click', '.accept-btn', function() {
       var userId = $(this).data('id');
       var $button = $(this);
-      var url = '{{ route("admin.users.accept", ":id") }}'; // Dynamic URL template
-      url = url.replace(':id', userId); // Replace placeholder with actual user ID
-      var successText = 'Are you sure you want to Approve this user?';
-
-      $button.prop('disabled', true);
+      var url = '{{ route("admin.users.accept", ":id") }}'.replace(':id', userId);
 
       Swal.fire({
-        title: 'Are you sure?',
-        text: successText,
-        icon: 'warning',
+        title: 'Approve Advertiser?',
+        text: 'Are you sure you want to approve this advertiser?',
+        icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Yes, proceed!',
-        cancelButtonText: 'No, cancel!',
+        confirmButtonText: 'Yes, Approve!',
+        cancelButtonText: 'Cancel',
         reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
+          $button.prop('disabled', true);
           $.ajax({
             url: url,
             type: 'POST',
-            data: {
-              _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
-            },
+            data: { _token: $('meta[name="csrf-token"]').attr('content') },
             success: function(response) {
-              Swal.fire(
-                'Success!',
-                response.message,
-                'success'
-              ).then(() => {
-                location.reload(); // Optionally reload the page
+              Swal.fire('Approved!', response.message, 'success').then(() => {
+                location.reload();
               });
             },
             error: function(xhr) {
-              console.log(xhr.responseText);
-              Swal.fire(
-                'Error!',
-                'Something went wrong.',
-                'error'
-              );
+              console.error(xhr.responseText);
+              Swal.fire('Error!', 'Something went wrong.', 'error');
             }
           }).always(function() {
             $button.prop('disabled', false);
           });
-        } else {
-          $button.prop('disabled', false);
         }
       });
     });
 
-    $('.reject-btn').on('click', function() {
+    // Delegated Reject button
+    $(document).on('click', '.reject-btn', function() {
       var userId = $(this).data('id');
       var $button = $(this);
-      var url = '{{ route("admin.users.reject", ":id") }}'; // Dynamic URL template for reject
-      url = url.replace(':id', userId); // Replace placeholder with actual user ID
+      var url = '{{ route("admin.users.reject", ":id") }}'.replace(':id', userId);
 
-      // Prompt for the rejection reason
       Swal.fire({
-        title: 'Are you sure?',
-        text: 'Please provide a reason for rejecting this user.',
-        input: 'textarea', // Use textarea for the reason
+        title: 'Reject Advertiser?',
+        text: 'Please provide a reason for rejecting this advertiser.',
+        input: 'textarea',
         inputPlaceholder: 'Enter reason here...',
-        inputAttributes: {
-          'aria-label': 'Enter reason for rejection'
-        },
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, reject!',
-        cancelButtonText: 'No, cancel!',
+        confirmButtonText: 'Yes, Reject!',
+        cancelButtonText: 'Cancel',
         reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
-          var reason = result.value; // Get the reason from the input
-
-          if (reason) { // Check if the reason is not empty
+          var reason = result.value;
+          if (reason) {
             $button.prop('disabled', true);
-
             $.ajax({
               url: url,
               type: 'POST',
               data: {
-                _token: $('meta[name="csrf-token"]').attr('content'), // CSRF token
-                reason: reason // Send the reason with the request
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                reason: reason
               },
               success: function(response) {
-                Swal.fire(
-                  'Rejected!',
-                  response.message,
-                  'success'
-                ).then(() => {
-                  location.reload(); // Optionally reload the page
+                Swal.fire('Rejected!', response.message, 'success').then(() => {
+                  location.reload();
                 });
               },
               error: function(xhr) {
-                console.log(xhr.responseText);
-                Swal.fire(
-                  'Error!',
-                  'Something went wrong.',
-                  'error'
-                );
+                console.error(xhr.responseText);
+                Swal.fire('Error!', 'Something went wrong.', 'error');
               }
             }).always(function() {
               $button.prop('disabled', false);
             });
           } else {
-            Swal.fire(
-              'Cancelled',
-              'Rejection reason is required!',
-              'info'
-            );
+            Swal.fire('Notice', 'Rejection reason is required!', 'info');
           }
-        } else {
-          $button.prop('disabled', false);
         }
       });
     });
 
-  })
+    // Delegated Block button
+    $(document).on('click', '.block-btn', function() {
+      var userId = $(this).data('id');
+      var $button = $(this);
+      var url = '{{ route("admin.users.block", ":id") }}'.replace(':id', userId);
+
+      Swal.fire({
+        title: 'Block Profile?',
+        text: 'Are you sure you want to block this advertiser profile?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Block!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $button.prop('disabled', true);
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: { _token: $('meta[name="csrf-token"]').attr('content') },
+            success: function(response) {
+              Swal.fire('Blocked!', response.message, 'success').then(() => {
+                location.reload();
+              });
+            },
+            error: function(xhr) {
+              console.error(xhr.responseText);
+              Swal.fire('Error!', 'Something went wrong while blocking.', 'error');
+            }
+          }).always(function() {
+            $button.prop('disabled', false);
+          });
+        }
+      });
+    });
+
+    // Delegated Unblock button
+    $(document).on('click', '.unblock-btn', function() {
+      var userId = $(this).data('id');
+      var $button = $(this);
+      var url = '{{ route("admin.users.unblock", ":id") }}'.replace(':id', userId);
+
+      Swal.fire({
+        title: 'Unblock Profile?',
+        text: 'Are you sure you want to unblock this advertiser profile?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Unblock!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $button.prop('disabled', true);
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: { _token: $('meta[name="csrf-token"]').attr('content') },
+            success: function(response) {
+              Swal.fire('Unblocked!', response.message, 'success').then(() => {
+                location.reload();
+              });
+            },
+            error: function(xhr) {
+              console.error(xhr.responseText);
+              Swal.fire('Error!', 'Something went wrong while unblocking.', 'error');
+            }
+          }).always(function() {
+            $button.prop('disabled', false);
+          });
+        }
+      });
+    });
+
+    // Delegated Delete button
+    $(document).on('click', '.delete-btn', function() {
+      var userId = $(this).data('id');
+      var $button = $(this);
+      var url = '{{ route("admin.users.delete", ":id") }}'.replace(':id', userId);
+
+      Swal.fire({
+        title: 'Delete Profile Permanently?',
+        text: 'This will permanently delete this profile, all uploaded photos, videos, and associated records. This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        confirmButtonText: 'Yes, Delete Permanently!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $button.prop('disabled', true);
+          Swal.fire({
+            title: 'Deleting...',
+            text: 'Cleaning up profile assets and data...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+          });
+
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: { _token: $('meta[name="csrf-token"]').attr('content') },
+            success: function(response) {
+              Swal.fire('Deleted!', response.message, 'success').then(() => {
+                location.reload();
+              });
+            },
+            error: function(xhr) {
+              console.error(xhr.responseText);
+              var msg = 'Something went wrong while deleting profile.';
+              if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+              }
+              Swal.fire('Error!', msg, 'error');
+            }
+          }).always(function() {
+            $button.prop('disabled', false);
+          });
+        }
+      });
+    });
+  });
 </script>
+
+@include('admin.component.password_modal')
 @endpush('js')

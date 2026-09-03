@@ -10,9 +10,12 @@ use App\Services\Admin\UserServices;
 use App\Repository\Eloquent\{AdminRepository, UserRepository, CommonRepository, OccupationRepository, PlanRepository};
 use Illuminate\Support\Facades\Mail;
 use App\Mail\{AcceptbyAdminMail, RejectbyAdminMail};
-use App\Models\{EscortServiceCategory, UserEscortService, Country};
+use App\Models\{User, EscortServiceCategory, UserEscortService, Country};
 use App\Traits\ImageUploadTrait;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use Validator;
 use Carbon\Carbon;
 
@@ -287,30 +290,150 @@ class UserController extends Controller
     public function delete(Request $request, $id)
     {
         try {
-
-            $success = $this->userRepository->delete(['id' => $id]);
-            if ($success) {
-                return response()->json(['status' => true, 'message' => __('message.statusThree', ['parameter' => 'User'])]);
-            } else {
-                return response()->json(['status' => false], 500);
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json(['status' => false, 'message' => 'User not found.'], 404);
             }
-        } catch (Exception $e) {
-            Log::error("UserController : delete()" . $e->getLine() . " " . $e->getMessage());
-            return response()->json(['status' => '0', 'message' => __('message.statusZero')]);
+
+            DB::transaction(function () use ($id, $user) {
+                // 1. Delete physical files from disk
+                if ($user->profile_image) {
+                    $this->deletePhysicalFile($user->profile_image);
+                }
+                if ($user->document_image) {
+                    $this->deletePhysicalFile($user->document_image);
+                }
+                if ($user->holding_document_image) {
+                    $this->deletePhysicalFile($user->holding_document_image);
+                }
+
+                // Delete uploaded photos and their physical files
+                $photos = DB::table('uploaded_photos')->where('user_id', $id)->get();
+                foreach ($photos as $photo) {
+                    if (!empty($photo->file_path)) {
+                        $this->deletePhysicalFile($photo->file_path);
+                    }
+                }
+                DB::table('uploaded_photos')->where('user_id', $id)->delete();
+
+                // Delete uploaded videos and their physical files
+                $videos = DB::table('videos')->where('user_id', $id)->get();
+                foreach ($videos as $video) {
+                    if (!empty($video->file_path)) {
+                        $this->deletePhysicalFile($video->file_path);
+                    }
+                }
+                DB::table('videos')->where('user_id', $id)->delete();
+
+                // 2. Cascade delete all related database records
+                DB::table('boost_user_profiles')->where('user_id', $id)->delete();
+                DB::table('user_escort_services')->where('user_id', $id)->delete();
+                DB::table('user_availabilities')->where('user_id', $id)->delete();
+                DB::table('feature_devils')->where('user_id', $id)->delete();
+                DB::table('manually_boost_requests')->where('user_id', $id)->delete();
+                DB::table('user_daily_shows')->where('user_id', $id)->delete();
+                DB::table('user_visibility_logs')->where('user_id', $id)->delete();
+                DB::table('transactions')->where('user_id', $id)->delete();
+                DB::table('reviews')->where('user_id', $id)->orWhere('reviewer_id', $id)->delete();
+                DB::table('wishlists')->where('user_id', $id)->orWhere('favourite_user_id', $id)->delete();
+                DB::table('views')->where('viewed_id', $id)->orWhere('viewer_id', $id)->delete();
+                DB::table('comment_likes')->where('user_id', $id)->delete();
+                DB::table('comments')->where('user_id', $id)->delete();
+                DB::table('likes')->where('user_id', $id)->delete();
+                DB::table('news_and_stories')->where('user_id', $id)->delete();
+
+                if (\Illuminate\Support\Facades\Schema::hasTable('oauth_access_tokens')) {
+                    DB::table('oauth_access_tokens')->where('user_id', $id)->delete();
+                }
+
+                // 3. Delete the user
+                $user->delete();
+            });
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Profile deleted successfully.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("UserController : delete() on line " . $e->getLine() . " - " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to delete profile: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function deletePhysicalFile($filePath)
+    {
+        try {
+            if (empty($filePath)) return;
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            } elseif (Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            } elseif (file_exists(public_path($filePath))) {
+                @unlink(public_path($filePath));
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Could not delete physical file: {$filePath} - " . $e->getMessage());
+        }
+    }
+
+    public function changePassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|string|min:6',
+        ]);
+
+        try {
+            $user = User::findOrFail($id);
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            if ($request->boolean('send_email')) {
+                try {
+                    $appName = config('app.name');
+                    $mailData = [
+                        'subject' => 'Your ' . $appName . ' Account Password Has Been Updated',
+                        'email' => $user->email,
+                        'body' => '<p>Hello ' . e($user->name) . ',</p>' .
+                                  '<p>Your password for <strong>' . $appName . '</strong> has been updated by the administrator.</p>' .
+                                  '<p><strong>New Password:</strong> ' . e($request->password) . '</p>' .
+                                  '<p>Thanks,<br>' . $appName . '</p>'
+                    ];
+                    Mail::to($user->email)->send(new \App\Mail\DemoMail($mailData));
+                } catch (\Throwable $mailEx) {
+                    Log::warning("changePassword Mail Error: " . $mailEx->getMessage());
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Password updated successfully for ' . $user->name . '.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("UserController : changePassword() on line " . $e->getLine() . " - " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to update password.'
+            ], 500);
         }
     }
 
     public function block($id)
     {
         try {
-            $value['user_status'] = 1;
-            $user = $this->userRepository->getOne(['id' => $id]);
-            $success = $this->userRepository->update(['id' => $id], $value);
-            // dd($success);
-            if ($success) {
-                $appName = config('app.name');
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json(['status' => false, 'message' => 'User not found.'], 404);
+            }
 
-                $mailBody  = '<p>Hello ' . $user->name . ',</p>';
+            $user->user_status = 1;
+            $user->save();
+
+            try {
+                $appName = config('app.name');
+                $mailBody  = '<p>Hello ' . e($user->name) . ',</p>';
                 $mailBody .= '<p>This is to inform you that your account in <strong>' . $appName . '</strong> has been <strong>blocked</strong>.</p>';
                 $mailBody .= '<p>Please contact the administrator for more information.</p>';
                 $mailBody .= '<p>Thanks,<br>' . $appName . '</p>';
@@ -321,11 +444,12 @@ class UserController extends Controller
                 ];
 
                 Mail::to($user->email)->send(new \App\Mail\DemoMail($mailData));
-                return response()->json(['status' => true, 'message' => __('message.user_blocked')]);
-            } else {
-                return response()->json(['status' => false], 500);
+            } catch (\Throwable $mailEx) {
+                Log::warning("UserController:block - Mail error: " . $mailEx->getMessage());
             }
-        } catch (Exception $e) {
+
+            return response()->json(['status' => true, 'message' => __('message.user_blocked')]);
+        } catch (\Exception $e) {
             Log::error("UserAdminController : block() " . $e->getLine() . " " . $e->getMessage());
             return response()->json(['status' => false, 'message' => __('message.something_went_wrong')], 500);
         }
@@ -334,14 +458,17 @@ class UserController extends Controller
     public function unblock($id)
     {
         try {
-            $value['user_status'] = 0;
+            $user = User::find($id);
+            if (!$user) {
+                return response()->json(['status' => false, 'message' => 'User not found.'], 404);
+            }
 
-            $success = $this->userRepository->update(['id' => $id], $value);
-            if ($success) {
-                $user = $this->userRepository->getOne(['id' => $id]);
+            $user->user_status = 0;
+            $user->save();
+
+            try {
                 $appName = config('app.name');
-
-                $mailBody = '<p>Hello ' . $user->name . ',</p>';
+                $mailBody = '<p>Hello ' . e($user->name) . ',</p>';
                 $mailBody .= '<p>Your account in <strong>' . $appName . '</strong> has been <strong>unblocked</strong>. You can now access your account.</p>';
                 $mailBody .= '<p>Thanks,<br>' . $appName . '</p>';
 
@@ -352,11 +479,12 @@ class UserController extends Controller
                 ];
 
                 Mail::to($user->email)->send(new \App\Mail\DemoMail($mailData));
-                return response()->json(['status' => true, 'message' => __('message.user_unblocked')]);
-            } else {
-                return response()->json(['status' => false], 500);
+            } catch (\Throwable $mailEx) {
+                Log::warning("UserController:unblock - Mail error: " . $mailEx->getMessage());
             }
-        } catch (Exception $e) {
+
+            return response()->json(['status' => true, 'message' => __('message.user_unblocked')]);
+        } catch (\Exception $e) {
             Log::error("UserAdminController : unblock() " . $e->getLine() . " " . $e->getMessage());
             return response()->json(['status' => false, 'message' => __('message.something_went_wrong')], 500);
         }

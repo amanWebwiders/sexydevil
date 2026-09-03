@@ -42,18 +42,17 @@
                                         <td>{{ $data->name }}</td>
                                         <td>{{ $data->email }}</td>
 
-                                        <td class="d-lg-flex gap-2">
+                                        <td class="d-lg-flex gap-1 flex-wrap">
                                             @if($data->user_status == 0)
-                                            <button class="btn btn-warning block-btn" data-id="{{ $data->id }}">Block</button>
+                                            <button class="btn btn-sm btn-warning block-btn" data-id="{{ $data->id }}">Block</button>
                                             @elseif($data->user_status == 1)
-                                            <button class="btn btn-success unblock-btn" data-id="{{ $data->id }}">Unblock</button>
+                                            <button class="btn btn-sm btn-success unblock-btn" data-id="{{ $data->id }}">Unblock</button>
                                             @endif
-                                            <button class="btn btn-danger delete-btn" data-id="{{ $data->id }}">Delete</button>
-                                            <a href="{{ route('admin.userdetail', $data->id) }}" class="btn btn-primary">View</a>
-                                            <!-- <button type="button" class="btn btn-primary show-data" data-toggle="modal"
-                                                data-plan-id="{{ $data->id }}">
-                                                Edit
-                                            </button> -->
+                                            <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $data->id }}">Delete</button>
+                                            <a href="{{ route('admin.userdetail', $data->id) }}" class="btn btn-sm btn-primary">View</a>
+                                            <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $data->id }}" data-name="{{ $data->name }}" data-email="{{ $data->email }}" title="Manage Password">
+                                                <i class="fa-solid fa-key"></i> Password
+                                            </button>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -144,148 +143,133 @@
         });
 
 
-        $('.block-btn').on('click', function() {
+        // Delegated Block button
+        $(document).on('click', '.block-btn', function() {
             var userId = $(this).data('id');
             var $button = $(this);
-            var url = '{{ route("admin.users.block", ":id") }}'; // Dynamic URL template for block
-            url = url.replace(':id', userId); // Replace placeholder with actual user ID
-            var blockText = 'Are you sure you want to block this client?';
-
-            $button.prop('disabled', true);
+            var url = '{{ route("admin.users.block", ":id") }}'.replace(':id', userId);
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: blockText,
+                title: 'Block Client?',
+                text: 'Are you sure you want to block this client account?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, block!',
-                cancelButtonText: 'No, cancel!',
+                confirmButtonText: 'Yes, Block!',
+                cancelButtonText: 'Cancel',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $button.prop('disabled', true);
                     $.ajax({
                         url: url,
                         type: 'POST',
                         data: {
-                            _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
+                            _token: $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            Swal.fire(
-                                'Blocked!',
-                                response.message,
-                                'success'
-                            ).then(() => {
-                                location.reload(); // Optionally reload the page
+                            Swal.fire('Blocked!', response.message, 'success').then(() => {
+                                location.reload();
                             });
                         },
                         error: function(xhr) {
-                            console.log(xhr.responseText);
-                            Swal.fire(
-                                'Error!',
-                                'Something went wrong.',
-                                'error'
-                            );
+                            console.error(xhr.responseText);
+                            Swal.fire('Error!', 'Something went wrong while blocking.', 'error');
                         }
                     }).always(function() {
                         $button.prop('disabled', false);
                     });
-                } else {
-                    $button.prop('disabled', false);
                 }
             });
         });
 
-        // Unblock button click event
-        $('.unblock-btn').on('click', function() {
+        // Delegated Unblock button
+        $(document).on('click', '.unblock-btn', function() {
             var userId = $(this).data('id');
             var $button = $(this);
-            var url = '{{ route("admin.users.unblock", ":id") }}'; // Dynamic URL template for unblock
-            url = url.replace(':id', userId); // Replace placeholder with actual user ID
-            var unblockText = 'Are you sure you want to unblock this client?';
-
-            $button.prop('disabled', true);
+            var url = '{{ route("admin.users.unblock", ":id") }}'.replace(':id', userId);
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: unblockText,
-                icon: 'warning',
+                title: 'Unblock Client?',
+                text: 'Are you sure you want to unblock this client account?',
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, unblock!',
-                cancelButtonText: 'No, cancel!',
+                confirmButtonText: 'Yes, Unblock!',
+                cancelButtonText: 'Cancel',
                 reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
+                    $button.prop('disabled', true);
                     $.ajax({
                         url: url,
                         type: 'POST',
                         data: {
-                            _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
+                            _token: $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            Swal.fire(
-                                'Unblocked!',
-                                response.message,
-                                'success'
-                            ).then(() => {
-                                location.reload(); // Optionally reload the page
+                            Swal.fire('Unblocked!', response.message, 'success').then(() => {
+                                location.reload();
                             });
                         },
                         error: function(xhr) {
-                            console.log(xhr.responseText);
-                            Swal.fire(
-                                'Error!',
-                                'Something went wrong.',
-                                'error'
-                            );
+                            console.error(xhr.responseText);
+                            Swal.fire('Error!', 'Something went wrong while unblocking.', 'error');
                         }
                     }).always(function() {
                         $button.prop('disabled', false);
                     });
-                } else {
-                    $button.prop('disabled', false);
                 }
             });
         });
 
-        $('.delete-btn').on('click', function() {
+        // Delegated Delete button
+        $(document).on('click', '.delete-btn', function() {
             var userId = $(this).data('id');
             var $button = $(this);
-            var url = '{{ route("admin.users.delete", ":id") }}'; // Dynamic URL template for reject
-            url = url.replace(':id', userId); // Replace placeholder with actual user ID
+            var url = '{{ route("admin.users.delete", ":id") }}'.replace(':id', userId);
 
-            // Prompt for the rejection reason
-
-            $button.prop('disabled', true);
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'), // CSRF token
-
-                },
-                success: function(response) {
-                    Swal.fire(
-                        'Deleted!',
-                        response.message,
-                        'success'
-                    ).then(() => {
-                        location.reload(); // Optionally reload the page
+            Swal.fire({
+                title: 'Delete Client Permanently?',
+                text: 'This will permanently delete this client account and all related records. This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                confirmButtonText: 'Yes, Delete Permanently!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $button.prop('disabled', true);
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Removing client records...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
                     });
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                    Swal.fire(
-                        'Error!',
-                        'Something went wrong.',
-                        'error'
-                    );
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire('Deleted!', response.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            console.error(xhr.responseText);
+                            var msg = 'Something went wrong while deleting profile.';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            Swal.fire('Error!', msg, 'error');
+                        }
+                    }).always(function() {
+                        $button.prop('disabled', false);
+                    });
                 }
-            }).always(function() {
-                $button.prop('disabled', false);
             });
-
-
         });
         $('.show-data').on('click', function() {
 
@@ -389,4 +373,6 @@
         });
     })
 </script>
+
+@include('admin.component.password_modal')
 @endpush('js')

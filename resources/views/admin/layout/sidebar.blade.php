@@ -198,7 +198,7 @@
 					<li><a class="dropdown-item" href="{{route('admin.privacy-policy')}}">Privacy Policy</a></li>
 					<li><a class="dropdown-item" href="{{route('admin.contact-page-content')}}">Content Page</a></li>
 					<li><a class="dropdown-item" href="{{route('admin.location-seo-content')}}">Location SEO Content</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.faqs.index')}}">FAQ Management</a></li>
+					<!-- <li><a class="dropdown-item" href="{{route('admin.faqs.index')}}">FAQ Management</a></li> -->
 				</ul>
 			</div>
 		</div>
