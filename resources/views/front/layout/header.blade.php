@@ -128,10 +128,10 @@
                                     @guest
                                         <ul class="nav main-nav align-items-center">
                                             <li class="active"><a href="{{ route('home') }}">Home</a></li>
-                                            <li><a href="{{route('model.search', ["city" => $city])}}">All Escorts</a></li>
-                                            <li><a href="{{route('new.escorts', ["city" => $city])}}">New Escorts</a></li>
-                                            <li><a href="{{route('reels', ["city" => $city])}}">Hot Stories</a></li>
-                                            <li><a href="{{route('user.agencies', ["city" => $city])}}">Agencies/Sex Locations</a></li>
+                                            <li><a href="{{ route('model.search') }}">All Escorts</a></li>
+                                            <li><a href="{{ route('new.escorts') }}">New Escorts</a></li>
+                                            <li><a href="{{ route('reels') }}">Hot Stories</a></li>
+                                            <li><a href="{{ route('user.agencies') }}">Agencies/Sex Locations</a></li>
                                             <!-- <li><a href="#">Stories</a></li> -->
                                             <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
                                             <!-- <li class="position-relative ">
@@ -160,10 +160,10 @@
                                         @if($user->user_status == 0 && $user->email_verified_at !== null && ($user->type == 1 || ($user->type == 2 && $user->plan_id && $user->admin_status == 'approved')))
                                             <ul class="nav main-nav align-items-center">
                                                 <li class="active"><a href="{{ route('home') }}">Home</a></li>
-                                                <li><a href="{{route('model.search', ["city" => $city])}}">All Escorts</a></li>
-                                                <li><a href="{{route('new.escorts', ["city" => $city])}}">New Escorts</a></li>
-                                                <li><a href="{{route('reels', ["city" => $city])}}">Hot Stories</a></li>
-                                                <li><a href="{{route('user.agencies', ["city" => $city])}}">Agencies/Sex Locations</a></li>
+                                                <li><a href="{{ route('model.search') }}">All Escorts</a></li>
+                                                <li><a href="{{ route('new.escorts') }}">New Escorts</a></li>
+                                                <li><a href="{{ route('reels') }}">Hot Stories</a></li>
+                                                <li><a href="{{ route('user.agencies') }}">Agencies/Sex Locations</a></li>
                                                 <!-- <li><a href="#">Stories</a></li> -->
                                                 <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
                                                 <!-- <li class="position-relative ">

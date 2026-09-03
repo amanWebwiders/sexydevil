@@ -54,7 +54,7 @@
                     
                     @foreach($country ?? [] as $countri)
                     <option value="{{ $countri['id'] }}" data-flag="{{ asset('images/flags/' . strtolower(emojiToCountryCode($countri['emoji'])) . '.svg') }}" 
-                    @if(!isset($city)) {{ $countri['id'] == 48 ? 'selected' : 'sdfsdf' }} @endif >
+                    {{ (request('country_id') == $countri['id'] || (!request('country_id') && $countri['id'] == 48)) ? 'selected' : '' }}>
                         {{ $countri['country'] }} ({{ $countri['total_users'] }})
                     </option>
                     @endforeach
@@ -63,14 +63,14 @@
 
             <div class="col-lg-3 mb-3">
                 <label class="filter-label">State</label>
-                <select class="custom-select filter_state select2-state" name="state_id" data-selected="{{ old('state_id', $selectedStateId ?? '') }}">
+                <select class="custom-select filter_state select2-state" name="state_id" data-selected="{{ old('state_id', request('state_id', $selectedStateId ?? '')) }}">
                     <option value="">Select State</option>
                 </select>
             </div>
 
             <div class="col-lg-3 mb-3">
                 <label class="filter-label">City</label>
-                <select class="custom-select filter_city select2-city" name="city_id" data-selected="{{ old('city_id', $selectedCityId ?? '') }}">
+                <select class="custom-select filter_city select2-city" name="city_id" data-selected="{{ old('city_id', request('city_id', $selectedCityId ?? '')) }}">
                     <option value="">Select City</option>
                 </select>
             </div>

@@ -170,6 +170,13 @@ class HomeController extends Controller
         return view('front.contact', compact('locationSeoContent'));
     }
 
+    public function faq()
+    {
+        $faqs = \App\Models\Faq::where('status', 1)->orderBy('order', 'asc')->get();
+        $locationSeoContent = $this->userServices->getLocationSeoContent(null, "FAQ");
+        return view('front.faq', compact('faqs', 'locationSeoContent'));
+    }
+
     public function Login()
     {
 

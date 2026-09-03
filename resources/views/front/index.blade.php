@@ -113,14 +113,10 @@
         .owl-carousel .item {
             width: 100%;
         }
-/* 
-        .owl-nav{
-            display:none;
-        } */
-        .owl-carousel .owl-stage {
+        .owl-carousel.owl-center-stage .owl-stage {
             display: flex !important;
-            justify-content: center;
-            margin: 0 auto;
+            justify-content: center !important;
+            margin: 0 auto !important;
         }
 
         .owl-nav {
@@ -454,7 +450,7 @@
                         <div class="container-fluid">
                             <div class="">
                                 <h2 class="heading mx-auto">Divine Obsession – Weekly Top 3</h2>
-                                <div class="owl-carousel owl-theme featured-devils-cards row position-relative">
+                                <div class="owl-carousel owl-theme featured-devils-cards position-relative">
                                     @foreach($divineObessions as $escort)
                                         <div class="item product_card index-cards ">
                                             <a href="{{ route('user.profile.show', $escort->id) }}">
@@ -1621,178 +1617,30 @@
         }
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const sliderClasses = [
-                '.featured-devils-cards-slider',
-                '.featured-devils-cards-slider-two',
-                '.featured-devils-cards-slider-three',
-                '.featured-devils-cards-slider-four',
-                '.featured-devils-cards-slider-five'
-            ];
+    $(document).ready(function(){
+        $(".owl-carousel").each(function(){
+            var $carousel = $(this);
+            var itemCount = $carousel.find('.item').length;
+            
+            if (itemCount < 4) {
+                $carousel.addClass('owl-center-stage');
+            }
 
-            sliderClasses.forEach(selector => {
-                const sliderElements = document.querySelectorAll(selector);
-                sliderElements.forEach(sliderElement => {
-                    const slideCount = sliderElement.querySelectorAll('.item, .product_card, .swiper-slide').length;
-                    new Swiper(sliderElement, {
-                        loop: slideCount > 4,
-                        slidesPerView: 4,
-                        slidesPerGroup: 1,
-                        spaceBetween: 20,
-                        centeredSlides: false,
-                        allowTouchMove: true,
-                        simulateTouch: true,
-                        grabCursor: true,
-                        touchRatio: 1,
-                        touchAngle: 45,
-                        navigation: {
-                            nextEl: '.swiper-button-next',
-                            prevEl: '.swiper-button-prev',
-                        },
-                        pagination: false,
-                        breakpoints: {
-                            320: {
-                                slidesPerView: 2
-                            },
-                            440: {
-                                slidesPerView: 2
-                            },
-                            768: {
-                                slidesPerView: 3
-                            },
-                            1200: {
-                                slidesPerView: 4
-                            },
-                        },
-                        on: {
-                            beforeInit: function() {
-                                this.loopedSlides = this.slides.length;
-                            }
-                        }
-                    });
+            $carousel.owlCarousel({
+                loop: itemCount > 4,
+                margin: 20,
+                nav: itemCount > 4,
+                navText: ["<", ">"],
+                dots: false,
+                responsive:{
+                    0:{ items: 2, loop: itemCount > 2, nav: itemCount > 2 },
+                    768:{ items: 3, loop: itemCount > 3, nav: itemCount > 3 },
+                    1200:{ items: 4, loop: itemCount > 4, nav: itemCount > 4 }
                 }
             });
         });
-    </script>
-
-    <script>
-
-    </script>
-
-
-    <!-- <script>
-  const slider1 = document.querySelector('#slider');
-  const slidesContainer = slider1.querySelector('.slides');
-  const slides = slider1.querySelectorAll('.slide');
-  const prevBtn = slider1.querySelector('.prev');
-  const nextBtn = slider1.querySelector('.next');
-  
-  let index = 0;
-  let startX = 0;
-  let isDragging = false;
-  let autoplayInterval;
-
-  function showSlide(i) {
-    if (i < 0) index = slides.length - 1;
-    else if (i >= slides.length) index = 0;
-    else index = i;
-
-    slidesContainer.style.transform = `translateX(${-index * 100}%)`;
-  }
-
-  function nextSlide() {
-    showSlide(index + 1);
-  }
-
-  function prevSlideFunc() {
-    showSlide(index - 1);
-  }
-
-  // Buttons
-  nextBtn.addEventListener('click', (e) => { 
-  nextSlide(); resetAutoplay();
-   e.preventDefault();
-        e.stopPropagation();
-   });
-  prevBtn.addEventListener('click', () => { prevSlideFunc(); resetAutoplay(); });
-
-  // Touch swipe
-  slidesContainer.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
-  });
-
-  slidesContainer.addEventListener('touchend', (e) => {
-    if (!isDragging) return;
-    let endX = e.changedTouches[0].clientX;
-    let diff = startX - endX;
-
-    if (diff > 50) nextSlide();
-    else if (diff < -50) prevSlideFunc();
-
-    isDragging = false;
-    resetAutoplay();
-  });
-
-  // Auto slideshow every 2s
-  function startAutoplay() {
-    autoplayInterval = setInterval(nextSlide, 2000);
-  }
-
-  function resetAutoplay() {
-    clearInterval(autoplayInterval);
-    startAutoplay();
-  }
-
-  startAutoplay();
-
-
-// document.querySelectorAll('.product_card > a').forEach(anchor => {
-//     anchor.addEventListener('click', function (e) {
-//         // If the click is inside the slider nav buttons, don't follow link
-//         if (e.target.closest('#slider .nav-btn')) {
-//             e.preventDefault();
-//         }
-//     });
-// });
-
-// document.querySelectorAll('#slider .nav-btn').forEach(btn => {
-//     btn.addEventListener('click', e => {
-//         e.preventDefault();
-//         e.stopPropagation();
-//     });
-// });
-</script> -->
-
-
-    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
-   
-
-
-<script>
-$(document).ready(function(){
-    $(".owl-carousel").each(function(){
-        var $carousel = $(this);
-        var itemCount = $carousel.find('.item').length;
-        $carousel.owlCarousel({
-            loop: itemCount > 4,
-            margin: 20,
-            nav: itemCount > 4,
-            navText: ["<", ">"],
-            dots: false,
-            responsive:{
-                0:{ items: Math.min(itemCount, 2) || 2, loop: itemCount > 2, nav: itemCount > 2 },
-                768:{ items: Math.min(itemCount, 3) || 3, loop: itemCount > 3, nav: itemCount > 3 },
-                1200:{ items: Math.min(itemCount, 4) || 4, loop: itemCount > 4, nav: itemCount > 4 }
-            }
-        });
     });
-});
-</script>
+    </script>
 
 
     @endpush

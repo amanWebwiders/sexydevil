@@ -182,6 +182,12 @@
 					<li><a class="dropdown-item" href="{{route('admin.video-approval')}}">Video</a></li>
 				</ul>
 			</div>
+			<div class="menu-item {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}">
+				<a href="{{route('admin.faqs.index')}}" class="menu-link">
+					<span class="menu-icon"><i class="fa-solid fa-circle-question"></i></span>
+					<span class="menu-text">FAQ Management</span>
+				</a>
+			</div>
 			<div class="dropdown ">
 				<a class=" dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown">
 					<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>Settings
@@ -192,6 +198,7 @@
 					<li><a class="dropdown-item" href="{{route('admin.privacy-policy')}}">Privacy Policy</a></li>
 					<li><a class="dropdown-item" href="{{route('admin.contact-page-content')}}">Content Page</a></li>
 					<li><a class="dropdown-item" href="{{route('admin.location-seo-content')}}">Location SEO Content</a></li>
+					<li><a class="dropdown-item" href="{{route('admin.faqs.index')}}">FAQ Management</a></li>
 				</ul>
 			</div>
 		</div>

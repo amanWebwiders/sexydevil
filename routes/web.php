@@ -103,6 +103,10 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
          Route::match(["get", "post"], 'video-approval', 'ImageVideoApprovalController@VideoApproval')->name('video-approval');
          Route::match(["get", "post"], 'video-approval-action', 'ImageVideoApprovalController@VideoApprovalAction')->name('video-approval-action');
          Route::match(["get", "post"], 'video-convert', 'ImageVideoApprovalController@VideoConvert')->name('video-convert');
+
+         /* FAQ Management */
+         Route::resource('faqs', 'FaqController')->except(['show']);
+         Route::post('faqs/toggle-status/{id}', 'FaqController@toggleStatus')->name('faqs.toggle-status');
     });
 });
 
@@ -117,6 +121,7 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::get('/user-forgot-password', 'HomeController@userForgotPassword')->name('user-forgot-password');
     Route::get('/about-us', 'HomeController@aboutUs')->name('about-us');
     Route::get('/contact-us', 'HomeController@contactUs')->name('contact-us');
+    Route::get('/faq', 'HomeController@faq')->name('faq');
     Route::post('/user.register', 'HomeController@Register')->name('user.register');
     Route::get('/get-states/{country_id}', 'DashboardController@getStates')->name(name: 'getstates');
     Route::get('/get-cities/{state_id}', 'DashboardController@getCities')->name('getcities');
