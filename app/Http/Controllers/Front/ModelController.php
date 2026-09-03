@@ -40,7 +40,7 @@ class ModelController extends Controller
             $mycity = urlencode($request->city);
             return redirect()->route('model.search', ["city" => $mycity] );
         }
-        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "terms-conditions", "terms-and-conditions", "favourite-list", "news-stories", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "gallery", "sitemap.xml", "robots.txt"];
+        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "terms-conditions", "terms-and-conditions", "favourite-list", "news-stories", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "gallery", "sitemap.xml", "robots.txt", "faq"];
         if ($city && strtolower($city) === 'home') {
             return redirect()->route('model.search');
         }
@@ -355,7 +355,7 @@ class ModelController extends Controller
             $mycity = urlencode($request->city);
             return redirect()->route('new.escorts', ["city" => $mycity] );
         }
-        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
+        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "model-search", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "faq"];
         if($city && in_array($city, $invalid_route)) {
             return redirect()->route('new.escorts');
         }
@@ -608,7 +608,7 @@ class ModelController extends Controller
             $mycity = urlencode($request->city);
             return redirect()->route('active.escorts', ["city" => $mycity] );
         }
-        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
+        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "model-search", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "faq"];
         if($city && in_array($city, $invalid_route)) {
             return redirect()->route('active.escorts');
         }
@@ -824,7 +824,7 @@ class ModelController extends Controller
             $mycity = urlencode($request->city);
             return redirect()->route('lowcost.escorts', ["city" => $mycity] );
         }
-        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
+        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "model-search", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "faq"];
         if($city && in_array($city, $invalid_route)) {
             return redirect()->route('lowcost.escorts');
         }
@@ -1037,7 +1037,7 @@ class ModelController extends Controller
             $mycity = urlencode($request->city);
             return redirect()->route('recommend.escorts', ["city" => $mycity] );
         }
-        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels"];
+        $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "model-search", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "favourite-list", "news-stories", "video", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "faq"];
         if($city && in_array($city, $invalid_route)) {
             return redirect()->route('recommend.escorts');
         }

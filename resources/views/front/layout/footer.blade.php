@@ -4,8 +4,7 @@
             <div class="divider-20 d-none d-xl-block"></div>
 
             <div class="col-12 text-center" data-animation="fadeInUp">
-
-                <div class="d-flex justify-content-center gap-3 footer-menu mb-3">
+                <div class="d-flex justify-content-center flex-wrap gap-3 footer-menu mb-3 text-center">
                     <div>
                         <a href="{{route('contact-us')}}">Contact Us</a>
                     </div>
@@ -15,10 +14,9 @@
                     <div>
                         <a href="{{route('terms')}}">Terms & Conditions</a>
                     </div>
-
-                    <!-- <a href="#"></a>
-                    <a href="#"></a>    
-                    <a href="#"></a> -->
+                    <div>
+                        <a href="{{route('faq')}}">FAQ</a>
+                    </div>
                 </div>
 
                 <!-- <div class="widget widget_social_buttons">
@@ -58,7 +56,7 @@
                 </div>
 
                 <div class="widget copyright">
-                    <p>&copy; Copyright <span class="copyright_year">2025</span> All Rights Reserved</p>
+                    <p>&copy; Copyright <span class="copyright_year">{{ date('Y') }}</span> All Rights Reserved</p>
                 </div>
             </div>
 
