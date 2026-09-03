@@ -132,6 +132,13 @@
                                             <th>Phone Number</th>
                                             <td><input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="form-control" required></td>
                                         </tr>
+                                        <tr>
+                                            <th>Change Password</th>
+                                            <td>
+                                                <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current password (min 6 characters)">
+                                                <small class="text-muted">Enter a new password if you wish to reset or update this account's password.</small>
+                                            </td>
+                                        </tr>
                                         @if($user->type == 2)
                                         <tr>
                                             <th>Plan Name</th>

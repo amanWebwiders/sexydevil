@@ -51,6 +51,7 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
         Route::post('/users/accept/{id}', 'UserController@accept')->name('users.accept');
         Route::post('/users/reject/{id}', 'UserController@reject')->name('users.reject');
         Route::post('/users/delete/{id}', 'UserController@delete')->name('users.delete');
+        Route::post('/users/change-password/{id}', 'UserController@changePassword')->name('users.change-password');
         Route::get('/user/{id}/edit', 'UserController@showDetail')->name('edit-user');
         Route::patch('/user/update/{id}', 'UserController@update')->name('update-user');
         Route::post('/purchase-plan', 'UserController@planAssign')->name('purchase.plan');
