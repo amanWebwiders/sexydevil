@@ -268,11 +268,7 @@ class UserRepository extends BaseRepository
             ->selectSub(function ($q) {
                 $q->from('news_and_stories')
                     ->selectRaw('COALESCE(MAX(id), 0)')
-                    ->whereColumn('news_and_stories.user_id', 'users.id')
-                    ->where(function ($sub) {
-                        $sub->whereNull('validity')
-                            ->orWhere('validity', '>=', now());
-                    });
+                    ->whereColumn('news_and_stories.user_id', 'users.id');
             }, 'latest_story_id')
             ->orderByDesc('latest_story_id');
 
