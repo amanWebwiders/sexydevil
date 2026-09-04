@@ -38,7 +38,13 @@ class ModelController extends Controller
     {
         if ($request->has('city') && !empty($request->city)) {
             $mycity = urlencode($request->city);
+            if ($request->filled('type')) {
+                session()->put('SeoType', $request->type);
+            }
             return redirect()->route('model.search', ["city" => $mycity] );
+        }
+        if ($request->has('city') && empty($request->city) && empty($request->except(['city', 'type']))) {
+            return redirect()->route('model.search');
         }
         $invalid_route = ["edit-profile", "update-password", "photo", "video", "availabilities", "rate", "active-escorts", "recommend-escorts", "lowcost-escorts", "about-us", "contact-us", "terms-condition", "terms-conditions", "terms-and-conditions", "favourite-list", "news-stories", "user-login", "choose", "user-signup", "profile", "manually-boost", "new-escorts", "reels", "gallery", "sitemap.xml", "robots.txt", "faq"];
         if ($city && strtolower($city) === 'home') {

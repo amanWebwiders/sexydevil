@@ -54,7 +54,7 @@ class HomeController extends Controller
             return redirect()->to('/' . urlencode($request->city));
         } else if($request->has('city') && empty($request->city)) {
             session()->put('SeoType', 'worldwide');
-            return redirect()->to('/home' . urlencode($request->city));
+            return redirect()->route('model.search');
         }
         
 

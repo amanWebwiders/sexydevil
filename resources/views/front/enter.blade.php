@@ -5,7 +5,7 @@
     <div class="container entry" style="padding-block: 150px 50px;">
         <div class="main-row">
             <div class="search-area">
-                <form method="get" action="{{ route('home', [ 'city'=> "test"]) }}">
+                <form method="get" action="{{ route('model.search') }}" id="searchForm">
                 <label for="search">WHERE DO YOU WANT TO HAVE FUN?</label>
 
                 <div class="search-field">                    
@@ -65,70 +65,70 @@
                     <li class="country-item">
                         <div class="country-name">Colombia</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Medellín">Medellín,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Bogotá D.C">Bogotá D.C,</a> 
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Cali">Cali</a>
+                            <a href="{{ route('home', ['city' => 'Medellín']) }}">Medellín,</a> <a href="{{ route('home', ['city' => 'Bogotá D.C']) }}">Bogotá D.C,</a> 
+                            <a href="{{ route('home', ['city' => 'Cali']) }}">Cali</a>
                         </div>
                     </li>
                     <li class="country-item">
                         <div class="country-name">Spain</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Madrid">Madrid,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Barcelona">Barcelona,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Canarias">Canarias</a>
+                            <a href="{{ route('home', ['city' => 'Madrid']) }}">Madrid,</a> <a href="{{ route('home', ['city' => 'Barcelona']) }}">Barcelona,</a> <a href="{{ route('home', ['city' => 'Canarias']) }}">Canarias</a>
                         </div>
                     </li>
                     <li class="country-item">
                         <div class="country-name">Netherlands</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Amsterdam">Amsterdam,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Rotterdam">Rotterdam,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Den Haag">Den Haag</a>
+                            <a href="{{ route('home', ['city' => 'Amsterdam']) }}">Amsterdam,</a> <a href="{{ route('home', ['city' => 'Rotterdam']) }}">Rotterdam,</a> <a href="{{ route('home', ['city' => 'Den Haag']) }}">Den Haag</a>
                         </div>
                     </li>
                     <li class="country-item">
                         <div class="country-name">United Kingdom</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=London">London,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Manchester">Manchester,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Birmingham">Birmingham</a>
+                            <a href="{{ route('home', ['city' => 'London']) }}">London,</a> <a href="{{ route('home', ['city' => 'Manchester']) }}">Manchester,</a> <a href="{{ route('home', ['city' => 'Birmingham']) }}">Birmingham</a>
                         </div>
                     </li>
                      <li class="country-item">
                         <div class="country-name">Germany</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Berlin">Berlin,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Hamburg">Hamburg,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Munich">Munich,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Frankfurt">Frankfurt,</a>
+                            <a href="{{ route('home', ['city' => 'Berlin']) }}">Berlin,</a> <a href="{{ route('home', ['city' => 'Hamburg']) }}">Hamburg,</a> <a href="{{ route('home', ['city' => 'Munich']) }}">Munich,</a> <a href="{{ route('home', ['city' => 'Frankfurt']) }}">Frankfurt,</a>
                         </div>
                     </li>
                     <li class="country-item">
                         <div class="country-name">United Arab Emirates</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Dubai">Dubai,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Abu Dhabi">Abu Dhabi,</a>
+                            <a href="{{ route('home', ['city' => 'Dubai']) }}">Dubai,</a> <a href="{{ route('home', ['city' => 'Abu Dhabi']) }}">Abu Dhabi,</a>
                         </div>
                     </li>
                     <li class="country-item">
                         <div class="country-name">Thailand</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Bangkok">Bangkok,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Phuket">Phuket,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Pattaya">Pattaya</a>
+                            <a href="{{ route('home', ['city' => 'Bangkok']) }}">Bangkok,</a> <a href="{{ route('home', ['city' => 'Phuket']) }}">Phuket,</a> <a href="{{ route('home', ['city' => 'Pattaya']) }}">Pattaya</a>
                         </div>
                     </li>
                     <li class="country-item">
                         <div class="country-name">Australia</div>
                         <div class="city-list">
-                            <a href="{{ route('home', ["city" => 'test']) }}?city=Sydney">Sydney,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Melbourne">Melbourne,</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Brisbane">Brisbane</a> <a href="{{ route('home', ["city" => 'test']) }}?city=Perth">Perth</a>
+                            <a href="{{ route('home', ['city' => 'Sydney']) }}">Sydney,</a> <a href="{{ route('home', ['city' => 'Melbourne']) }}">Melbourne,</a> <a href="{{ route('home', ['city' => 'Brisbane']) }}">Brisbane</a> <a href="{{ route('home', ['city' => 'Perth']) }}">Perth</a>
                         </div>
                     </li>
-                    <!-- <li><a href="{{ route('home', ["city" => 'test' ]) }}?city={{$cityCountry["city"]}}" >{{ $cityCountry["city"] }}</a></li>
+                    <!-- <li><a href="{{ route('home', ['city' => $cityCountry['city']]) }}" >{{ $cityCountry["city"] }}</a></li>
                     @foreach ($MyCity as $_city)
-                        <li><a href="{{ route('home', ["city" => 'test']) }}?city={{$_city->name}}" >{{ $_city->name }}</a></li>
+                        <li><a href="{{ route('home', ['city' => $_city->name]) }}" >{{ $_city->name }}</a></li>
                     @endforeach  -->
                 </ul>
             </div>
             <div class="regions">
                 <h3>REGIONS</h3>
                 <ul>
-                    <li class="regions-item"><a href="{{ route('home', ["city" => 'test']) }}?city=Europe">Europe</a></li>
-                    <li class="regions-item"><a href="{{ route('home', ["city" => 'test']) }}?city=Latin America">Latin America</a></li>
-                    <li class="regions-item"><a href="{{ route('home', ["city" => 'test']) }}?city=North America">North America</a></li>
-                    <li class="regions-item"><a href="{{ route('home', ["city" => 'test']) }}?city=Oceania">Oceania</a></li>
-                    <li class="regions-item"><a href="{{ route('home', ["city" => 'test']) }}?city=Asia">Asia</a></li> 
-                    <li class="regions-item"><a href="{{ route('home', ["city" => 'test']) }}?city=Middle East">Middle East</a></li> 
-                    <!-- <li><a href="{{ route('home', ["city" => 'test']) }}?city=" >All regions</a></li>
+                    <li class="regions-item"><a href="{{ route('home', ['city' => 'Europe']) }}">Europe</a></li>
+                    <li class="regions-item"><a href="{{ route('home', ['city' => 'Latin America']) }}">Latin America</a></li>
+                    <li class="regions-item"><a href="{{ route('home', ['city' => 'North America']) }}">North America</a></li>
+                    <li class="regions-item"><a href="{{ route('home', ['city' => 'Oceania']) }}">Oceania</a></li>
+                    <li class="regions-item"><a href="{{ route('home', ['city' => 'Asia']) }}">Asia</a></li> 
+                    <li class="regions-item"><a href="{{ route('home', ['city' => 'Middle East']) }}">Middle East</a></li> 
+                    <!-- <li><a href="{{ route('model.search') }}" >All regions</a></li>
                     @foreach ($state as $_state)
-                        <li><a href="{{ route('home', ["city" => 'test']) }}?city={{$_state->name}}" >{{ $_state->name }}</a></li>
+                        <li><a href="{{ route('home', ['city' => $_state->name]) }}" >{{ $_state->name }}</a></li>
                     @endforeach  -->
                 </ul>
             </div>
@@ -330,6 +330,17 @@ $(document).on('click', '.selectedCountry', function(e) {
     $("#hiddenType").val($(this).data('type'));
     $('#result').empty();
     $('.overAllCountry').addClass('d-none');
+});
+
+$(document).on('submit', '#searchForm', function(e) {
+    var searchVal = $.trim($("#search").val());
+    if (!searchVal) {
+        e.preventDefault();
+        window.location.href = "{{ route('model.search') }}";
+    } else {
+        e.preventDefault();
+        window.location.href = "{{ route('model.search') }}/" + encodeURIComponent(searchVal);
+    }
 });
     </script>
 
