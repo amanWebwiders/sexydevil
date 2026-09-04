@@ -553,92 +553,60 @@ class UserServices
 
     public function getUsersByCurrentCityCountry($request, $city = null) {
         try {
-
-            $currentLoc = currentCityContry();
-            if(isset($city) && !empty($city)) {
-                $currentLoc["city"] = $city;
-                $currentLoc["country"] = $city;
-            }
-
-            $cityId = $this->cityRepository->getSingleRecordWhere(['name' => $currentLoc["city"] ]);
-            $countryId = $this->countryRepository->getSingleRecordWhere(['name' => $currentLoc["country"] ]);
-
-            $myCity = $cityId->id ?? 1;
-            $myCountryId = $countryId->id ?? 1;
-            $current_date = now()->format('Y-m-d');
             $user = Auth::guard('web')->user();
             $user_id = $user->id ?? 0;
             $where = [
                 'users.type' => 2,
                 'user_status' => 0,
                 'admin_status' => 'approved',
-                ['plan_start_date', '<=', $current_date],
-                ['plan_end_date', '>=', $current_date],
                 ['users.id', '!=', $user_id]
             ];
 
             $page = (int)($request->page ?? 1);
-            //from current city
-            $records_from = $request->records_from ?? "city";
-            $users = $this->userRepository->usersByMyCurrentLocation(array_merge($where, [['city_id', '=', $myCity]]), $page);
-            if(isset($users) && $users->isNotEmpty()) {
-                $records_from = "city";
-                $page = $page+1;
-            } else if($records_from == 'city') {
-               $page = isset($request->records_from) && $request->records_from == 'country' ? $page:1;
-                $records_from = "country";
-            }
-            //from current county
-            if($users->isEmpty() && $records_from == 'country') {
-                $users = $this->userRepository->usersByMyCurrentLocation(
-                    array_merge($where, [
-                                ['city_id', '!=', $myCity],
-                                ['country_id', '=', $myCountryId],
-                            ]), $page
-                );
-            }
-            //dd($users->count());
-            if(isset($users) && $users->count() > 1 && $records_from == 'country') {
-                $records_from = "country";
-                $page = $page+1;
-            } else if($records_from == 'country') {
-                $page = isset($request->records_from) && $request->records_from == 'globally' ? $page:1;
-                $records_from = "globally";
-            }
-            //dd($records_from);
-            //globally
-            if($users->isEmpty() && $records_from == "globally") {
-                $users = $this->userRepository->usersByMyCurrentLocation(
-                        array_merge($where, [
-                                ['city_id', '!=', $myCity],
-                                ['country_id', '!=', $myCountryId],
-                        ]), $page
-                );
-            }
-            //dd($users);
-            if(isset($users) && $users->count() > 1 && $records_from == "globally") {
-                $page = $page+1;
-            } else if($records_from == 'globally') {
-                $page = isset($request->records_from) && $request->records_from == 'world' ? $page:1;
+
+            // If no city is specified (e.g. visiting /reels main feed), show worldwide chronologically from newest to oldest
+            if (empty($city)) {
+                $users = $this->userRepository->usersByMyCurrentLocation($where, $page);
                 $records_from = "world";
-            }
-            //dd($page);
-            if($users->isEmpty() && $records_from == "world"){
-                $users = $this->userRepository->usersByMyCurrentLocation(
-                        $where, $page
-                );
-                $page = $page+1;
+                $nextPage = ($users && $users->isNotEmpty()) ? $page + 1 : $page;
+                return [
+                    "records" => $users ? ($users->items() ?? []) : [],
+                    "records_from" => $records_from,
+                    "page" => $nextPage
+                ];
             }
 
-            if($users->isEmpty() && $records_from == "world"){
-                $users = $this->userRepository->usersByMyCurrentLocation(
-                        $where, $page
-                );
-                $page = $users->isEmpty() ? 1 : $page+1;
+            // If a specific city was passed in URL (e.g. /reels/medellin)
+            $cityRecord = $this->cityRepository->getSingleRecordWhere(['name' => $city]);
+            $myCity = $cityRecord->id ?? null;
+
+            $records_from = $request->records_from ?? "city";
+
+            // 1. From current city
+            if ($records_from == "city" && $myCity) {
+                $users = $this->userRepository->usersByMyCurrentLocation(array_merge($where, [['city_id', '=', $myCity]]), $page);
+                if ($users && $users->isNotEmpty()) {
+                    return [
+                        "records" => $users->items() ?? [],
+                        "records_from" => "city",
+                        "page" => $page + 1
+                    ];
+                }
+                // Fallback to country / world if city is empty
+                $records_from = "world";
+                $page = 1;
             }
-            return [ "records" => $users->items() ?? [], "records_from" => $records_from, "page" => $page ];
+
+            // 2. Fallback to worldwide so reels never end abruptly
+            $users = $this->userRepository->usersByMyCurrentLocation($where, $page);
+            return [
+                "records" => $users ? ($users->items() ?? []) : [],
+                "records_from" => "world",
+                "page" => ($users && $users->isNotEmpty()) ? $page + 1 : $page
+            ];
         } catch (Exception $e) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
+            return [ "records" => [], "records_from" => "world", "page" => 1 ];
         }
     }
 

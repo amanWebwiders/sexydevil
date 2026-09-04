@@ -232,7 +232,7 @@ class NewStoryController extends Controller
                 return ["status" => isset($allUsers) && !empty($allUsers) ? 200 : 400, "list" => view('front.component.reelsAjax', compact('allUsers'))->render(), "page" => $page, "records_from" => $records_from, 'content' => $locationSeoContent['data']->content ?? null];
             }
             $country = $this->countryRepository->getAllRecordWhere([], ['id', 'name']);
-            return view('front.reels', compact('data', 'allUsers', 'country', 'page', 'records_from', 'locationSeoContent'));
+            return view('front.reels', compact('data', 'allUsers', 'country', 'page', 'records_from', 'locationSeoContent', 'city'));
         } catch (\Exception $e) {
             Log::error("Error in HomeController.reels(): " . $e->getMessage() . " line" . $e->getLine());
             return response()->json(['status' => 0, 'message' => __('message.statusZero'), 'data' => $this->dataObject, 'error' => $this->dataObject], 500);

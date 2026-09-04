@@ -171,10 +171,6 @@ class User extends Authenticatable
     public function stories()
     {
         return $this->hasMany(NewsAndStory::class, 'user_id')
-            ->where(function ($query) {
-                $query->whereNull('validity')
-                      ->orWhere('validity', '>=', now());
-            })
             ->orderBy('id', 'desc');
     }
 
