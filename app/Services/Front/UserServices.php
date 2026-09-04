@@ -82,39 +82,54 @@ class UserServices
                 $create['contact_details'] = $request->contact_details;
 
                 if ($request->dob) {
-                    $create['dob']  = \Carbon\Carbon::createFromFormat('m/d/Y', $request->dob)->format('Y-m-d');
+                    try {
+                        $rawDob = trim($request->dob);
+                        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawDob)) {
+                            $create['dob'] = $rawDob;
+                        } elseif (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $rawDob, $m)) {
+                            $p1 = (int)$m[1];
+                            $p2 = (int)$m[2];
+                            $y = (int)$m[3];
+                            if ($p2 > 12) {
+                                // m/d/Y
+                                $create['dob'] = sprintf('%04d-%02d-%02d', $y, $p1, $p2);
+                            } else {
+                                // d/m/Y (standard flatpickr)
+                                $create['dob'] = sprintf('%04d-%02d-%02d', $y, $p2, $p1);
+                            }
+                        } else {
+                            $create['dob'] = date('Y-m-d', strtotime($rawDob));
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning("UserServices::register() could not parse DOB '{$request->dob}': " . $e->getMessage());
+                    }
                 }
                 $create['country_id'] = $request->country_id;
+
+                $allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
 
                 // If media files are uploaded
                 if ($request->hasFile('media')) {
                     $image = $request->file('media');
-                    $extension = $image->getClientOriginalExtension();
-                    if(in_array($extension, ["jpg", "jpeg", "png", "gif"])) {
-                        // Generate a unique file name for the image and store it
-                        $imagePath = $this->uploadImage($image, 'media');  // Save to 'artists' folder in the public disk
-                        // Add the image path to the data
+                    $extension = strtolower($image->getClientOriginalExtension());
+                    if (in_array($extension, $allowedExtensions)) {
+                        $imagePath = $this->uploadImage($image, 'media');
                         $create['verify_age_document'] = $imagePath;
-
                     }
                 }
                 if ($request->hasFile('document_image')) {
                     $image = $request->file('document_image');
-                    $extension = $image->getClientOriginalExtension();
-                    if(in_array($extension, ["jpg", "jpeg", "png", "gif"])) {
-                        // Generate a unique file name for the image and store it
-                        $imagePath = $this->uploadImage($image, 'document_image');  // Save to 'artists' folder in the public disk
-                        // Add the image path to the data
+                    $extension = strtolower($image->getClientOriginalExtension());
+                    if (in_array($extension, $allowedExtensions)) {
+                        $imagePath = $this->uploadImage($image, 'document_image');
                         $create['document_image'] = $imagePath;
                     }
                 }
                 if ($request->hasFile('holding_document_image')) {
                     $image = $request->file('holding_document_image');
-                    $extension = $image->getClientOriginalExtension();
-                    if(in_array($extension, ["jpg", "jpeg", "png", "gif"])) {
-                        // Generate a unique file name for the image and store it
-                        $imagePath = $this->uploadImage($image, 'holding_document_image');  // Save to 'artists' folder in the public disk
-                        // Add the image path to the data
+                    $extension = strtolower($image->getClientOriginalExtension());
+                    if (in_array($extension, $allowedExtensions)) {
+                        $imagePath = $this->uploadImage($image, 'holding_document_image');
                         $create['holding_document_image'] = $imagePath;
                     }
                 }
@@ -122,10 +137,9 @@ class UserServices
                     $photoPaths = [];
 
                     foreach ($request->file('identity_photos') as $photo) {
-                        // Reuse your existing image upload logic
-                        $extension = $photo->getClientOriginalExtension();
-                        if(in_array($extension, ["jpg", "jpeg", "png", "gif"])) {
-                            $path = $this->uploadImage($photo, 'identity_photos'); // Save to 'identity_photos' folder in public disk
+                        $extension = strtolower($photo->getClientOriginalExtension());
+                        if (in_array($extension, $allowedExtensions)) {
+                            $path = $this->uploadImage($photo, 'identity_photos');
                             $photoPaths[] = $path;
                         }
                     }
@@ -630,7 +644,11 @@ class UserServices
 
     public function reelSearch($inputs)  {
         try {
-            $where = [];
+            $where = [
+                'users.type' => 2,
+                'users.user_status' => 0,
+                'users.admin_status' => 'approved'
+            ];
             if(isset($inputs["country_id"]) && !empty($inputs["country_id"])) {
                 $where['country_id'] = $inputs["country_id"];
             }

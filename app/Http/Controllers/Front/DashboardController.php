@@ -372,7 +372,7 @@ class DashboardController extends Controller
     public function uploadPhoto(Request $request)
     {
         $request->validate([
-            'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:20480'
         ]);
         $run = false;
         foreach ($request->file('images') as $image) {

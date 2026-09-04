@@ -254,15 +254,31 @@ class UserRepository extends BaseRepository
     }
     public function usersByMyCurrentLocation(array $byWhere, $page)  {
         try { 
-            $data = $this->model->with('country', 'plan', 'gender', 'nationality', 'state', 'city', 'countries', 'ethnicity', 'bodyType', 'haircolor', 'hairLength', 'hairType', 'eyeColor', 'reviewsReceived', 'reviewsGiven','videos','stories','stories.likes', 'stories.comments','images')->where($byWhere)->whereHas('stories')
-            //->join('news_and_stories', 'news_and_stories.user_id', '=', 'users.id') // assuming stories.user_id → users.id
-            /* ->select('users.*', 'news_and_stories.id as story_id', 'news_and_stories.user_id') // ✅ include for ORDER BY
-            ->orderBy('news_and_stories.id', 'desc') */
-            ->distinct()
-            ->paginate(10, ['*'], 'page', $page);
-            return $data->setCollection($data->getCollection()->shuffle());
+            $query = $this->model->with([
+                'country', 'plan', 'gender', 'nationality', 'state', 'city',
+                'countries', 'ethnicity', 'bodyType', 'haircolor', 'hairLength',
+                'hairType', 'eyeColor', 'reviewsReceived', 'reviewsGiven',
+                'videos', 'stories', 'stories.likes', 'stories.comments', 'images'
+            ])
+            ->where($byWhere)
+            ->where('users.user_status', 0)
+            ->where('users.admin_status', 'approved')
+            ->whereHas('stories')
+            ->select('users.*')
+            ->selectSub(function ($q) {
+                $q->from('news_and_stories')
+                    ->selectRaw('COALESCE(MAX(id), 0)')
+                    ->whereColumn('news_and_stories.user_id', 'users.id')
+                    ->where(function ($sub) {
+                        $sub->whereNull('validity')
+                            ->orWhere('validity', '>=', now());
+                    });
+            }, 'latest_story_id')
+            ->orderByDesc('latest_story_id');
+
+            return $query->paginate(10, ['*'], 'page', $page);
         } catch (\Exception $e) {
-            Log::error("Error in UserRepository.usersByMyCurrentLocation    (): " . $e->getMessage());
+            Log::error("Error in UserRepository.usersByMyCurrentLocation(): " . $e->getMessage());
             return false;
         }
     }

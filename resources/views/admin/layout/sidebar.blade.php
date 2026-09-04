@@ -182,10 +182,10 @@
 					<li><a class="dropdown-item" href="{{route('admin.video-approval')}}">Video</a></li>
 				</ul>
 			</div>
-			<div class="menu-item {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}">
-				<a href="{{route('admin.faqs.index')}}" class="menu-link">
-					<span class="menu-icon"><i class="fa-solid fa-circle-question"></i></span>
-					<span class="menu-text">FAQ Management</span>
+			<div class="menu-item {{ request()->routeIs('admin.hot-stories.*') ? 'active' : '' }}">
+				<a href="{{route('admin.hot-stories.index')}}" class="menu-link">
+					<span class="menu-icon"><i class="fa-solid fa-fire text-danger"></i></span>
+					<span class="menu-text">Hot Stories</span>
 				</a>
 			</div>
 			<div class="dropdown ">
@@ -198,7 +198,7 @@
 					<li><a class="dropdown-item" href="{{route('admin.privacy-policy')}}">Privacy Policy</a></li>
 					<li><a class="dropdown-item" href="{{route('admin.contact-page-content')}}">Content Page</a></li>
 					<li><a class="dropdown-item" href="{{route('admin.location-seo-content')}}">Location SEO Content</a></li>
-					<!-- <li><a class="dropdown-item" href="{{route('admin.faqs.index')}}">FAQ Management</a></li> -->
+					<li><a class="dropdown-item" href="{{route('admin.faqs.index')}}">FAQ Management</a></li>
 				</ul>
 			</div>
 		</div>

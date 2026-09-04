@@ -542,7 +542,7 @@ class UserController extends Controller
     {
 
         $request->validate([
-            'images.*' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:20480'
         ]);
 
         foreach ($request->file('images') as $image) {

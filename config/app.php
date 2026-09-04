@@ -17,6 +17,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'logo_path' => env('LOGO_PATH', 'images/escort_logo1.png'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

@@ -26,7 +26,7 @@
                                                 <td align="center" style="text-align: center;" valign="middle">
                                                     <a style="font-family:'Ubuntu',sans-serif;color:#ff3000;font-weight:300;display:block;letter-spacing:-1.5px;text-decoration:none;margin-top:2px"
                                                         href="#">
-                                                        <img src="{{ asset(env('LOGO_PATH')) }}"
+                                                        <img src="{{ asset(config('app.logo_path', 'images/escort_logo1.png')) }}"
                                                             style="padding-top:0;display:inline-block;vertical-align:middle;margin-right:0px;height:55px"
                                                             class="CToWUd">
                                                     </a>

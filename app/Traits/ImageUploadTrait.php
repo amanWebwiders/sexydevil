@@ -20,59 +20,55 @@ trait ImageUploadTrait {
      */
 
     public function uploadImage($image, $path)
-
     {
-
         try {
-            $name = time() . rand(99,1000).'.' . $image->getClientOriginalExtension();
-            if($path == "user_videos") {
+            $ext = strtolower($image->getClientOriginalExtension());
+            $name = time() . rand(99,1000) . '.' . $ext;
+            if ($path == "user_videos") {
                 $imageData = $image->storeAs($path, $name, 'public');                
             } else {
                 $img = Image::read($image->getRealPath());
-                $watermark = Image::read(public_path('watermark.png'));
-                $watermark->scale(width: $img->width() * 0.2);
-                $img->place($watermark, 'bottom-right', 10, 10);
-                $imageData = $path.'/'. $name;
-
+                // Scale down ultra-large camera photos to prevent memory spikes
+                if ($img->width() > 2500) {
+                    $img->scaleDown(width: 2500);
+                }
+                $watermarkPath = public_path('watermark.png');
+                if (file_exists($watermarkPath)) {
+                    $watermark = Image::read($watermarkPath);
+                    $watermark->scale(width: max(50, (int)($img->width() * 0.2)));
+                    $img->place($watermark, 'bottom-right', 10, 10);
+                }
+                $imageData = $path . '/' . $name;
                 Storage::disk('public')->put($imageData, (string) $img->encode());
-                /* $img = Image::make($image->getRealPath());
-                $watermark = public_path('watermark.png');
-                $img->insert($watermark, 'bottom-right', 10, 10);
-                $imageData = $img->storeAs($path, $name, 'public');                
-                $img->save($path); */
             }
             return $imageData;
-            // $path = $file->store('images', 'public');
-            // if (!$path) {
-            //     throw new Exception("Image upload failed.");
-            // }
-            // return basename($path);
-
         } catch (Exception $e) {
-
             Log::error(__CLASS__ . "::" . __FUNCTION__ . " - " . $e->getMessage());
-
             return "Error: " . $e->getMessage();
-
         }
-
     }
 
-
-        public function uploadWatermarkImage($image, $path) {
-
+    public function uploadWatermarkImage($image, $path) {
         try {
-            $name = time() . rand(99,1000).'.' . $image->getClientOriginalExtension();
-            $original = time() . rand(1001,9999).'.' . $image->getClientOriginalExtension();
+            $ext = strtolower($image->getClientOriginalExtension());
+            $name = time() . rand(99,1000) . '.' . $ext;
+            $original = time() . rand(1001,9999) . '.' . $ext;
             $watermarked = "";
-            if($path == "user_videos") {
+            if ($path == "user_videos") {
                 $imageData = $image->storeAs($path, $original, 'public');  
+                $orignal = $imageData;
             } else {
                 $img = Image::read($image->getRealPath());
-                $watermark = Image::read(public_path('watermark.png'));
-                $watermark->scale(width: $img->width() * 1);
-                $img->place($watermark, 'center');
-                $imageData = $path.'/'. $name;
+                if ($img->width() > 2500) {
+                    $img->scaleDown(width: 2500);
+                }
+                $watermarkPath = public_path('watermark.png');
+                if (file_exists($watermarkPath)) {
+                    $watermark = Image::read($watermarkPath);
+                    $watermark->scale(width: max(50, (int)($img->width() * 0.8)));
+                    $img->place($watermark, 'center');
+                }
+                $imageData = $path . '/' . $name;
                 $watermarked = $imageData;
                 Storage::disk('public')->put($imageData, (string) $img->encode());
                 $orignal = $image->storeAs($path, $original, 'public');
@@ -82,7 +78,6 @@ trait ImageUploadTrait {
             Log::error(__CLASS__ . "::" . __FUNCTION__ . " - " . $e->getMessage());
             return ["orignal" => false, "watermarked" => false];
         }
-
     }
 
 

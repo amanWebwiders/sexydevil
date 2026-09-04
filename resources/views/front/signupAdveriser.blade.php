@@ -43,7 +43,8 @@
                                         name="name" required>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <input type="date" class="form-control dob" id="dob" name="dob" placeholder="Date of Birth (You must be 18+)" required>
+                                    <label for="dob" class="text-white mb-1">Date of Birth (18+) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control dob" id="dob" name="dob" placeholder="Select Birth Date (dd/mm/yyyy)" required readonly="readonly">
                                 </div>
 
 
@@ -120,20 +121,20 @@
                                 <h5 class="mx-auto mb-5 text-center">Upload Required Verification Photos</h5>
                                 <div class="form-group col-md-12">
                                     <label>1. Upload a clear photo of your identification document</label>
-                                    <input type="file" class="form-control" name="document_image" accept="image/*" required>
+                                    <input type="file" class="form-control" name="document_image" accept="image/png, image/jpeg, image/jpg, image/webp" required>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label>2. Upload a photo of yourself holding the document</label>
-                                    <input type="file" class="form-control" name="holding_document_image" accept="image/*" required>
+                                    <input type="file" class="form-control" name="holding_document_image" accept="image/png, image/jpeg, image/jpg, image/webp" required>
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label>3. Upload a photo of yourself holding a paper with the website name and today’s date</label>
-                                    <input type="file" class="form-control" accept="image/*" name="media" required>
+                                    <input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg, image/webp" name="media" required>
 
                                 </div>
                                 <div class="form-group col-md-12">
                                     <label>4. Upload 1 or 2 recent pictures of yourself (to match your document)</label>
-                                    <input type="file" class="form-control" accept="image/*" name="identity_photos[]" multiple required>
+                                    <input type="file" class="form-control" accept="image/png, image/jpeg, image/jpg, image/webp" name="identity_photos[]" multiple required>
 
                                 </div>
                                 <div class="text-center mt-4" id="saveMediaContainer">
@@ -178,30 +179,22 @@
 
 
 <script>
+    const today = new Date();
+    const maxDobDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
     flatpickr(".dob", {
         dateFormat: "d/m/Y",
-        maxDate: new Date().fp_incr(-18 * 365), // 18 years ago
-    })
+        maxDate: maxDobDate,
+        disableMobile: true,
+        allowInput: false
+    });
+
     $(document).ready(function() {
         $('.phone_code').select2({
-          
             allowClear: true
         });
     });
 
-    window.addEventListener('DOMContentLoaded', function() {
-        const dobInput = document.getElementById('dob');
-        const today = new Date();
-        const maxDate = new Date(
-            today.getFullYear() - 18,
-            today.getMonth(),
-            today.getDate()
-        );
-
-        // Format to yyyy-mm-dd
-        const maxDateFormatted = maxDate.toISOString().split('T')[0];
-        dobInput.setAttribute('max', maxDateFormatted);
-    });
     $('#nextBtn').on('click', function() {
         var isValid = true;
 
@@ -216,7 +209,11 @@
         });
 
         if (!isValid) {
-            alert('Please fill all required fields.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Required Fields',
+                text: 'Please fill all required fields before proceeding.'
+            });
             return;
         }
 
@@ -266,6 +263,7 @@
                     $('.form-control').removeClass('is-invalid');
 
                     let showStep1 = false;
+                    let errorMessages = [];
 
                     if (xhr.responseJSON && xhr.responseJSON.errors) {
                         $.each(xhr.responseJSON.errors, function(key, value) {
@@ -279,23 +277,30 @@
                             }
 
                             inputField.addClass('is-invalid');
-                            inputField.after('<span class="text-danger">' + value[0] + '</span>');
+                            inputField.after('<span class="text-danger d-block mt-1">' + value[0] + '</span>');
+                            errorMessages.push(value[0]);
 
                             if ($('#step1').find(inputField).length > 0) {
                                 showStep1 = true;
                             }
                         });
 
-
                         if (showStep1) {
                             $('#step2').hide();
                             $('#step1').fadeIn();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Validation Error',
+                                html: errorMessages.join('<br>')
+                            });
                         }
                     } else {
+                        let errMsg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Something went wrong. Please try again.';
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Something went wrong. Please try again.',
+                            text: errMsg,
                         });
                     }
                 }

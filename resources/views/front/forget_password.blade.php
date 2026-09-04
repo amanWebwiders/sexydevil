@@ -26,7 +26,7 @@
         <div class="container">
             <div class="row align-items-center justify-content-center">
                 <div class="col">
-                <img src="./images/escort_logo.png" alt="">
+                <img src="{{ asset('images/escort_logo1.png') }}" alt="">
                 </div>
                 <div class="col">
                     <h1 class="mx-auto mb-5 text-center">Forget Password</h1>
