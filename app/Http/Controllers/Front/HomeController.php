@@ -382,7 +382,7 @@ class HomeController extends Controller
 
             $user = $this->userRepository->getOne(['id' => $id]);
             // dd($user);
-            if ($user) {
+            if ($user && $user->user_status == 0 && $user->admin_status == 'approved') {
                 $this->userRepository->logView(
                     $viewedId = $user->id,
                     $viewerId = auth()->id(), // null if guest
@@ -417,6 +417,7 @@ class HomeController extends Controller
                 $seoOgImage = !empty($user->profile_image) ? config('app.img_url') . $user->profile_image : null;
                 return view('front.model_detail', compact('newsstory', 'user', 'selectedServices', 'selectedSelections', 'categories', 'uploadedPhotos', 'uploadedVideos', 'availabilities', 'countryCodes', 'language' ,'favorite_users', 'locationSeoContent', 'pageTitle', 'seoOgImage'));
             }
+            abort(404);
         } catch (\Exception $e) {
             Log::error("Error in HomeController.Register(): " . $e->getMessage());
             return response()->json(['status' => 0, 'message' => __('message.statusZero'), 'data' => $this->dataObject, 'error' => $this->dataObject], 500);

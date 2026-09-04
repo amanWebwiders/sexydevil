@@ -155,7 +155,7 @@
         </div>
     </div>
 </div>
-@if(request()->route()->getName() !== "terms")
+@if(!request()->route() || request()->route()->getName() !== "terms")
 <div class="popup-inter-wrapper">
     <div class="popup-verification-modal">
     <div class="popup-modal-header">

@@ -615,8 +615,12 @@
                                         @forelse ($availabilities as $availability)
                                         <tr>
                                             <td>{{ ucfirst($availability->day) }}</td>
-                                            <td>{{ date('h:i A', strtotime($availability->start_time)) }}</td>
-                                            <td>{{ date('h:i A', strtotime($availability->end_time)) }}</td>
+                                            @if($availability->all_day || empty($availability->start_time))
+                                                <td colspan="2" class="text-center font-weight-bold">All day</td>
+                                            @else
+                                                <td>{{ date('h:i A', strtotime($availability->start_time)) }}</td>
+                                                <td>{{ date('h:i A', strtotime($availability->end_time)) }}</td>
+                                            @endif
                                         </tr>
                                         @empty
                                         <tr>

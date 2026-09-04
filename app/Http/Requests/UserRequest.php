@@ -36,10 +36,9 @@ class UserRequest extends FormRequest
         ];
         
           if ($this->type == 2) {
-           
-        $rules['identity_photos'] = 'required|array|min:1|max:2';
-        $rules['identity_photos.*'] = 'image|mimes:jpeg,png,jpg|max:2048';
-    }
+            $rules['identity_photos'] = 'required|array|min:1|max:2';
+            $rules['identity_photos.*'] = 'image|mimes:jpeg,png,jpg,webp,gif|max:20480';
+        }
      return $rules;
 
     }

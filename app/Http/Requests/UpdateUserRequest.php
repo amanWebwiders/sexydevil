@@ -50,7 +50,7 @@ class UpdateUserRequest extends FormRequest
     // If type == 2, validate identity_photos (optional for edit)
     if ($this->input('type') == 2) {
         $rules['identity_photos'] = 'nullable|array|min:1|max:2';
-        $rules['identity_photos.*'] = 'image|mimes:jpeg,png,jpg|max:2048';
+        $rules['identity_photos.*'] = 'image|mimes:jpeg,png,jpg,webp,gif|max:20480';
     }
 
     return $rules;

@@ -108,6 +108,11 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
          /* FAQ Management */
          Route::resource('faqs', 'FaqController')->except(['show']);
          Route::post('faqs/toggle-status/{id}', 'FaqController@toggleStatus')->name('faqs.toggle-status');
+
+         /* Hot Stories Moderation & Control */
+         Route::get('hot-stories', 'HotStoryController@index')->name('hot-stories.index');
+         Route::delete('hot-stories/{id}', 'HotStoryController@destroy')->name('hot-stories.destroy');
+         Route::post('hot-stories/bulk-delete', 'HotStoryController@bulkDelete')->name('hot-stories.bulk-delete');
     });
 });
 
@@ -168,6 +173,8 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::get('/gallery', fn() => redirect()->to(route('reels'), 301));
     Route::get('/login', fn() => redirect()->to(route('user-login'), 301));
     Route::get('/signup', fn() => redirect()->to(route('choose'), 301));
+    Route::get('/signup-adveriser', fn() => redirect()->to(route('user-signupadvertiser'), 301));
+    Route::get('/signup-advertiser', fn() => redirect()->to(route('user-signupadvertiser'), 301));
     Route::get('/register', fn() => redirect()->to(route('choose'), 301));
     Route::get('/stories', fn() => redirect()->to(route('reels'), 301));
     Route::get('/all-escorts', fn() => redirect()->to(route('model.search'), 301));

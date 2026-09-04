@@ -178,7 +178,25 @@ class UserServices
                     $create['country_id'] = $request->country_id;
                 }
                 if ($request->dob) {
-                    $create['dob'] = \Carbon\Carbon::createFromFormat('Y-m-d', $request->dob)->format('Y-m-d');
+                    try {
+                        $rawDob = trim($request->dob);
+                        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawDob)) {
+                            $create['dob'] = $rawDob;
+                        } elseif (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $rawDob, $m)) {
+                            $p1 = (int)$m[1];
+                            $p2 = (int)$m[2];
+                            $y = (int)$m[3];
+                            if ($p2 > 12) {
+                                $create['dob'] = sprintf('%04d-%02d-%02d', $y, $p1, $p2);
+                            } else {
+                                $create['dob'] = sprintf('%04d-%02d-%02d', $y, $p2, $p1);
+                            }
+                        } else {
+                            $create['dob'] = date('Y-m-d', strtotime($rawDob));
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning("Admin UserServices could not parse DOB '{$request->dob}': " . $e->getMessage());
+                    }
                 }
                 if ($request->sex_location) {
                     $create['sex_location'] = $request->sex_location;

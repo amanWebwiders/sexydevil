@@ -45,7 +45,7 @@
                         <div class="row align-items-center">
                             <div class="col-md-2">
                                 <a href="login_index.php" class="logo">
-                                    <img src="images/escort_logo.png" alt="img">
+                                    <img src="{{ asset('images/escort_logo1.png') }}" alt="img">
                                 </a>
                             </div>
                             <div class="col-md-7">
