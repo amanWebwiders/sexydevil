@@ -558,7 +558,6 @@ class UserServices
             $where = [
                 'users.type' => 2,
                 'user_status' => 0,
-                'admin_status' => 'approved',
                 ['users.id', '!=', $user_id]
             ];
 
@@ -614,8 +613,7 @@ class UserServices
         try {
             $where = [
                 'users.type' => 2,
-                'users.user_status' => 0,
-                'users.admin_status' => 'approved'
+                'users.user_status' => 0
             ];
             if(isset($inputs["country_id"]) && !empty($inputs["country_id"])) {
                 $where['country_id'] = $inputs["country_id"];

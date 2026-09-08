@@ -516,6 +516,10 @@ function denyConsent() {
             $('.max-output').val('0').attr('data-raw', 0);
             $('.min-output-val').val(0);
             $('.max-output-val').val(0);
+
+            // Update URL to clean /model-search
+            const cleanUrl = "{{ route('model.search') }}";
+            history.replaceState(null, '', cleanUrl);
         });
 
         // Search Button
@@ -545,10 +549,14 @@ function denyConsent() {
 
             // If current page is NOT the model search page
             if (!currentPath.includes('/model')) {
-                // Redirect to model page with query parameters
-                //window.location.href = modelPageURL + '?' + queryString;
-                $(this).closest('form').submit();
+                // Redirect to clean model-search page (without city in URL)
+                var $form = $(this).closest('form');
+                $form.attr('action', modelPageURL);
+                $form.submit();
             } else {
+                // Update URL to clean /model-search (remove city from URL)
+                history.replaceState(null, '', modelPageURL);
+
                 // Already on model page – make AJAX call
                 $.ajax({
                     url: modelPageURL,
@@ -563,8 +571,6 @@ function denyConsent() {
                     success: function(response) {
                         window.isLoading = false;
                         $('.resultsContainer').html(response.list);
-                        // Update browser URL without reload
-                        //history.pushState(null, '', modelPageURL + '?' + queryString);
                     },
                     error: function(xhr) {
                         console.log(xhr.responseText);

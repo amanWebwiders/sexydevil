@@ -262,7 +262,6 @@ class UserRepository extends BaseRepository
             ])
             ->where($byWhere)
             ->where('users.user_status', 0)
-            ->where('users.admin_status', 'approved')
             ->whereHas('stories')
             ->select('users.*')
             ->selectSub(function ($q) {
@@ -1198,12 +1197,16 @@ class UserRepository extends BaseRepository
             }
             
             if(isset($keywords)) {
-                
                 $parts = str_replace("+", " ", $keywords);
-                if(!empty($parts)) {                    
-                    $query->join('cities', 'users.city_id', '=', 'cities.id')->where(function($q) use($parts) {
-                            $q->where('cities.name', 'like', "%{$parts}%");
-                        });
+                if(!empty($parts)) {
+                    $query->leftJoin('countries', 'users.country_id', '=', 'countries.id')
+                          ->leftJoin('states', 'users.state_id', '=', 'states.id')
+                          ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
+                          ->where(function($q) use($parts) {
+                              $q->where('countries.name', 'like', "%{$parts}%")
+                                ->orWhere('states.name', 'like', "%{$parts}%")
+                                ->orWhere('cities.name', 'like', "%{$parts}%");
+                          });
                 }
             }
             $existingUsers = clone $query;

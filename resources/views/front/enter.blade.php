@@ -5,7 +5,7 @@
     <div class="container entry" style="padding-block: 150px 50px;">
         <div class="main-row">
             <div class="search-area">
-                <form method="get" action="{{ route('model.search') }}" id="searchForm">
+                <form method="get" action="{{ url('/') }}" id="searchForm">
                 <label for="search">WHERE DO YOU WANT TO HAVE FUN?</label>
 
                 <div class="search-field">                    
@@ -63,50 +63,50 @@
                 <h3>TOP CITIES</h3>
                 <ul>
                     <li class="country-item">
-                        <div class="country-name">Colombia</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'Colombia']) }}" style="color: inherit; text-decoration: none;">Colombia</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'Medellín']) }}">Medellín,</a> <a href="{{ route('home', ['city' => 'Bogotá D.C']) }}">Bogotá D.C,</a> 
                             <a href="{{ route('home', ['city' => 'Cali']) }}">Cali</a>
                         </div>
                     </li>
                     <li class="country-item">
-                        <div class="country-name">Spain</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'Spain']) }}" style="color: inherit; text-decoration: none;">Spain</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'Madrid']) }}">Madrid,</a> <a href="{{ route('home', ['city' => 'Barcelona']) }}">Barcelona,</a> <a href="{{ route('home', ['city' => 'Canarias']) }}">Canarias</a>
                         </div>
                     </li>
                     <li class="country-item">
-                        <div class="country-name">Netherlands</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'Netherlands']) }}" style="color: inherit; text-decoration: none;">Netherlands</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'Amsterdam']) }}">Amsterdam,</a> <a href="{{ route('home', ['city' => 'Rotterdam']) }}">Rotterdam,</a> <a href="{{ route('home', ['city' => 'Den Haag']) }}">Den Haag</a>
                         </div>
                     </li>
                     <li class="country-item">
-                        <div class="country-name">United Kingdom</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'United Kingdom']) }}" style="color: inherit; text-decoration: none;">United Kingdom</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'London']) }}">London,</a> <a href="{{ route('home', ['city' => 'Manchester']) }}">Manchester,</a> <a href="{{ route('home', ['city' => 'Birmingham']) }}">Birmingham</a>
                         </div>
                     </li>
                      <li class="country-item">
-                        <div class="country-name">Germany</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'Germany']) }}" style="color: inherit; text-decoration: none;">Germany</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'Berlin']) }}">Berlin,</a> <a href="{{ route('home', ['city' => 'Hamburg']) }}">Hamburg,</a> <a href="{{ route('home', ['city' => 'Munich']) }}">Munich,</a> <a href="{{ route('home', ['city' => 'Frankfurt']) }}">Frankfurt,</a>
                         </div>
                     </li>
                     <li class="country-item">
-                        <div class="country-name">United Arab Emirates</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'United Arab Emirates']) }}" style="color: inherit; text-decoration: none;">United Arab Emirates</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'Dubai']) }}">Dubai,</a> <a href="{{ route('home', ['city' => 'Abu Dhabi']) }}">Abu Dhabi,</a>
                         </div>
                     </li>
                     <li class="country-item">
-                        <div class="country-name">Thailand</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'Thailand']) }}" style="color: inherit; text-decoration: none;">Thailand</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'Bangkok']) }}">Bangkok,</a> <a href="{{ route('home', ['city' => 'Phuket']) }}">Phuket,</a> <a href="{{ route('home', ['city' => 'Pattaya']) }}">Pattaya</a>
                         </div>
                     </li>
                     <li class="country-item">
-                        <div class="country-name">Australia</div>
+                        <div class="country-name"><a href="{{ route('home', ['city' => 'Australia']) }}" style="color: inherit; text-decoration: none;">Australia</a></div>
                         <div class="city-list">
                             <a href="{{ route('home', ['city' => 'Sydney']) }}">Sydney,</a> <a href="{{ route('home', ['city' => 'Melbourne']) }}">Melbourne,</a> <a href="{{ route('home', ['city' => 'Brisbane']) }}">Brisbane</a> <a href="{{ route('home', ['city' => 'Perth']) }}">Perth</a>
                         </div>
@@ -333,13 +333,12 @@ $(document).on('click', '.selectedCountry', function(e) {
 });
 
 $(document).on('submit', '#searchForm', function(e) {
+    e.preventDefault();
     var searchVal = $.trim($("#search").val());
     if (!searchVal) {
-        e.preventDefault();
-        window.location.href = "{{ route('model.search') }}";
+        window.location.href = "{{ url('/') }}";
     } else {
-        e.preventDefault();
-        window.location.href = "{{ route('model.search') }}/" + encodeURIComponent(searchVal);
+        window.location.href = "{{ url('/') }}/" + encodeURIComponent(searchVal);
     }
 });
     </script>
