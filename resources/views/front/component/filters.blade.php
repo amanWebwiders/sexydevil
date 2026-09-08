@@ -22,7 +22,7 @@
     }
 </style>
 <div class="filter-section d-none d-lg-block">
-    <form method="post" id="filterForm" action="{{ route('model.search', ["city" => $city ?? ""]) }}">
+    <form method="post" id="filterForm" action="{{ route('model.search') }}">
         @csrf
     <div class="filter-box filter-section" data-search-url="{{ route('model.search') }}">
 
