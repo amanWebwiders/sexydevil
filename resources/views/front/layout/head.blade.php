@@ -52,12 +52,13 @@
 	<link rel="stylesheet" href="{{ asset('css/font-awesome.css')}}">
 	<link rel="stylesheet" href="{{ asset('css/main.css')}}" class="color-switcher-link">
 	<script src="{{ asset('js/vendor/modernizr-custom.js')}}"></script>
-	<!-- Favicon Tags (Google Search Engine Compliant - Absolute URLs, Square PNG >= 48x48px) -->
-	<link rel="icon" type="image/png" sizes="48x48" href="{{ asset('images/escort_favicon.png') }}">
-	<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('images/escort_favicon.png') }}">
-	<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/escort_favicon.png') }}">
-	<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/escort_favicon.png') }}">
+	<!-- Favicon Tags (Google Search Central Compliant - Absolute URLs, Square PNG multiples of 48px & Apple Touch Icon) -->
+	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 	<link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+	<link rel="icon" type="image/png" sizes="48x48" href="{{ asset('favicon-48x48.png') }}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
+	<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192x192.png') }}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
