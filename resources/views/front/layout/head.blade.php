@@ -82,7 +82,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-utbXrZ1P0xZ4M7V+G6x7pT6lZsN67d5V8Vt0RsmvVnXgO4c9V+6H1Y9CQ/KxwBfDkPvR1rSj7wZ6aLks+W1h6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-0c9T6VbCKQ07v30t2h2GZ0y/++Rn/9mW4S8n/X1pNJJxTVd8FhuP6F+oAq0tCjYpQxg8U4Z9r+P9OtkC2s3rQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-	  
+	  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6C9H332N41"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6C9H332N41');
+</script>
 
 </head>
 

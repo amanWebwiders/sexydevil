@@ -24,4 +24,13 @@
 _ide_helper.php
 Homestead.json
 Homestead.yaml
-Thumbs.db*.zip
+Thumbs.db
+
+# Archives & Backups
+*.zip
+*.tar.gz
+*.sql
+
+# Local tools & uploads
+composer.phar
+public/uploads/
