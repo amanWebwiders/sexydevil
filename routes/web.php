@@ -166,6 +166,66 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
             ->header('Content-Type', 'text/plain');
     })->name('robots');
 
+    Route::get('/favicon.ico', function () {
+        $path = public_path('favicon.ico');
+        if (!file_exists($path)) {
+            $path = base_path('favicon.ico');
+        }
+        if (file_exists($path)) {
+            return response()->file($path, [
+                'Content-Type' => 'image/x-icon',
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+        return response('', 404);
+    })->name('favicon');
+
+    Route::get('/apple-touch-icon.png', function () {
+        $path = public_path('apple-touch-icon.png');
+        if (!file_exists($path)) {
+            $path = base_path('apple-touch-icon.png');
+        }
+        if (file_exists($path)) {
+            return response()->file($path, [
+                'Content-Type' => 'image/png',
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+        return response('', 404);
+    })->name('apple-touch-icon');
+
+    Route::get('/apple-touch-icon-precomposed.png', function () {
+        $path = public_path('apple-touch-icon-precomposed.png');
+        if (!file_exists($path)) {
+            $path = base_path('apple-touch-icon-precomposed.png');
+        }
+        if (file_exists($path)) {
+            return response()->file($path, [
+                'Content-Type' => 'image/png',
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+        return response('', 404);
+    });
+
+    Route::get('/favicon-{size}.png', function ($size) {
+        $allowed = ['48x48', '96x96', '192x192'];
+        if (in_array($size, $allowed, true)) {
+            $filename = "favicon-{$size}.png";
+            $path = public_path($filename);
+            if (!file_exists($path)) {
+                $path = base_path($filename);
+            }
+            if (file_exists($path)) {
+                return response()->file($path, [
+                    'Content-Type' => 'image/png',
+                    'Cache-Control' => 'public, max-age=86400',
+                ]);
+            }
+        }
+        return response('', 404);
+    })->where('size', '48x48|96x96|192x192');
+
     // Legacy & Alias 301 Redirects for Technical SEO & GSC
     Route::get('/home', fn() => redirect()->to(url('/'), 301));
     Route::get('/terms-and-conditions', fn() => redirect()->to(route('terms'), 301));
