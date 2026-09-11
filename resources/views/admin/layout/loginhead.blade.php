@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="{{ asset('css/font-awesome.css')}}">
     <link rel="stylesheet" href="{{ asset('css/main.css')}}" class="color-switcher-link">
     <script src="{{ asset('js/vendor/modernizr-custom.js')}}"></script>
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="icon" type="image/png" sizes="48x48" href="{{ asset('favicon-48x48.png') }}">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192x192.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url('favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ url('favicon-48x48.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ url('favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ url('favicon-192x192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url('apple-touch-icon.png') }}">
 
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 

@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="css/font-awesome.css">
 	<link rel="stylesheet" href="css/main.css" class="color-switcher-link">
 	<script src="js/vendor/modernizr-custom.js"></script>
-	<link rel="icon" type="image/x-icon" href="/images/escort_favicon.png">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
 
 
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />

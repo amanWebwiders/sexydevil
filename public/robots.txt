@@ -52,6 +52,8 @@ Allow: /
 Allow: /images/
 Allow: /public/images/
 Allow: /favicon.ico
+Allow: /favicon-*.png
+Allow: /apple-touch-icon*.png
 Allow: /public/favicon.ico
 Allow: /about-us
 Allow: /contact-us
@@ -71,6 +73,8 @@ User-agent: Googlebot-Image
 Allow: /images/
 Allow: /public/images/
 Allow: /favicon.ico
+Allow: /favicon-*.png
+Allow: /apple-touch-icon*.png
 Allow: /public/favicon.ico
 
 # XML Sitemap Location
