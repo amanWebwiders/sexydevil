@@ -15,12 +15,12 @@
 	<link href="{{ asset('admin/assets/css/app.min.css')}}" rel="stylesheet">
 	<!-- ================== END core-css ================== -->
 
-	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-	<link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-	<link rel="icon" type="image/png" sizes="48x48" href="{{ asset('favicon-48x48.png') }}">
-	<link rel="icon" type="image/png" sizes="96x96" href="{{ asset('favicon-96x96.png') }}">
-	<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192x192.png') }}">
-	<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+	<link rel="icon" type="image/x-icon" href="{{ url('favicon.ico') }}">
+	<link rel="shortcut icon" type="image/x-icon" href="{{ url('favicon.ico') }}">
+	<link rel="icon" type="image/png" sizes="48x48" href="{{ url('favicon-48x48.png') }}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{ url('favicon-96x96.png') }}">
+	<link rel="icon" type="image/png" sizes="192x192" href="{{ url('favicon-192x192.png') }}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url('apple-touch-icon.png') }}">
 	
 	<!-- ================== BEGIN page-css ================== -->
 	<link href="{{ asset('admin/assets/plugins/jvectormap-next/jquery-jvectormap.css')}}" rel="stylesheet">

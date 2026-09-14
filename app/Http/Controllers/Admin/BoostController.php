@@ -24,20 +24,32 @@ class BoostController extends Controller
     public function index() {
         try {
             $my_country = $this->countryRepository->getCountryWithUserCount();
-            // dd($my_country);
             $state = collect();
-           
             $db_city = collect();
-           
+            $country_id = null;
+            $firstStateId = null;
+
+            if (!empty($my_country)) {
+                $country_id = is_array($my_country[0]) ? ($my_country[0]['id'] ?? null) : ($my_country[0]->id ?? null);
+            }
+
+            if ($country_id) {
+                $state = \App\Models\State::where('country_id', $country_id)->withCount('users')->orderBy('name')->get();
+                if ($state->isNotEmpty()) {
+                    $firstStateId = $state->first()->id;
+                    $db_city = \App\Models\City::where('state_id', $firstStateId)->withCount('users')->orderBy('name')->get();
+                }
+            }
+
             $current_date = now()->format('Y-m-d');
 
             $where = ["type" => 2, ['users.plan_start_date', '<=', $current_date], ['users.plan_end_date', '>=', $current_date]];
-            if(isset($my_country[0]->id)) {
-                $where["country_id"] = $my_country[0]->id;
+            if ($country_id) {
+                $where["country_id"] = $country_id;
             }
-       
+
             $users = $this->userRepository->getAllWhere($where, ["id", "name", "email"]);
-            return view('admin.boost-user-list', compact('my_country', 'state', 'db_city', 'users'));
+            return view('admin.boost-user-list', compact('my_country', 'state', 'db_city', 'users', 'country_id', 'firstStateId'));
         } catch (\Exception $e) {
             Log::error('Error in BoostController/index :' . $e->getMessage() . 'in line' . $e->getLine());
             return redirect()->route('admin.dashboard')->withErrors(['error' => __('message.something_went_wrong')]);

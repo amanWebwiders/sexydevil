@@ -90,11 +90,13 @@ class NewStoryController extends Controller
             $receiver = new FileReceiver('file', $request, HandlerFactory::classFromRequest($request));
             //if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $extension = $file->extension();
-            $mimeType = $file->getMimeType();
-            // } 
+            $mimeType = $file ? $file->getMimeType() : '';
+            $extension = strtolower($file->getClientOriginalExtension() ?: $file->guessExtension() ?: '');
+            if (!$extension) {
+                $extension = str_starts_with($mimeType, 'video/') ? 'mp4' : 'jpg';
+            }
 
-            if ($receiver->isUploaded() && in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'mp4', 'ogg', 'webm', 'avi']) && (str_starts_with($mimeType, 'image/') || str_starts_with($mimeType, 'video/'))) {
+            if ($receiver->isUploaded() && in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'mp4', 'ogg', 'webm', 'avi', 'mov']) && (str_starts_with($mimeType, 'image/') || str_starts_with($mimeType, 'video/'))) {
                 $save = $receiver->receive();
 
                 if ($save->isFinished()) {
@@ -110,7 +112,13 @@ class NewStoryController extends Controller
                         ]);
                     }
 
-                    $filename = uniqid() . '_' . $file->getClientOriginalName();
+                    $origName = $file->getClientOriginalName();
+                    $fileExt = strtolower(pathinfo($origName, PATHINFO_EXTENSION) ?: ($file->guessExtension() ?: ($isVideo ? 'mp4' : 'jpg')));
+                    $baseName = pathinfo($origName, PATHINFO_FILENAME);
+                    if ($baseName === 'blob' || empty($baseName)) {
+                        $baseName = 'story';
+                    }
+                    $filename = uniqid() . '_' . $baseName . '.' . $fileExt;
                     $path = $file->storeAs($folder, $filename, 'public');
 
                     return response()->json([
@@ -229,7 +237,14 @@ class NewStoryController extends Controller
             $records_from = $allUsersData["records_from"];
             $locationSeoContent = $this->userServices->getLocationSeoContent($locationSeoCity, "Hot Stories");        
             if ($request->ajax()) {
-                return ["status" => isset($allUsers) && !empty($allUsers) ? 200 : 400, "list" => view('front.component.reelsAjax', compact('allUsers'))->render(), "page" => $page, "records_from" => $records_from, 'content' => $locationSeoContent['data']->content ?? null];
+                return [
+                    "status" => isset($allUsers) && !empty($allUsers) ? 200 : 400,
+                    "list" => view('front.component.reelsAjax', compact('allUsers'))->render(),
+                    "page" => $page,
+                    "records_from" => $records_from,
+                    "has_more" => $allUsersData["has_more"] ?? false,
+                    'content' => $locationSeoContent['data']->content ?? null
+                ];
             }
             $country = $this->countryRepository->getAllRecordWhere([], ['id', 'name']);
             return view('front.reels', compact('data', 'allUsers', 'country', 'page', 'records_from', 'locationSeoContent', 'city'));
@@ -262,7 +277,13 @@ class NewStoryController extends Controller
             //dd($locationSeoContent);
 
            $reels = $this->userServices->reelSearch($request->all());
-            return response()->json(['status' => $reels["status"], 'data' => $reels["list"], 'page' => $reels["page"], 'content' => $locationSeoContent["data"]->content ?? null]);
+            return response()->json([
+                'status' => $reels["status"],
+                'data' => $reels["list"],
+                'page' => $reels["page"],
+                'has_more' => $reels["has_more"] ?? false,
+                'content' => $locationSeoContent["data"]->content ?? null
+            ]);
         } catch (\Exception $e) {
             Log::error("Error in HomeController.reelSearch(): " . $e->getMessage());
             return response()->json(['status' => 400, 'message' => __('message.statusZero'), 'data' => "", 'error' => $this->dataObject, 'content' => null], 500);

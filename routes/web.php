@@ -135,6 +135,9 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::get('/getcurrency/{id}', 'DashboardController@getCurrency')->name('getcurrency');
     Route::get('/reels/{city?}', 'NewStoryController@reels')->name('reels');
     Route::post('/reels', 'NewStoryController@reelSearch')->name('home.reels');
+    Route::get('/storage/app/public/{any}', function ($any) {
+        return redirect('/storage/' . $any, 301);
+    })->where('any', '.*');
 
     Route::get('/getsubcategory/{category_id}', 'DashboardController@getSubCategory')->name('getsubcategory');
     Route::match(['get', 'post'],'/model-search/{city?}', 'ModelController@search')->name('model.search');
@@ -225,6 +228,12 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
         }
         return response('', 404);
     })->where('size', '48x48|96x96|192x192');
+
+    // 301 Redirects for /public/ favicon and icon requests to root
+    Route::get('/public/favicon.ico', fn() => redirect()->to(url('/favicon.ico'), 301));
+    Route::get('/public/apple-touch-icon.png', fn() => redirect()->to(url('/apple-touch-icon.png'), 301));
+    Route::get('/public/apple-touch-icon-precomposed.png', fn() => redirect()->to(url('/apple-touch-icon-precomposed.png'), 301));
+    Route::get('/public/favicon-{size}.png', fn($size) => redirect()->to(url("/favicon-{$size}.png"), 301))->where('size', '48x48|96x96|192x192');
 
     // Legacy & Alias 301 Redirects for Technical SEO & GSC
     Route::get('/home', fn() => redirect()->to(url('/'), 301));
