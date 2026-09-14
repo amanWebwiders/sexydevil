@@ -24,8 +24,14 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # 301 Redirect legacy /public/ favicon and icon requests to root
-    RewriteRule ^public/(favicon.*|apple-touch-icon.*)$ /$1 [R=301,L]
+    # 301 Redirect legacy /public/ favicon and icon requests to root (only direct client requests)
+    RewriteCond %{THE_REQUEST} \s/+public/(favicon[^\s\?]*|apple-touch-icon[^\s\?]*) [NC]
+    RewriteCond %{HTTP:X-Forwarded-Proto} =https [OR]
+    RewriteCond %{HTTPS} on
+    RewriteRule ^public/(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    RewriteCond %{THE_REQUEST} \s/+public/(favicon[^\s\?]*|apple-touch-icon[^\s\?]*) [NC]
+    RewriteRule ^public/(.*)$ /$1 [R=301,L]
 
     # Serve static assets directly from public/ if requested from root
     RewriteCond %{REQUEST_URI} !^/public/
