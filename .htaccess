@@ -24,6 +24,9 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # 301 Redirect legacy /public/ favicon and icon requests to root
+    RewriteRule ^public/(favicon.*|apple-touch-icon.*)$ /$1 [R=301,L]
+
     # Serve static assets directly from public/ if requested from root
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f

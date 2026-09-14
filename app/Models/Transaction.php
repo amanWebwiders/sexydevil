@@ -12,11 +12,11 @@ class Transaction extends Model
 
      public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault(['name' => 'User Deleted / N/A']);
     }
 
     public function plan()
     {
-        return $this->belongsTo(Plan::class);
+        return $this->belongsTo(Plan::class)->withDefault(['title' => 'N/A']);
     }
 }

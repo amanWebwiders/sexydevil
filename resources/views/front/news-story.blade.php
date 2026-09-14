@@ -745,7 +745,7 @@
 
         function uploadFile(file, type, originalName = null, sizeInfo = '') {
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', file, originalName || file.name || (type === 'video' ? 'video.mp4' : 'image.jpg'));
 
             const progressId = `progress_${Math.random().toString(36).substr(2, 9)}`;
             $('#uploadProgressContainer').html('').append(`
