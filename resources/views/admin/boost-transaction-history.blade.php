@@ -49,15 +49,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($data as $index => $data)
+                                    @foreach ($data as $index => $row)
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
-                                        <td>#{{ $data->transaction_id }}</td>
-                                        <td>{{ $data->user->name }}</td>
-                                        <td>${{ $data->amount }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($data->user->boost_start_date)->format('d M Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($data->user->boost_end_date)->format('d M Y') }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($data->created_at)->format('d M Y h:i A') }}</td>
+                                        <td>#{{ $row->transaction_id }}</td>
+                                        <td>{{ $row->user->name ?? 'User Deleted / N/A' }}</td>
+                                        <td>${{ $row->amount ?? '0.00' }}</td>
+                                        <td>{{ !empty($row->user?->boost_start_date) ? \Carbon\Carbon::parse($row->user->boost_start_date)->format('d M Y') : 'N/A' }}</td>
+                                        <td>{{ !empty($row->user?->boost_end_date) ? \Carbon\Carbon::parse($row->user->boost_end_date)->format('d M Y') : 'N/A' }}</td>
+                                        <td>{{ !empty($row->created_at) ? \Carbon\Carbon::parse($row->created_at)->format('d M Y h:i A') : 'N/A' }}</td>
 
 
                                     </tr>

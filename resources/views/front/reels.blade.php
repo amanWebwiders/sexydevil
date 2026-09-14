@@ -12,9 +12,11 @@
     }
 
     .reels-bg-img {
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
+      object-fit: contain;
+      object-position: center;
+      width: 100%;
+      height: 100%;
+      background: #000;
     }
 
     .profile-media::before {
@@ -22,7 +24,34 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(to top, rgb(0 0 0 / 50%), rgba(0, 0, 0, 0));
+      pointer-events: none;
+      z-index: 1;
+    }
 
+    .profile-overlay {
+      z-index: 2;
+    }
+
+    .action-icons {
+      z-index: 2;
+    }
+
+    .gallery-story-item {
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .gallery-story-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+    }
+
+    .gallery-story-item.active-story-item {
+      border-color: #e12d4f;
+      box-shadow: 0 0 10px rgba(225, 45, 79, 0.6);
     }
 
     .reels-bg-video {
@@ -505,90 +534,85 @@
       <div class="reels-card">
         @forelse($allUsers as $users)
           @php
-
-            $ext = strtolower(pathinfo($users->images, PATHINFO_EXTENSION));
-            $isVideo = in_array($ext, ['mp4', 'mov', 'webm', 'avi']);
             $storyId = $users->id;
             $text = strip_tags($users->description);
             $words = explode(' ', $text);
             $preview = implode(' ', array_slice($words, 0, 20));
             $hasMore = count($words) > 20;
             $userlogin = auth()->user();
-            $userLiked = false;
             $views = getBoostedViews($users->reviewsReceived->count(), $users->id);
             $firstStory = $users->stories->first();
 
-            $mediaFile = null;
-            $isVideo = false;
+            $mediaFile = $firstStory ? ($firstStory->images ?? $firstStory->videos ?? '') : '';
+            $cleanMediaFile = ltrim(str_replace('storage/app/public/', '', $mediaFile), '/');
+            $ext = strtolower(pathinfo($cleanMediaFile, PATHINFO_EXTENSION));
+            $isVideo = in_array($ext, ['mp4', 'mov', 'webm', 'avi', 'ogg']) || str_contains($cleanMediaFile, 'uploads/news/videos');
+            $mediaUrl = $cleanMediaFile ? asset('storage/' . $cleanMediaFile) : '';
 
-            if ($firstStory) {
-              $file = $firstStory->images ?? $firstStory->videos;
-              $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-              $isVideo = in_array($ext, ['mp4', 'ogg', 'webm', 'avi']);
-              $mediaFile = $file;
-            }
+            $cleanThumb = $firstStory && $firstStory->thumbnail ? ltrim(str_replace('storage/app/public/', '', $firstStory->thumbnail), '/') : '';
+            $posterUrl = $cleanThumb ? asset('storage/' . $cleanThumb) : asset('images/escort_logo1.png');
+
+            $userProfileImg = (isset($users->profile_image) && Storage::disk('public')->exists($users->profile_image))
+                ? asset('storage/' . $users->profile_image)
+                : asset('storage/profile_image/default-profile.png');
+
+            $userLiked = ($userlogin && $firstStory) ? $firstStory->likes->where('user_id', $userlogin->id)->isNotEmpty() : false;
           @endphp
           @if($users->stories->count() > 0)
 
-            <div class="profile-section mb-5" id="reelsContainer">
-              <div class="profile-media">
-                @if($firstStory && $isVideo)
-                  {{-- Show video if first post is video --}}
-                  <div class="video-wrapper position-relative">
-    
-                      <video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="{{ url('storage/app/public/' . $firstStory->thumbnail) }}">
-                          <source src="{{ config('app.img_url'). $mediaFile }}">
+            <div class="profile-section mb-5" id="reelsContainer-{{ $users->id }}" data-user-id="{{ $users->id }}">
+              <div class="profile-media" id="profile-media-{{ $users->id }}">
+                <div class="active-media-box w-100 h-100 position-relative">
+                  @if($firstStory && $isVideo)
+                    <div class="video-wrapper position-relative w-100 h-100">
+                      <video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="{{ $posterUrl }}" playsinline loop>
+                        <source src="{{ $mediaUrl }}" type="video/mp4">
                       </video>
-
-                      <!-- Play Icon -->
                       <div class="play-btn">
-                          <i class="fa fa-play"></i>
+                        <i class="fa fa-play"></i>
                       </div>
-
-                  </div>
-                  <!-- <video class="w-100 h-100 object-cover reels-bg-video" loop>
-                    <source src="{{ config('app.img_url'). $mediaFile }}" type="video/mp4">
-                  </video> -->
-                @else
-
-                  <div class="w-100 h-100 bg-cover bg-center reels-bg-img"
-                    style="background-image: url('{{ $firstStory ? config('app.img_url') . $mediaFile : config('app.img_url') . (isset($users->profile_image) && Storage::disk('public')->exists($users->profile_image) ? $users->profile_image :"profile_image/default-profile.png" )}}');">
-                  </div>
-                @endif
+                    </div>
+                  @elseif($firstStory)
+                    <div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">
+                      <img src="{{ $mediaUrl }}"
+                           alt="{{ $users->nickname }}"
+                           class="w-100 h-100 reels-bg-img"
+                           onerror="this.onerror=null; this.src='{{ $userProfileImg }}';" />
+                    </div>
+                  @else
+                    <div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">
+                      <img src="{{ $userProfileImg }}"
+                           alt="{{ $users->nickname }}"
+                           class="w-100 h-100 reels-bg-img" />
+                    </div>
+                  @endif
+                </div>
 
                 <div class="profile-overlay">
                   <h5 class="notranslate" translate="no">{{$users->nickname}} <i class="fas fa-check-circle text-primary"></i></h5>
                   <p class="notranslate" translate="no">@ {{$users->nickname}} · #{{$users->sexual_orientation}} #{{$users->sex_location}} </p>
                 </div>
                 <div class="action-icons text-center">
-                  @if(isset($users->profile_image) && Storage::disk('public')->exists($users->profile_image))
-                  <img src="{{config('app.img_url') . $users->profile_image }}" alt="">
-                  @else
-                  <img src="{{ asset('storage/profile_image/default-profile.png') }}" alt="">
-                  @endif
+                  <img src="{{ $userProfileImg }}" alt="{{ $users->nickname }}">
+
                   <button class="reel-action-button like-button {{ $userLiked ? 'liked' : '' }}"
-                    data-story-id="{{ $firstStory->id }}" data-id="{{ auth()->id() }}">
+                    data-story-id="{{ $firstStory ? $firstStory->id : '' }}" data-id="{{ auth()->id() }}">
                     <i
                       class="{{ $userLiked ? 'fas' : 'far' }} fa-heart fa-solid action-icon {{ $userLiked ? 'text-danger' : '' }}"></i>
-                    <span class="like-count">{{ $firstStory->likes->count() }}</span>
+                    <span class="like-count">{{ $firstStory ? $firstStory->likes->count() : 0 }}</span>
                   </button>
-                  <a href="{{ route('user.profile.show', ['id' => $users->id]) }}?tab=feeds&story_id={{ $firstStory->id }}"
+                  <a href="{{ $firstStory ? route('user.profile.show', ['id' => $users->id]) . '?tab=feeds&story_id=' . $firstStory->id : route('user.profile.show', ['id' => $users->id]) }}"
                     class="reel-action-button comment-button" data-id="{{ $users->id }}"
-                    data-story-id="{{ $firstStory->id }}">
+                    data-story-id="{{ $firstStory ? $firstStory->id : '' }}">
                     <i class="fas fa-comment action-icon"></i>
-                    <span>{{ $firstStory->comments->count() }}</span>
+                    <span class="comment-count">{{ $firstStory ? $firstStory->comments->count() : 0 }}</span>
                   </a>
-                  <button class="reel-action-button" onclick="shareReel({{ $firstStory->id }})">
+                  <button class="reel-action-button" onclick="shareReel({{ $firstStory ? $firstStory->id : 0 }})">
                     <i class="fas fa-share action-icon"></i>
                     <span></span>
                   </button>
                 </div>
               </div>
-
-
-
-
-
 
               <div class="profile-info">
                 <div class="reels-model-name">
@@ -598,11 +622,7 @@
                 <h6 class="mt-3 mb-2 notranslate" translate="no">{{$users->slogan}}</h6>
                 <div class="stats">
                   <div>
-                    @if(isset($users->profile_image) && Storage::disk('public')->exists($users->profile_image))
-                    <img src="{{ config('app.img_url') . $users->profile_image }}" alt="">
-                    @else
-                    <img src="{{ asset('storage/profile_image/default-profile.png') }}" alt="">
-                    @endif
+                    <img src="{{ $userProfileImg }}" alt="{{ $users->nickname }}">
                   </div>
                   <div>
                     <p>
@@ -614,14 +634,8 @@
                       <strong>{{ number_format($views['count']) }} </strong> {{ Str::plural('View', $views['count']) }}
                     </p>
                   </div>
-                  <!-- <div>
-                                                                          <p>
-                                                                            <strong>78.7k</strong> Followers
-                                                                          </p>
-                                                                        </div> -->
                 </div>
                 <div class="d-flex align-items-center reels-detail-ui">
-                  <!-- <button class="btn  btn-maincolor cards-btn w-100 mr-1">Follow</button> -->
                   <a href="{{ route('user.profile.show', $users->id) }}"
                     class="btn btn-maincolor cards-btn view-prof-btn w-100 ml-1">View Profile</a>
                   <a href="https://api.whatsapp.com/send?text={{ urlencode(route('user.profile.show', $users->id)) }}"
@@ -632,7 +646,6 @@
                     target="_blank">
                     <i class="fab fa-telegram-plane ml-2"></i>
                   </a>
-
                 </div>
                 <p style="" class="mt-2 fs-14 notranslate" translate="no">
                   <span>{{ $preview }}
@@ -647,44 +660,54 @@
                 <div class="gallery row">
                   @foreach($users->stories as $key => $story)
                     @php
-                      $ext = strtolower(pathinfo($story->images ?? $story->videos, PATHINFO_EXTENSION));
-                      $isVideo = in_array($ext, ['mp4', 'mov', 'webm', 'avi']);
-                      $mediaFile = $story->images ?? $story->videos;
+                      $sFile = $story->images ?? $story->videos ?? '';
+                      $sCleanFile = ltrim(str_replace('storage/app/public/', '', $sFile), '/');
+                      $sExt = strtolower(pathinfo($sCleanFile, PATHINFO_EXTENSION));
+                      $sIsVideo = in_array($sExt, ['mp4', 'mov', 'webm', 'avi', 'ogg']) || str_contains($sCleanFile, 'uploads/news/videos');
+                      $sMediaUrl = $sCleanFile ? asset('storage/' . $sCleanFile) : '';
+                      $sCleanThumb = $story->thumbnail ? ltrim(str_replace('storage/app/public/', '', $story->thumbnail), '/') : '';
+                      $sThumbUrl = $sCleanThumb ? asset('storage/' . $sCleanThumb) : asset('images/escort_logo1.png');
+                      $sLiked = ($userlogin) ? $story->likes->where('user_id', $userlogin->id)->isNotEmpty() : false;
                     @endphp
 
-                    {{-- first media: show big or highlighted --}}
-
-                    <div class="col-6">
-                      <!--  -->
-                        <div class="position-relative h-100">
-                          @if($isVideo)
+                    <div class="col-6 mb-3">
+                      <div class="position-relative h-100 gallery-story-item {{ $key === 0 ? 'active-story-item' : '' }}"
+                           style="cursor: pointer;"
+                           data-user-id="{{ $users->id }}"
+                           data-story-id="{{ $story->id }}"
+                           data-media-url="{{ $sMediaUrl }}"
+                           data-is-video="{{ $sIsVideo ? '1' : '0' }}"
+                           data-poster-url="{{ $sThumbUrl }}"
+                           data-like-count="{{ $story->likes->count() }}"
+                           data-is-liked="{{ $sLiked ? '1' : '0' }}"
+                           data-comment-count="{{ $story->comments->count() }}"
+                           title="Click to view in main reel">
+                        @if($sIsVideo)
                           <div class="video-wrapper position-relative">
-    
-                              <video class="w-100 object-cover reels-bg-video myVideo" poster="{{ url('storage/app/public/' . $story->thumbnail) }}">
-                                  <source src="{{ config('app.img_url'). $mediaFile }}">
-                              </video>
-
-                              <!-- Play Icon -->
-                              <div class="play-btn">
-                                  <i class="fa fa-play"></i>
-                              </div>
-
+                            <video class="w-100 object-cover reels-bg-video" poster="{{ $sThumbUrl }}" preload="metadata">
+                              <source src="{{ $sMediaUrl }}" type="video/mp4">
+                            </video>
+                            <div class="play-btn">
+                              <i class="fa fa-play"></i>
+                            </div>
                           </div>
-                          @else
-                          <a href="{{ route('user.profile.show', ['id' => $users->id]) }}?tab=feeds&story_id={{ $story->id }}">
-                          <img src="{{ config('app.img_url') . $mediaFile }}" alt="User Post" class="w-100 rounded" />
-                          </a>
-                          @endif
+                        @else
+                          <div class="w-100 position-relative" style="height: 150px; background: #000; border-radius: 6px; overflow: hidden;">
+                            <img src="{{ $sMediaUrl }}" alt="User Post" class="w-100 h-100" style="object-fit: cover;"
+                                 onerror="this.onerror=null; this.src='{{ $userProfileImg }}';" />
+                          </div>
+                        @endif
 
-                          <div class="fav-btn"><button class="reel-action-button like-button {{ $userLiked ? 'liked' : '' }}"
-                              data-story-id="{{ $story->id }}" data-id="{{ auth()->id() }}">
-                              <i
-                                class="{{ $userLiked ? 'fas' : 'far' }} fa-heart fa-solid action-icon {{ $userLiked ? 'text-danger' : '' }}"></i>
-                              <span class="like-count">{{ $story->likes->count() }}</span>
-                            </button></div>
+                        <div class="fav-btn">
+                          <button class="reel-action-button like-button {{ $sLiked ? 'liked' : '' }}"
+                            data-story-id="{{ $story->id }}" data-id="{{ auth()->id() }}">
+                            <i
+                              class="{{ $sLiked ? 'fas' : 'far' }} fa-heart fa-solid action-icon {{ $sLiked ? 'text-danger' : '' }}"></i>
+                            <span class="like-count">{{ $story->likes->count() }}</span>
+                          </button>
                         </div>
+                      </div>
                     </div>
-
                   @endforeach
                 </div>
 
@@ -1223,86 +1246,220 @@
       });
       return false;
     }
-    var page = search = 2
+    var page = 2;
+    var search = 2;
+    var records_from = '{{ $records_from ?? "world" }}';
+    var isLoading = false;
+    var hasMore = true;
 
+    // Gallery item click: switch active story in the main left reel player
+    $(document).on('click', '.gallery-story-item', function (e) {
+      if ($(e.target).closest('.like-button').length) {
+        return;
+      }
+      var $item = $(this);
+      var storyId = $item.data('story-id');
+      var mediaUrl = $item.data('media-url');
+      var isVideo = $item.data('is-video') == '1';
+      var posterUrl = $item.data('poster-url');
+      var likeCount = $item.data('like-count');
+      var isLiked = $item.data('is-liked') == '1';
+      var commentCount = $item.data('comment-count');
+
+      var $section = $item.closest('.profile-section');
+      var $mediaBox = $section.find('.active-media-box');
+      var $mediaContainer = $section.find('.profile-media');
+
+      $section.find('.gallery-story-item').removeClass('active-story-item');
+      $item.addClass('active-story-item');
+
+      if (isVideo) {
+        $mediaBox.html(
+          '<div class="video-wrapper position-relative w-100 h-100">' +
+            '<video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="' + posterUrl + '" playsinline loop autoplay>' +
+              '<source src="' + mediaUrl + '" type="video/mp4">' +
+            '</video>' +
+            '<div class="play-btn d-none"><i class="fa fa-play"></i></div>' +
+          '</div>'
+        );
+        var vid = $mediaBox.find('video')[0];
+        if (vid) {
+          vid.play().catch(function(){});
+        }
+      } else {
+        $mediaBox.html(
+          '<div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">' +
+            '<img src="' + mediaUrl + '" class="w-100 h-100 reels-bg-img" />' +
+          '</div>'
+        );
+      }
+
+      var $likeBtn = $mediaContainer.find('.action-icons .like-button');
+      $likeBtn.attr('data-story-id', storyId).data('story-id', storyId);
+      $likeBtn.find('.like-count').text(likeCount);
+      if (isLiked) {
+        $likeBtn.addClass('liked').find('i').removeClass('far').addClass('fas text-danger');
+      } else {
+        $likeBtn.removeClass('liked').find('i').removeClass('fas text-danger').addClass('far');
+      }
+
+      var $commentBtn = $mediaContainer.find('.action-icons .comment-button');
+      $commentBtn.attr('data-story-id', storyId).data('story-id', storyId);
+      $commentBtn.find('.comment-count').text(commentCount);
+    });
+
+    // Toggle video play / pause on click
+    $(document).on('click', '.video-wrapper', function (e) {
+      if ($(e.target).closest('.action-icons, .profile-overlay').length) return;
+      var video = $(this).find('video')[0];
+      var playBtn = $(this).find('.play-btn');
+      if (video) {
+        if (video.paused) {
+          video.play().catch(function(){});
+          playBtn.addClass('d-none');
+        } else {
+          video.pause();
+          playBtn.removeClass('d-none');
+        }
+      }
+    });
+
+    // Video intersection observer for auto play/pause when in viewport
+    var videoObserver = null;
+    function initVideoObserver() {
+      if (!('IntersectionObserver' in window)) return;
+      if (videoObserver) {
+        videoObserver.disconnect();
+      }
+      videoObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          var video = entry.target.querySelector('.active-media-box video');
+          if (video) {
+            if (entry.isIntersecting) {
+              video.play().catch(function(){});
+              var playBtn = entry.target.querySelector('.active-media-box .play-btn');
+              if (playBtn) playBtn.classList.add('d-none');
+            } else {
+              video.pause();
+            }
+          }
+        });
+      }, { threshold: 0.5 });
+
+      document.querySelectorAll('.profile-section').forEach(function (sec) {
+        videoObserver.observe(sec);
+      });
+    }
+
+    // Filter Search
     function getReels() {
       search = 1;
+      page = 1;
+      hasMore = true;
+      isLoading = true;
+
       var myData = {};
       myData.country_id = $("#country").val();
       myData.state_id = $("#state").val();
       myData.city = $("#city").val();
       myData._token = '{{ csrf_token() }}';
+
       $.ajax({
         url: '{{ route('home.reels') }}?page=' + page,
         type: "post",
         data: myData,
         dataType: 'json',
         beforeSend: function () {
-          //$(".reels-card").html('Process ....');
+          $(".reels-card").css('opacity', '0.5');
         },
         success: function (data) {
           if ($('#exampleModal').hasClass('show')) {
             $('#exampleModal').modal('toggle');
           }
           $(".locationSeoContent").html(data.content !== null ? data.content : '');
-          if (data.status == 200) {
-            if (page == 1) {
-              $(".reels-card").html(data.data);
-            } else {
-              $(".reels-card").append(data.data);
-            }
-            records_from = data.records_from;
+          if (data.status == 200 && data.data && data.data.trim().length > 0) {
+            $(".reels-card").html(data.data);
             page = data.page;
-            console.log(data.page);
-            console.log(page);
+            if (data.has_more === false) {
+              hasMore = false;
+            }
           } else {
-            //$(".reels-card").html('No record found');
-            //toastr.warning('{{ __('message.invalid_login') }}');
+            $(".reels-card").html('<p class="btn btn-block btn-maincolor">No stories found for the selected location.</p>');
+            hasMore = false;
           }
+          initVideoObserver();
+        },
+        complete: function () {
+          $(".reels-card").css('opacity', '1');
+          isLoading = false;
         }
       });
       return false;
-
     }
+
+    // Load next page on scroll
+    function loadMoreReels() {
+      if (isLoading || !hasMore) return;
+      isLoading = true;
+
+      var isFilter = (search === 1);
+      var url = isFilter
+        ? '{{ route('home.reels') }}?page=' + page
+        : '{{ route('reels', ["city" => $city]) }}?page=' + page + '&records_from=' + records_from;
+      var type = isFilter ? "POST" : "GET";
+      var postData = isFilter ? {
+        country_id: $("#country").val(),
+        state_id: $("#state").val(),
+        city: $("#city").val(),
+        _token: '{{ csrf_token() }}'
+      } : {};
+
+      $.ajax({
+        url: url,
+        type: type,
+        data: postData,
+        dataType: 'json',
+        success: function (data) {
+          var html = isFilter ? data.data : data.list;
+          if (data.status == 200 && html && html.trim().length > 0) {
+            $(".reels-card").append(html);
+            page = data.page;
+            if (data.records_from) {
+              records_from = data.records_from;
+            }
+            if (data.has_more === false) {
+              hasMore = false;
+            }
+            initVideoObserver();
+          } else {
+            hasMore = false;
+          }
+        },
+        error: function () {
+          hasMore = false;
+        },
+        complete: function () {
+          isLoading = false;
+        }
+      });
+    }
+
+    // Scroll listener with throttle
+    $('.reels-card').on('scroll', function () {
+      var elem = $(this);
+      if (elem.scrollTop() + elem.innerHeight() >= elem[0].scrollHeight - 350) {
+        loadMoreReels();
+      }
+    });
+
     $(document).ready(function () {
       $('#country, #state, #city, #advertiser').select2({
         dropdownParent: $('#exampleModal')
       });
-    })
+      initVideoObserver();
+    });
 
-    setInterval(function () {
-      if (search == 2) {
-        getReelsByInterval();
-      } else {
-        getReels();
-      }
-    }, 10000);
-
-    var records_from = '{{ $records_from }}';
-    function getReelsByInterval() {
-      $.ajax({
-        url: '{{ route('reels', ["city" => $city]) }}?page=' + page + '&records_from=' + records_from,
-        type: "get",
-        dataType: 'json',
-        beforeSend: function () {
-          //$(".reels-card").html('Process ....');
-        },
-        success: function (data) {
-          if (data.status == 200) {
-            $(".reels-card").append(data.list);
-            records_from = data.records_from;
-            page = data.page;
-          } else {
-            page = data.page;
-            //$(".reels-card").html('No record found');
-          }
-        }
-      });
-      return false;
-
-    }
     $('.getReels').click(function () {
-      page = 1;
       getReels();
     });
   </script>

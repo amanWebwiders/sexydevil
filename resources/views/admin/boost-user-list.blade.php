@@ -170,11 +170,11 @@
 
                         <label>Country</label>
 
-                        <select id="country" onchange="return fetchState($(this))" name="country" class="form-control" >
+                        <select id="country" name="country" class="form-control" >
 
                             @foreach ($my_country as $_country)
 
-                                <option value="{{ $_country['id'] }}">{{ $_country['country'] }} ({{ $_country['total_users'] }})</option>
+                                <option value="{{ $_country['id'] }}" {{ (isset($country_id) && $country_id == $_country['id']) ? 'selected' : '' }}>{{ $_country['country'] }} ({{ $_country['total_users'] }})</option>
 
                             @endforeach
 
@@ -186,13 +186,13 @@
 
                         <label>State</label>
 
-                        <select id="state" onchange="return fetchCity($(this))" name="state" class="form-control" >
+                        <select id="state" name="state" class="form-control" >
 
                             <option value="">-- select ---</option>
 
                             @foreach ($state as $_state)
 
-                                <option value="{{ $_state->id }}">{{ $_state->name }} ({{ $_state->users_count }})</option>
+                                <option value="{{ $_state->id }}" {{ (isset($firstStateId) && $firstStateId == $_state->id) ? 'selected' : '' }}>{{ $_state->name }} ({{ $_state->users_count }})</option>
 
                             @endforeach
 
@@ -408,11 +408,18 @@
 
     function fetchState(thiss) {
 
-        var country_id = thiss.val();
+        var country_id = $(thiss).val();
+
+        if (!country_id) {
+            $("#state").html("<option value=''>-- select state ---</option>").trigger('change.select2');
+            $("#city").html("<option value=''>-- select city ---</option>").trigger('change.select2');
+            fetchModelsForDropDown();
+            return false;
+        }
 
         var route = "{{ route('getstates', ['country_id' => ':country_id']) }}"; 
 
-        route = route.replace(':country_id', country_id)+ '?with_users=1';
+        route = route.replace(':country_id', country_id);
 
         $.ajax({
 
@@ -424,21 +431,33 @@
 
             beforeSend:function(){ 
 
-                $("#state, #city").html("");
+                $("#state").html("<option value=''>Loading states...</option>").trigger('change.select2');
 
-                $("#state").html(`<option value=''>---select state---</option>`);
+                $("#city").html("<option value=''>-- select city ---</option>").trigger('change.select2');
 
             },
 
             success:function(data) {
 
+                $("#state").html(`<option value=''>-- select state ---</option>`);
+
                 $.each(data, function(index, item) {
 
-                    $("#state").append(`<option value='${item.id}'>${item.name} (${item.users_count})</option>`);
+                    var count = (item.users_count !== undefined && item.users_count > 0) ? ` (${item.users_count})` : '';
+
+                    $("#state").append(`<option value='${item.id}'>${item.name}${count}</option>`);
 
                 });
 
+                $("#state").trigger('change.select2');
+
                 fetchModelsForDropDown();
+
+            },
+
+            error: function() {
+
+                $("#state").html("<option value=''>-- select state ---</option>").trigger('change.select2');
 
             }
 
@@ -452,11 +471,17 @@
 
     function fetchCity(thiss) {
 
-        var state_id = thiss.val();
+        var state_id = $(thiss).val();
+
+        if (!state_id) {
+            $("#city").html("<option value=''>-- select city ---</option>").trigger('change.select2');
+            fetchModelsForDropDown();
+            return false;
+        }
 
         var route = "{{ route('getcities', ['state_id' => ':state_id']) }}"; 
 
-        route = route.replace(':state_id', state_id)+ '?with_users=1';
+        route = route.replace(':state_id', state_id);
 
         $.ajax({
 
@@ -468,21 +493,31 @@
 
             beforeSend:function(){ 
 
-                $("#city").html("");
+                $("#city").html("<option value=''>Loading cities...</option>").trigger('change.select2');
 
             },
 
             success:function(data) {
 
-                $("#city").html(`<option value=''>---select city---</option>`);
+                $("#city").html(`<option value=''>-- select city ---</option>`);
 
                 $.each(data, function(index, item) {
 
-                    $("#city").append(`<option value='${item.id}'>${item.name} (${item.users_count})</option>`);
+                    var count = (item.users_count !== undefined && item.users_count > 0) ? ` (${item.users_count})` : '';
+
+                    $("#city").append(`<option value='${item.id}'>${item.name}${count}</option>`);
 
                 });
 
+                $("#city").trigger('change.select2');
+
                 fetchModelsForDropDown();
+
+            },
+
+            error: function() {
+
+                $("#city").html("<option value=''>-- select city ---</option>").trigger('change.select2');
 
             }
 
@@ -524,6 +559,16 @@
 
 function addEvent(start, end) {
 
+    var city_id = $.trim($("#city option:selected").val());
+    if (!city_id) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Please Select City',
+            text: 'Please select a City from the dropdown first to activate/boost users in that area.'
+        });
+        return false;
+    }
+
     let formatted = moment(start).format('DD-MM-YYYY');
 
     $("#eventDate").val(formatted);
@@ -540,7 +585,7 @@ function addEvent(start, end) {
 
     form.find('input[name="city"]').val($.trim($("#city option:selected").text()));
 
-    form.find('input[name="city_id"]').val($.trim($("#city option:selected").val()));
+    form.find('input[name="city_id"]').val(city_id);
 
 
 
@@ -880,15 +925,28 @@ function showSelectedModels(start, end) {
 
 $(document).ready(function () {
 
-    $('#country, #state, #city, #advertiser').select2();
+    $('#country, #state, #city, #advertiser').select2({
+        width: '100%'
+    });
 
-})
+    $(document).on("change", "#country", function() {
+        fetchState($(this));
+    });
 
-$(document).on("change", "#city", function() {
+    $(document).on("change", "#state", function() {
+        fetchCity($(this));
+    });
 
-    fetchModelsForDropDown();
+    $(document).on("change", "#city", function() {
+        fetchModelsForDropDown();
+    });
 
-})
+    // If state options are empty or only placeholder, trigger fetchState
+    if ($('#country').val() && $('#state option').length <= 1) {
+        fetchState($('#country'));
+    }
+
+});
 
 function fetchModelsForDropDown() {
 
@@ -920,31 +978,19 @@ function fetchModelsForDropDown() {
 
         success: function(data) { 
 
-            if(data.record.length > 0) {
+            $('#advertiser').html("");
 
-
+            if(data.record && data.record.length > 0) {
 
                 $.each(data.record, function(index, item) {
 
-                        $("#advertiser").append(`<option value='${item.id}'>${item.name} (${item.email}) </option>`);
+                    $("#advertiser").append(`<option value='${item.id}'>${item.name} (${item.email})</option>`);
 
-                    }); 
-
-                $('#advertiser').select2();
-
-            } else {
-
-                Swal.fire({
-
-                    icon: 'error',
-
-                    title: 'Error',
-
-                    text: 'No Advertiser found'
-
-                });
+                }); 
 
             }
+
+            $('#advertiser').trigger('change.select2');
 
         },
 
@@ -952,7 +998,7 @@ function fetchModelsForDropDown() {
 
             console.error("AJAX Error:", status, error);
 
-            console.log(xhr.responseText);
+            $('#advertiser').trigger('change.select2');
 
         }
 

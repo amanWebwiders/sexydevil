@@ -103,7 +103,7 @@ class DashboardController extends Controller
             $states = $this->stateRepository->getAllRecordWhere(['country_id' => $country_id]);
             return response()->json($states);
         } else {
-            $states = State::where('country_id', $country_id)->orderBy('name')->get();
+            $states = State::where('country_id', $country_id)->withCount('users')->orderBy('name')->get();
             return response()->json($states);
         }
     }
@@ -122,7 +122,7 @@ class DashboardController extends Controller
 
             return response()->json($cities);
         } else {
-            $cities = City::where('state_id', $state_id)->orderBy('name')->get();
+            $cities = City::where('state_id', $state_id)->withCount('users')->orderBy('name')->get();
             return response()->json($cities);
         }
     }

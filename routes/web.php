@@ -135,6 +135,9 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::get('/getcurrency/{id}', 'DashboardController@getCurrency')->name('getcurrency');
     Route::get('/reels/{city?}', 'NewStoryController@reels')->name('reels');
     Route::post('/reels', 'NewStoryController@reelSearch')->name('home.reels');
+    Route::get('/storage/app/public/{any}', function ($any) {
+        return redirect('/storage/' . $any, 301);
+    })->where('any', '.*');
 
     Route::get('/getsubcategory/{category_id}', 'DashboardController@getSubCategory')->name('getsubcategory');
     Route::match(['get', 'post'],'/model-search/{city?}', 'ModelController@search')->name('model.search');

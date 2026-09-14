@@ -553,12 +553,9 @@ class UserServices
 
     public function getUsersByCurrentCityCountry($request, $city = null) {
         try {
-            $user = Auth::guard('web')->user();
-            $user_id = $user->id ?? 0;
             $where = [
                 'users.type' => 2,
-                'user_status' => 0,
-                ['users.id', '!=', $user_id]
+                'users.user_status' => 0,
             ];
 
             $page = (int)($request->page ?? 1);
@@ -566,12 +563,12 @@ class UserServices
             // If no city is specified (e.g. visiting /reels main feed), show worldwide chronologically from newest to oldest
             if (empty($city)) {
                 $users = $this->userRepository->usersByMyCurrentLocation($where, $page);
-                $records_from = "world";
-                $nextPage = ($users && $users->isNotEmpty()) ? $page + 1 : $page;
+                $hasMore = $users && $users->hasMorePages();
                 return [
                     "records" => $users ? ($users->items() ?? []) : [],
-                    "records_from" => $records_from,
-                    "page" => $nextPage
+                    "records_from" => "world",
+                    "page" => $page + 1,
+                    "has_more" => $hasMore
                 ];
             }
 
@@ -581,17 +578,18 @@ class UserServices
 
             $records_from = $request->records_from ?? "city";
 
-            // 1. From current city
+            // 1. From specified city
             if ($records_from == "city" && $myCity) {
-                $users = $this->userRepository->usersByMyCurrentLocation(array_merge($where, [['city_id', '=', $myCity]]), $page);
+                $users = $this->userRepository->usersByMyCurrentLocation(array_merge($where, [['users.city_id', '=', $myCity]]), $page);
                 if ($users && $users->isNotEmpty()) {
                     return [
                         "records" => $users->items() ?? [],
                         "records_from" => "city",
-                        "page" => $page + 1
+                        "page" => $page + 1,
+                        "has_more" => $users->hasMorePages()
                     ];
                 }
-                // Fallback to country / world if city is empty
+                // Fallback to world if city is empty
                 $records_from = "world";
                 $page = 1;
             }
@@ -601,11 +599,12 @@ class UserServices
             return [
                 "records" => $users ? ($users->items() ?? []) : [],
                 "records_from" => "world",
-                "page" => ($users && $users->isNotEmpty()) ? $page + 1 : $page
+                "page" => ($users && $users->isNotEmpty()) ? $page + 1 : $page,
+                "has_more" => $users ? $users->hasMorePages() : false
             ];
         } catch (Exception $e) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-            return [ "records" => [], "records_from" => "world", "page" => 1 ];
+            return [ "records" => [], "records_from" => "world", "page" => 1, "has_more" => false ];
         }
     }
 
@@ -616,29 +615,29 @@ class UserServices
                 'users.user_status' => 0
             ];
             if(isset($inputs["country_id"]) && !empty($inputs["country_id"])) {
-                $where['country_id'] = $inputs["country_id"];
+                $where['users.country_id'] = $inputs["country_id"];
             }
 
             if(isset($inputs["state_id"]) && !empty($inputs["state_id"])) {
-                $where['state_id'] = $inputs["state_id"];
+                $where['users.state_id'] = $inputs["state_id"];
             }
 
             if(isset($inputs["city"]) && !empty($inputs["city"])) {
-                $where['city_id'] = $inputs["city"];
+                $where['users.city_id'] = $inputs["city"];
             }
-            $page = (int)$inputs["page"];
+            $page = (int)($inputs["page"] ?? 1);
             $allUsers = $this->userRepository->usersByMyCurrentLocation($where, $page);
-            if($allUsers->isEmpty()) {
-                //dd(123);
-                $allUsers = $this->userRepository->usersByMyCurrentLocation($where, 1);
-                $page = 1;
-            }
-            //dd($allUsers);
-            $page = $page + 1;
-            return ["status" => $allUsers->isNotEmpty() ? 200:400, "list" => view('front.component.reelsAjax', compact('allUsers'))->render(), "page" => $page];
+            $hasMore = $allUsers ? $allUsers->hasMorePages() : false;
+            $html = ($allUsers && $allUsers->isNotEmpty()) ? view('front.component.reelsAjax', compact('allUsers'))->render() : "";
+            return [
+                "status" => 200,
+                "list" => $html,
+                "page" => $page + 1,
+                "has_more" => $hasMore
+            ];
         } catch (Exception $e) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
-            return ["status" => 400, "list" => ""];
+            return ["status" => 400, "list" => "", "page" => 1, "has_more" => false];
         }
     }
 

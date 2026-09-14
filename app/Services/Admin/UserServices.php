@@ -562,23 +562,29 @@ class UserServices
             $current_date = now()->format('Y-m-d');
 
             $where = ["type" => 2, ['users.plan_start_date', '<=', $current_date], ['users.plan_end_date', '>=', $current_date]];
-            if(isset($inputs["country"])) {
+            if(isset($inputs["country"]) && !empty($inputs["country"])) {
                 $where["country_id"] = $inputs["country"];
             }
 
-            if(isset($inputs["state"])) {
+            if(isset($inputs["state"]) && !empty($inputs["state"])) {
                 $where["state_id"] =  $inputs["state"];
             }
 
-            if(isset($inputs["city"])) {
+            if(isset($inputs["city"]) && !empty($inputs["city"])) {
                 $where["city_id"] = $inputs["city"];
             } 
 
-            $submit_date = Carbon::createFromFormat('Y-m-d H:i:s', $inputs["start"])->format('Y-m-d');
             $alreadyModels = [];
-            if(isset($inputs["city"]) && !empty($inputs["city"])) {
-               $alreadyModels = $this->featureDevilRepository->getAllRecordWhere(["city_id" => $inputs["city"], 'date' => $submit_date ], ['user_id']);
-               $alreadyModels = $alreadyModels->isNotEmpty() ? $alreadyModels->toArray() : [];
+            if(isset($inputs["start"]) && !empty($inputs["start"])) {
+                try {
+                    $submit_date = Carbon::parse($inputs["start"])->format('Y-m-d');
+                    if(isset($inputs["city"]) && !empty($inputs["city"])) {
+                        $alreadyModels = $this->featureDevilRepository->getAllRecordWhere(["city_id" => $inputs["city"], 'date' => $submit_date ], ['user_id']);
+                        $alreadyModels = $alreadyModels->isNotEmpty() ? $alreadyModels->toArray() : [];
+                    }
+                } catch (\Exception $e) {
+                    $alreadyModels = [];
+                }
             }
             //dd($alreadyModels);
             $users = $this->userRepository->getAllWhere($where, ["id", "name", "email"], $alreadyModels);
