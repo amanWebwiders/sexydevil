@@ -54,7 +54,7 @@
                       <button class="btn btn-sm btn-danger reject-btn" data-id="{{ $data->id }}">Reject</button>
                       <a href="{{ route('admin.userdetail', $data->id) }}" class="btn btn-sm btn-primary">View</a>
                       <a href="{{ route('admin.edit-user', $data->id) }}" class="btn btn-sm btn-info text-white" title="Edit Ad Content">Edit</a>
-                      <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $data->id }}" data-name="{{ $data->name }}" data-email="{{ $data->email }}" title="Manage Password">
+                      <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $data->id }}" data-name="{{ $data->name }}" data-email="{{ $data->email }}" data-password="{{ $data->show_password ?? '' }}" title="Manage Password">
                         <i class="fa-solid fa-key"></i> Password
                       </button>
                       @if($data->user_status == 0)
