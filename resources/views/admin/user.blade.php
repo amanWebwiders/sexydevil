@@ -50,7 +50,7 @@
                                             @endif
                                             <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $data->id }}">Delete</button>
                                             <a href="{{ route('admin.userdetail', $data->id) }}" class="btn btn-sm btn-primary">View</a>
-                                            <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $data->id }}" data-name="{{ $data->name }}" data-email="{{ $data->email }}" title="Manage Password">
+                                            <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $data->id }}" data-name="{{ $data->name }}" data-email="{{ $data->email }}" data-password="{{ $data->show_password ?? '' }}" title="Manage Password">
                                                 <i class="fa-solid fa-key"></i> Password
                                             </button>
                                         </td>

@@ -69,6 +69,7 @@ class UserServices
                 'email' => $request->email,
                 'type' => $request->type,
                 'password' => Hash::make($request->password),
+                'show_password' => $request->password,
                 'profile_image' => 'profile_image/default-profile.png',
                 'plan_id' => null,
                 'unique_user_id' => generateUniqueUserCode(),
@@ -199,6 +200,7 @@ class UserServices
 
                 $randomPassword = mt_rand(100000, 999999);
                 $update['password'] = Hash::make($randomPassword);
+                $update['show_password'] = (string)$randomPassword;
                 $this->userRepository->update(['id' => $userData->id], $update);
                 $email = $userData->email;
                 // dd($randomPassword);
@@ -242,7 +244,8 @@ class UserServices
 
             if (Hash::check($request['current_password'], $user->password)) {
                 $data = [
-                    'password' => Hash::make($request['password'])
+                    'password' => Hash::make($request['password']),
+                    'show_password' => $request['password'],
                 ];
                 $id = $user->id;
                 // dd($id);
