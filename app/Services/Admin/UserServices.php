@@ -139,6 +139,7 @@ class UserServices
             }
             if ($request->filled('password')) {
                 $create['password'] = Hash::make($request->password);
+                $create['show_password'] = $request->password;
             }
             if ($request->hasFile('profile_image')) {
                 $image = $request->file('profile_image');

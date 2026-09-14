@@ -66,7 +66,7 @@
                                             <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $_data->id }}">Delete</button>
                                             <a href="{{ route('admin.userdetail', $_data->id) }}" class="btn btn-sm btn-primary">View</a>
                                             <a href="{{ route('admin.edit-user', $_data->id) }}" class="btn btn-sm btn-info text-white">Edit</a>
-                                            <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $_data->id }}" data-name="{{ $_data->name }}" data-email="{{ $_data->email }}" title="Manage Password">
+                                            <button class="btn btn-sm btn-secondary password-btn" data-id="{{ $_data->id }}" data-name="{{ $_data->name }}" data-email="{{ $_data->email }}" data-password="{{ $_data->show_password ?? '' }}" title="Manage Password">
                                                 <i class="fa-solid fa-key"></i> Password
                                             </button>
                                         </td>

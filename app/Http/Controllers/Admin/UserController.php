@@ -379,6 +379,66 @@ class UserController extends Controller
         }
     }
 
+    public function getPassword($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            return response()->json([
+                'status' => true,
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'has_password' => !empty($user->show_password),
+                'password' => $user->show_password ?? '',
+            ]);
+        } catch (\Exception $e) {
+            Log::error("UserController : getPassword() - " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
+    }
+
+    public function sendCurrentPassword($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            if (empty($user->show_password)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Current password is not available in readable format for this account. Please update the password below first.'
+                ], 422);
+            }
+
+            $appName = config('app.name');
+            $mailData = [
+                'subject' => 'Your ' . $appName . ' Account Login Password',
+                'email' => $user->email,
+                'body' => '<p>Hello ' . e($user->name) . ',</p>' .
+                          '<p>Here are your account login credentials for <strong>' . $appName . '</strong> as requested:</p>' .
+                          '<p><strong>Email / Username:</strong> ' . e($user->email) . '<br>' .
+                          '<strong>Current Password:</strong> <code style="font-size: 15px; font-weight: bold; background: #f1f5f9; padding: 4px 10px; border-radius: 4px; color: #dc2626;">' . e($user->show_password) . '</code></p>' .
+                          '<p>If you did not request this, please contact support immediately.</p>' .
+                          '<p>Thanks,<br>' . $appName . '</p>'
+            ];
+
+            Mail::to($user->email)->send(new \App\Mail\DemoMail($mailData));
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Current password sent successfully to ' . $user->email . '!'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("UserController : sendCurrentPassword() on line " . $e->getLine() . " - " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to send password email: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function changePassword(Request $request, $id)
     {
         $request->validate([
@@ -388,6 +448,7 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
             $user->password = Hash::make($request->password);
+            $user->show_password = $request->password;
             $user->save();
 
             if ($request->boolean('send_email')) {
@@ -398,7 +459,7 @@ class UserController extends Controller
                         'email' => $user->email,
                         'body' => '<p>Hello ' . e($user->name) . ',</p>' .
                                   '<p>Your password for <strong>' . $appName . '</strong> has been updated by the administrator.</p>' .
-                                  '<p><strong>New Password:</strong> ' . e($request->password) . '</p>' .
+                                  '<p><strong>New Password:</strong> <code style="font-size: 15px; font-weight: bold; background: #f1f5f9; padding: 4px 10px; border-radius: 4px; color: #dc2626;">' . e($request->password) . '</code></p>' .
                                   '<p>Thanks,<br>' . $appName . '</p>'
                     ];
                     Mail::to($user->email)->send(new \App\Mail\DemoMail($mailData));
@@ -409,6 +470,7 @@ class UserController extends Controller
 
             return response()->json([
                 'status' => true,
+                'password' => $user->show_password,
                 'message' => 'Password updated successfully for ' . $user->name . '.'
             ]);
         } catch (\Exception $e) {
