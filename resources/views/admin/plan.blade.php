@@ -39,6 +39,7 @@
                                         <th>S.no</th>
                                         <th>Title</th>
                                         <th>Description</th>
+                                        <th>Price ($)</th>
                                         <th>Days</th>
                                         <th>Appearance</th>
                                         <th>Action</th>
@@ -50,6 +51,7 @@
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $plan->title }}</td>
                                         <td>{{ $plan->description }}</td>
+                                        <td>${{ number_format($plan->cost, 2) }}</td>
                                         <td>{{ $plan->days }}</td>
                                         <td>{{ $plan->visibility }}x</td>
 
@@ -233,8 +235,10 @@
 <script>
     $(document).ready(function() {
         // Initialize DataTable safely
+        var isPriceChecked = $('.priceShow').is(':checked');
+        var planTable;
         if (!$.fn.DataTable.isDataTable('#usersTable')) {
-            $('#usersTable').DataTable({
+            planTable = $('#usersTable').DataTable({
                 "paging": true,
                 "searching": true,
                 "lengthChange": true,
@@ -244,7 +248,12 @@
                     "lengthMenu": "Display _MENU_ Plan per page"
                 }
             });
+        } else {
+            planTable = $('#usersTable').DataTable();
         }
+
+        // Apply initial Price column visibility based on checkbox status
+        planTable.column(3).visible(isPriceChecked);
 
         // Open Add Plan Modal (supports both BS5 data attributes and direct click)
         $(document).on('click', '#addPlanBtn, [data-bs-target="#addModal"], [data-target="#addModal"]', function(e) {
@@ -497,9 +506,15 @@
             });
         });
 
-        // Price Show toggle
+        // Price Show toggle (controls both table column and frontend display)
         $(document).on('change', '.priceShow', function() {
             var is_checked = $(this).is(":checked");
+
+            // Instantly toggle Price column in the table
+            if ($.fn.DataTable.isDataTable('#usersTable')) {
+                $('#usersTable').DataTable().column(3).visible(is_checked);
+            }
+
             $.ajax({
                 url: "{{ route('admin.priceHideShow') }}",
                 method: 'POST',
@@ -512,7 +527,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
-                            text: response.message,
+                            text: is_checked ? 'Price is now shown (table & website)' : 'Price is now hidden (table & website)',
                             timer: 1500,
                             showConfirmButton: false
                         });
