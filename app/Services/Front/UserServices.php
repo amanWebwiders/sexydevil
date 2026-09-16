@@ -5,7 +5,7 @@ namespace App\Services\Front;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use App\Repository\Eloquent\{UserRepository, CountryRepository, CityRepository, ManuallyBoostRequestRepository, LocationSeoContentRepository};
+use App\Repository\Eloquent\{UserRepository, CountryRepository, CityRepository, ManuallyBoostRequestRepository, LocationSeoContentRepository, NewsandstoryRepository};
 use App\Repository\Eloquent\AdminRepository;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +20,7 @@ use App\Traits\ImageUploadTrait;
 class UserServices
 {
     use ImageUploadTrait;
-    protected $userRepository, $cityRepository, $countryRepository, $manuallyBoostRequestRepository, $locationSeoContentRepository;
+    protected $userRepository, $cityRepository, $countryRepository, $manuallyBoostRequestRepository, $locationSeoContentRepository, $newsandstoryRepository;
     protected $AdminRepository;
     private $dataObject;
 
@@ -29,7 +29,8 @@ class UserServices
     CityRepository $cityRepository,
     CountryRepository $countryRepository,
     ManuallyBoostRequestRepository $manuallyBoostRequestRepository,
-    LocationSeoContentRepository $locationSeoContentRepository
+    LocationSeoContentRepository $locationSeoContentRepository,
+    NewsandstoryRepository $newsandstoryRepository
     )
     {
         $this->dataObject = new \stdClass();
@@ -39,6 +40,7 @@ class UserServices
         $this->countryRepository = $countryRepository;
         $this->manuallyBoostRequestRepository = $manuallyBoostRequestRepository;
         $this->locationSeoContentRepository = $locationSeoContentRepository;
+        $this->newsandstoryRepository = $newsandstoryRepository;
     }
 
     public function saveContactUsData($request)
@@ -556,19 +558,14 @@ class UserServices
 
     public function getUsersByCurrentCityCountry($request, $city = null) {
         try {
-            $where = [
-                'users.type' => 2,
-                'users.user_status' => 0,
-            ];
-
             $page = (int)($request->page ?? 1);
 
             // If no city is specified (e.g. visiting /reels main feed), show worldwide chronologically from newest to oldest
             if (empty($city)) {
-                $users = $this->userRepository->usersByMyCurrentLocation($where, $page);
-                $hasMore = $users && $users->hasMorePages();
+                $stories = $this->newsandstoryRepository->storiesByLocation([], $page);
+                $hasMore = $stories && $stories->hasMorePages();
                 return [
-                    "records" => $users ? ($users->items() ?? []) : [],
+                    "records" => $stories ? ($stories->items() ?? []) : [],
                     "records_from" => "world",
                     "page" => $page + 1,
                     "has_more" => $hasMore
@@ -583,13 +580,13 @@ class UserServices
 
             // 1. From specified city
             if ($records_from == "city" && $myCity) {
-                $users = $this->userRepository->usersByMyCurrentLocation(array_merge($where, [['users.city_id', '=', $myCity]]), $page);
-                if ($users && $users->isNotEmpty()) {
+                $stories = $this->newsandstoryRepository->storiesByLocation(['city_id' => $myCity], $page);
+                if ($stories && $stories->isNotEmpty()) {
                     return [
-                        "records" => $users->items() ?? [],
+                        "records" => $stories->items() ?? [],
                         "records_from" => "city",
                         "page" => $page + 1,
-                        "has_more" => $users->hasMorePages()
+                        "has_more" => $stories->hasMorePages()
                     ];
                 }
                 // Fallback to world if city is empty
@@ -598,12 +595,12 @@ class UserServices
             }
 
             // 2. Fallback to worldwide so reels never end abruptly
-            $users = $this->userRepository->usersByMyCurrentLocation($where, $page);
+            $stories = $this->newsandstoryRepository->storiesByLocation([], $page);
             return [
-                "records" => $users ? ($users->items() ?? []) : [],
+                "records" => $stories ? ($stories->items() ?? []) : [],
                 "records_from" => "world",
-                "page" => ($users && $users->isNotEmpty()) ? $page + 1 : $page,
-                "has_more" => $users ? $users->hasMorePages() : false
+                "page" => ($stories && $stories->isNotEmpty()) ? $page + 1 : $page,
+                "has_more" => $stories ? $stories->hasMorePages() : false
             ];
         } catch (Exception $e) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $e->getMessage());
@@ -611,27 +608,29 @@ class UserServices
         }
     }
 
+    public function getStoriesByCurrentCityCountry($request, $city = null) {
+        return $this->getUsersByCurrentCityCountry($request, $city);
+    }
+
     public function reelSearch($inputs)  {
         try {
-            $where = [
-                'users.type' => 2,
-                'users.user_status' => 0
-            ];
+            $userWhere = [];
             if(isset($inputs["country_id"]) && !empty($inputs["country_id"])) {
-                $where['users.country_id'] = $inputs["country_id"];
+                $userWhere['country_id'] = $inputs["country_id"];
             }
 
             if(isset($inputs["state_id"]) && !empty($inputs["state_id"])) {
-                $where['users.state_id'] = $inputs["state_id"];
+                $userWhere['state_id'] = $inputs["state_id"];
             }
 
             if(isset($inputs["city"]) && !empty($inputs["city"])) {
-                $where['users.city_id'] = $inputs["city"];
+                $userWhere['city_id'] = $inputs["city"];
             }
             $page = (int)($inputs["page"] ?? 1);
-            $allUsers = $this->userRepository->usersByMyCurrentLocation($where, $page);
-            $hasMore = $allUsers ? $allUsers->hasMorePages() : false;
-            $html = ($allUsers && $allUsers->isNotEmpty()) ? view('front.component.reelsAjax', compact('allUsers'))->render() : "";
+            $allStories = $this->newsandstoryRepository->storiesByLocation($userWhere, $page);
+            $hasMore = $allStories ? $allStories->hasMorePages() : false;
+            $allUsers = $allStories ? ($allStories->items() ?? []) : [];
+            $html = ($allStories && $allStories->isNotEmpty()) ? view('front.component.reelsAjax', compact('allStories', 'allUsers'))->render() : "";
             return [
                 "status" => 200,
                 "list" => $html,
