@@ -22,9 +22,9 @@
     }
 </style>
 <div class="filter-section d-none d-lg-block">
-    <form method="post" id="filterForm" action="{{ route('model.search') }}">
+    <form method="post" id="filterForm" action="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">
         @csrf
-    <div class="filter-box filter-section" data-search-url="{{ route('model.search') }}">
+    <div class="filter-box filter-section" data-search-url="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">
 
         <div class="row ">
 

@@ -54,7 +54,8 @@ class HomeController extends Controller
             return redirect()->to('/' . urlencode($request->city));
         } else if($request->has('city') && empty($request->city)) {
             session()->put('SeoType', 'worldwide');
-            return redirect()->route('model.search');
+            session()->forget('selected_location');
+            return redirect()->route('home.worldwide');
         }
         
 
@@ -63,7 +64,12 @@ class HomeController extends Controller
         $top6User = []; //$this->userRepository->getTopUsersCreatedToday();
         // dd($top6User);
         $NewUser = []; //$this->userRepository->getNewFaces();
-        $city = isset($city) && $city != "home" ? $city:null;
+        $city = isset($city) && strtolower($city) != "home" ? $city : null;
+        if ($city) {
+            session(['selected_location' => $city]);
+        } else {
+            session()->forget('selected_location');
+        }
         $locationSeo = $this->userServices->getLocationSeoContent($city, "Home");
         if (empty($locationSeo['data'])) {
             $locationSeo = $this->userServices->getLocationSeoContent($city, "Entry Page");
@@ -437,6 +443,7 @@ class HomeController extends Controller
 
     public function landing() {
         session()->forget('SeoType');
+        session()->forget('selected_location');
         $cityCountry = currentCityContry();
         $country = $this->countryRepository->getAllRecordWhere(["name" => $cityCountry["country"]], ['id', 'name']);
         //dump($country[0]->id);

@@ -5,7 +5,7 @@
     <div class="container entry" style="padding-block: 150px 50px;">
         <div class="main-row">
             <div class="search-area">
-                <form method="get" action="{{ url('/') }}" id="searchForm">
+                <form method="get" action="{{ route('home.worldwide') }}" id="searchForm">
                 <label for="search">WHERE DO YOU WANT TO HAVE FUN?</label>
 
                 <div class="search-field">                    
@@ -336,7 +336,7 @@ $(document).on('submit', '#searchForm', function(e) {
     e.preventDefault();
     var searchVal = $.trim($("#search").val());
     if (!searchVal) {
-        window.location.href = "{{ url('/') }}";
+        window.location.href = "{{ route('home.worldwide') }}";
     } else {
         window.location.href = "{{ url('/') }}/" + encodeURIComponent(searchVal);
     }

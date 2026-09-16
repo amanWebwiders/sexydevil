@@ -14,11 +14,11 @@
 
                 <ul>
 
-                    <li><a href="{{route('active.escorts', ["city" => $city] )}}">active now</a></li>
+                    <li><a href="{{ !empty($city) ? route('active.escorts', ['city' => $city]) : route('active.escorts') }}">active now</a></li>
 
-                    <li><a href="{{route('recommend.escorts', ["city" => $city] )}}">recommend escorts</a></li>
+                    <li><a href="{{ !empty($city) ? route('recommend.escorts', ['city' => $city]) : route('recommend.escorts') }}">recommend escorts</a></li>
 
-                    <li><a href="{{route('lowcost.escorts', ["city" => $city] )}}">low-cost</a></li>
+                    <li><a href="{{ !empty($city) ? route('lowcost.escorts', ['city' => $city]) : route('lowcost.escorts') }}">low-cost</a></li>
 
                     <li><a href="{{route('about-us')}}">About us</a></li>
                     

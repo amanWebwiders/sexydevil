@@ -532,7 +532,7 @@ class ModelController extends Controller
         $locationSeoContent = $this->userServices->getLocationSeoContent($locationSeoCity, "New Escorts");        
         if($request->ajax() == true) {
             //dd(1231);
-            $results = $this->userRepository->getByWhereSearch($filters, [], 8,$page);
+            $results = $this->userRepository->getByWhereSearch($filters, [], 8, $page, $city);
             $output["code"] = (isset($results) && !$results->isNotEmpty()) ? 400:200;
             //$page = ($output["code"] == 400) ? 1 : $page;
         } 
@@ -778,7 +778,7 @@ class ModelController extends Controller
 
         if($request->ajax() == true) {
             //dd(1231);
-            $results = $this->userRepository->getByWhereSearch($filters, [], 8,$page);
+            $results = $this->userRepository->getByWhereSearch($filters, [], 8, $page, $city);
             $output["code"] = (isset($results) && !$results->isNotEmpty()) ? 400:200;
             //$page = ($output["code"] == 400) ? 1 : $page;
         }
@@ -992,7 +992,7 @@ class ModelController extends Controller
 
         if($request->ajax() == true) {
             //dd(1231);
-            $results = $this->userRepository->getByWhereSearch($filters, $orderBy, 8,$page);
+            $results = $this->userRepository->getByWhereSearch($filters, $orderBy, 8, $page, $city);
             $output["code"] = (isset($results) && !$results->isNotEmpty()) ? 400:200;
             //$page = ($output["code"] == 400) ? 1 : $page;
         }
@@ -1205,7 +1205,7 @@ class ModelController extends Controller
 
         if($request->ajax() == true) {
             //dd(1231);
-            $results = $this->userRepository->getByWhereSearch($filters, $orderBy, 8,$page);
+            $results = $this->userRepository->getByWhereSearch($filters, $orderBy, 8, $page, $city);
             $output["code"] = (isset($results) && !$results->isNotEmpty()) ? 400:200;
             //$page = ($output["code"] == 400) ? 1 : $page;
         }
