@@ -518,7 +518,7 @@ function denyConsent() {
             $('.max-output-val').val(0);
 
             // Update URL to clean /model-search
-            const cleanUrl = "{{ route('model.search') }}";
+            const cleanUrl = "{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}";
             history.replaceState(null, '', cleanUrl);
         });
 
@@ -545,16 +545,16 @@ function denyConsent() {
             filters._token = '{{ csrf_token() }}';
             const queryString = new URLSearchParams(filters).toString();
             const currentPath = window.location.pathname;
-            const modelPageURL = "{{ route('model.search') }}";
+            const modelPageURL = "{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}";
 
             // If current page is NOT the model search page
             if (!currentPath.includes('/model')) {
-                // Redirect to clean model-search page (without city in URL)
+                // Redirect to model-search page
                 var $form = $(this).closest('form');
                 $form.attr('action', modelPageURL);
                 $form.submit();
             } else {
-                // Update URL to clean /model-search (remove city from URL)
+                // Update URL
                 history.replaceState(null, '', modelPageURL);
 
                 // Already on model page – make AJAX call

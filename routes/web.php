@@ -120,7 +120,7 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
 
 //Front Route Module 
 Route::namespace('App\Http\Controllers\Front')->group(function () {
-    //Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/home', 'HomeController@index')->name('home.worldwide');
     Route::get('/', 'HomeController@landing')->name('landing');
 
     Route::get('/user-login', 'HomeController@Login')->name('user-login');
@@ -238,7 +238,6 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::get('/public/favicon-{size}.png', fn($size) => redirect()->to(url("/favicon-{$size}.png"), 301))->where('size', '48x48|96x96|192x192');
 
     // Legacy & Alias 301 Redirects for Technical SEO & GSC
-    Route::get('/home', fn() => redirect()->to(url('/'), 301));
     Route::get('/terms-and-conditions', fn() => redirect()->to(route('terms'), 301));
     Route::get('/terms-conditions', fn() => redirect()->to(route('terms'), 301));
     Route::get('/gallery', fn() => redirect()->to(route('reels'), 301));
