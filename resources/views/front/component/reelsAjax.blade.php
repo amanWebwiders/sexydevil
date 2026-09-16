@@ -1,35 +1,42 @@
-    @forelse($allUsers as $users)
     @php
-      $storyId = $users->id;
-      $text = strip_tags($users->description);
+      $stories = $allStories ?? $allUsers ?? [];
+    @endphp
+    @forelse($stories as $story)
+    @php
+      $users = $story->user ?? null;
+      if (!$users) {
+          continue;
+      }
+      $storyId = $story->id;
+      $text = strip_tags($story->text ?: $users->description);
       $words = explode(' ', $text);
       $preview = implode(' ', array_slice($words, 0, 20));
       $hasMore = count($words) > 20;
       $userlogin = auth()->user();
-      $views = getBoostedViews($users->reviewsReceived->count(), $users->id);
-      $firstStory = $users->stories->first();
+      $views = getBoostedViews($users->reviewsReceived ? $users->reviewsReceived->count() : 0, $users->id);
 
-      $mediaFile = $firstStory ? ($firstStory->images ?? $firstStory->videos ?? '') : '';
+      $mediaFile = $story->images ?? $story->videos ?? '';
       $cleanMediaFile = ltrim(str_replace('storage/app/public/', '', $mediaFile), '/');
+      $cleanMediaFile = preg_replace('#^storage/#', '', $cleanMediaFile);
       $ext = strtolower(pathinfo($cleanMediaFile, PATHINFO_EXTENSION));
       $isVideo = in_array($ext, ['mp4', 'mov', 'webm', 'avi', 'ogg']) || str_contains($cleanMediaFile, 'uploads/news/videos');
       $mediaUrl = $cleanMediaFile ? asset('storage/' . $cleanMediaFile) : '';
 
-      $cleanThumb = $firstStory && $firstStory->thumbnail ? ltrim(str_replace('storage/app/public/', '', $firstStory->thumbnail), '/') : '';
+      $cleanThumb = $story->thumbnail ? ltrim(str_replace('storage/app/public/', '', $story->thumbnail), '/') : '';
+      $cleanThumb = preg_replace('#^storage/#', '', $cleanThumb);
       $posterUrl = $cleanThumb ? asset('storage/' . $cleanThumb) : asset('images/escort_logo1.png');
 
       $userProfileImg = (isset($users->profile_image) && Storage::disk('public')->exists($users->profile_image))
           ? asset('storage/' . $users->profile_image)
           : asset('storage/profile_image/default-profile.png');
 
-      $userLiked = ($userlogin && $firstStory) ? $firstStory->likes->where('user_id', $userlogin->id)->isNotEmpty() : false;
+      $userLiked = ($userlogin) ? $story->likes->where('user_id', $userlogin->id)->isNotEmpty() : false;
     @endphp
-    @if($users->stories->count() > 0)
 
-    <div class="profile-section mb-5" id="reelsContainer-{{ $users->id }}" data-user-id="{{ $users->id }}">
-      <div class="profile-media" id="profile-media-{{ $users->id }}">
+    <div class="profile-section mb-5" id="reelsContainer-{{ $story->id }}" data-story-id="{{ $story->id }}" data-user-id="{{ $users->id }}">
+      <div class="profile-media" id="profile-media-{{ $story->id }}">
         <div class="active-media-box w-100 h-100 position-relative">
-          @if($firstStory && $isVideo)
+          @if($isVideo)
             <div class="video-wrapper position-relative w-100 h-100">
               <video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="{{ $posterUrl }}" playsinline loop>
                 <source src="{{ $mediaUrl }}" type="video/mp4">
@@ -38,18 +45,12 @@
                 <i class="fa fa-play"></i>
               </div>
             </div>
-          @elseif($firstStory)
+          @else
             <div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">
               <img src="{{ $mediaUrl }}"
                    alt="{{ $users->nickname }}"
                    class="w-100 h-100 reels-bg-img"
                    onerror="this.onerror=null; this.src='{{ $userProfileImg }}';" />
-            </div>
-          @else
-            <div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">
-              <img src="{{ $userProfileImg }}"
-                   alt="{{ $users->nickname }}"
-                   class="w-100 h-100 reels-bg-img" />
             </div>
           @endif
         </div>
@@ -62,19 +63,19 @@
           <img src="{{ $userProfileImg }}" alt="{{ $users->nickname }}">
 
           <button class="reel-action-button like-button {{ $userLiked ? 'liked' : '' }}"
-            data-story-id="{{ $firstStory ? $firstStory->id : '' }}"
+            data-story-id="{{ $story->id }}"
             data-id="{{ auth()->id() }}">
             <i class="{{ $userLiked ? 'fas' : 'far' }} fa-heart fa-solid action-icon {{ $userLiked ? 'text-danger' : '' }}"></i>
-            <span class="like-count">{{ $firstStory ? $firstStory->likes->count() : 0 }}</span>
+            <span class="like-count">{{ $story->likes ? $story->likes->count() : 0 }}</span>
           </button>
-          <a href="{{ $firstStory ? route('user.profile.show', ['id' => $users->id]) . '?tab=feeds&story_id=' . $firstStory->id : route('user.profile.show', ['id' => $users->id]) }}"
+          <a href="{{ route('user.profile.show', ['id' => $users->id]) . '?tab=feeds&story_id=' . $story->id }}"
             class="reel-action-button comment-button"
             data-id="{{ $users->id }}"
-            data-story-id="{{ $firstStory ? $firstStory->id : '' }}">
+            data-story-id="{{ $story->id }}">
             <i class="fas fa-comment action-icon"></i>
-            <span class="comment-count">{{ $firstStory ? $firstStory->comments->count() : 0 }}</span>
+            <span class="comment-count">{{ $story->comments ? $story->comments->count() : 0 }}</span>
           </a>
-          <button class="reel-action-button" onclick="shareReel({{ $firstStory ? $firstStory->id : 0 }})">
+          <button class="reel-action-button" onclick="shareReel({{ $story->id }})">
             <i class="fas fa-share action-icon"></i>
             <span></span>
           </button>
@@ -93,7 +94,7 @@
           </div>
           <div>
             <p>
-              <strong>{{ $users->stories->count() }}</strong> Posts
+              <strong>{{ $users->stories ? $users->stories->count() : 0 }}</strong> Posts
             </p>
           </div>
           <div>
@@ -124,29 +125,32 @@
           @endif
         </p>
         <div class="gallery row">
-          @foreach($users->stories as $key => $story)
+          @if($users->stories)
+          @foreach($users->stories as $key => $s)
           @php
-            $sFile = $story->images ?? $story->videos ?? '';
+            $sFile = $s->images ?? $s->videos ?? '';
             $sCleanFile = ltrim(str_replace('storage/app/public/', '', $sFile), '/');
+            $sCleanFile = preg_replace('#^storage/#', '', $sCleanFile);
             $sExt = strtolower(pathinfo($sCleanFile, PATHINFO_EXTENSION));
             $sIsVideo = in_array($sExt, ['mp4', 'mov', 'webm', 'avi', 'ogg']) || str_contains($sCleanFile, 'uploads/news/videos');
             $sMediaUrl = $sCleanFile ? asset('storage/' . $sCleanFile) : '';
-            $sCleanThumb = $story->thumbnail ? ltrim(str_replace('storage/app/public/', '', $story->thumbnail), '/') : '';
+            $sCleanThumb = $s->thumbnail ? ltrim(str_replace('storage/app/public/', '', $s->thumbnail), '/') : '';
+            $sCleanThumb = preg_replace('#^storage/#', '', $sCleanThumb);
             $sThumbUrl = $sCleanThumb ? asset('storage/' . $sCleanThumb) : asset('images/escort_logo1.png');
-            $sLiked = ($userlogin) ? $story->likes->where('user_id', $userlogin->id)->isNotEmpty() : false;
+            $sLiked = ($userlogin) ? $s->likes->where('user_id', $userlogin->id)->isNotEmpty() : false;
           @endphp
 
           <div class="col-6 mb-3">
-            <div class="position-relative h-100 gallery-story-item {{ $key === 0 ? 'active-story-item' : '' }}"
+            <div class="position-relative h-100 gallery-story-item {{ $s->id == $story->id ? 'active-story-item' : '' }}"
                  style="cursor: pointer;"
                  data-user-id="{{ $users->id }}"
-                 data-story-id="{{ $story->id }}"
+                 data-story-id="{{ $s->id }}"
                  data-media-url="{{ $sMediaUrl }}"
                  data-is-video="{{ $sIsVideo ? '1' : '0' }}"
                  data-poster-url="{{ $sThumbUrl }}"
-                 data-like-count="{{ $story->likes->count() }}"
+                 data-like-count="{{ $s->likes ? $s->likes->count() : 0 }}"
                  data-is-liked="{{ $sLiked ? '1' : '0' }}"
-                 data-comment-count="{{ $story->comments->count() }}"
+                 data-comment-count="{{ $s->comments ? $s->comments->count() : 0 }}"
                  title="Click to view in main reel">
               @if($sIsVideo)
                 <div class="video-wrapper position-relative">
@@ -166,21 +170,21 @@
 
               <div class="fav-btn">
                 <button class="reel-action-button like-button {{ $sLiked ? 'liked' : '' }}"
-                  data-story-id="{{ $story->id }}"
+                  data-story-id="{{ $s->id }}"
                   data-id="{{ auth()->id() }}">
                   <i class="{{ $sLiked ? 'fas' : 'far' }} fa-heart fa-solid action-icon {{ $sLiked ? 'text-danger' : '' }}"></i>
-                  <span class="like-count">{{ $story->likes->count() }}</span>
+                  <span class="like-count">{{ $s->likes ? $s->likes->count() : 0 }}</span>
                 </button>
               </div>
             </div>
           </div>
           @endforeach
+          @endif
         </div>
 
       </div>
     </div>
     <hr>
-    @endif
 @empty
-    <p class="btn btn-block btn-maincolor mr-3">No users found.</p>
+    <p class="btn btn-block btn-maincolor mr-3">No stories found.</p>
 @endforelse
