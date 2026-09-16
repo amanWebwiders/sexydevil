@@ -276,4 +276,50 @@ public function getUserStoriesWhere (array $where, $valid_post = true) {
     }
 }
 
+    public function storiesByLocation(array $userWhere = [], $page = 1, $perPage = 10)
+    {
+        try {
+            $query = $this->model->with([
+                'user' => function ($q) {
+                    $q->with([
+                        'country', 'plan', 'gender', 'nationality', 'state', 'city',
+                        'countries', 'ethnicity', 'bodyType', 'haircolor', 'hairLength',
+                        'hairType', 'eyeColor', 'reviewsReceived', 'reviewsGiven',
+                        'videos', 'stories', 'stories.likes', 'stories.comments', 'images'
+                    ]);
+                },
+                'likes',
+                'comments.user'
+            ])
+            ->whereHas('user', function ($q) use ($userWhere) {
+                $q->where('users.type', 2)
+                  ->where('users.user_status', 0);
+
+                foreach ($userWhere as $key => $value) {
+                    if (is_array($value)) {
+                        $col = $value[0];
+                        $op = $value[1];
+                        $val = $value[2] ?? null;
+                        if (!str_contains($col, '.')) {
+                            $col = 'users.' . $col;
+                        }
+                        $q->where($col, $op, $val);
+                    } else {
+                        $col = $key;
+                        if (!str_contains($col, '.')) {
+                            $col = 'users.' . $col;
+                        }
+                        $q->where($col, $value);
+                    }
+                }
+            })
+            ->orderBy('news_and_stories.id', 'desc');
+
+            return $query->paginate($perPage, ['*'], 'page', $page);
+        } catch (\Exception $e) {
+            Log::error("Error in NewsandstoryRepository.storiesByLocation(): " . $e->getMessage());
+            return false;
+        }
+    }
+
 }

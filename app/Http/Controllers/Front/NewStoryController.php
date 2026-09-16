@@ -233,13 +233,14 @@ class NewStoryController extends Controller
             // dd($data);
 
             $page = $allUsersData["page"];
-            $allUsers = $allUsersData["records"];
+            $allStories = $allUsersData["records"];
+            $allUsers = $allStories;
             $records_from = $allUsersData["records_from"];
             $locationSeoContent = $this->userServices->getLocationSeoContent($locationSeoCity, "Hot Stories");        
             if ($request->ajax()) {
                 return [
-                    "status" => isset($allUsers) && !empty($allUsers) ? 200 : 400,
-                    "list" => view('front.component.reelsAjax', compact('allUsers'))->render(),
+                    "status" => isset($allStories) && !empty($allStories) ? 200 : 400,
+                    "list" => view('front.component.reelsAjax', compact('allStories', 'allUsers'))->render(),
                     "page" => $page,
                     "records_from" => $records_from,
                     "has_more" => $allUsersData["has_more"] ?? false,
@@ -247,7 +248,7 @@ class NewStoryController extends Controller
                 ];
             }
             $country = $this->countryRepository->getAllRecordWhere([], ['id', 'name']);
-            return view('front.reels', compact('data', 'allUsers', 'country', 'page', 'records_from', 'locationSeoContent', 'city'));
+            return view('front.reels', compact('data', 'allStories', 'allUsers', 'country', 'page', 'records_from', 'locationSeoContent', 'city'));
         } catch (\Exception $e) {
             Log::error("Error in HomeController.reels(): " . $e->getMessage() . " line" . $e->getLine());
             return response()->json(['status' => 0, 'message' => __('message.statusZero'), 'data' => $this->dataObject, 'error' => $this->dataObject], 500);
