@@ -2,46 +2,33 @@
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
-# Block access to .env and other hidden files
-<FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
 
-# Specifically block .env (extra safety)
-<Files ".env">
-    Order allow,deny
-    Deny from all
-</Files>
+    # Apache 2.4 - Block dotfiles & sensitive environment files
+    <FilesMatch "^\.">
+        Require all denied
+    </FilesMatch>
+
+    <Files ".env">
+        Require all denied
+    </Files>
+
+    <FilesMatch "(composer\.(json|lock)|package\.json|\.sql|\.zip)$">
+        Require all denied
+    </FilesMatch>
+
     RewriteEngine On
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
+    # Direct access to favicon, robots, and sitemaps from root
+    RewriteCond %{REQUEST_URI} ^/(favicon.*|apple-touch-icon.*|robots\.txt|sitemap.*\.xml)$ [NC]
+    RewriteRule ^ - [L]
 
-    # 301 Redirect legacy /public/ favicon and icon requests to root (only direct client requests)
-    RewriteCond %{THE_REQUEST} \s/+public/(favicon[^\s\?]*|apple-touch-icon[^\s\?]*) [NC]
-    RewriteCond %{HTTP:X-Forwarded-Proto} =https [OR]
-    RewriteCond %{HTTPS} on
-    RewriteRule ^public/(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-
-    RewriteCond %{THE_REQUEST} \s/+public/(favicon[^\s\?]*|apple-touch-icon[^\s\?]*) [NC]
-    RewriteRule ^public/(.*)$ /$1 [R=301,L]
-
-    # Serve static assets directly from public/ if requested from root
+    # Route everything else safely to public folder
     RewriteCond %{REQUEST_URI} !^/public/
-    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
     RewriteRule ^(.*)$ public/$1 [L]
-
-    # Send Requests To Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ public/index.php [L]
 </IfModule>
 
 <IfModule mod_mime.c>
