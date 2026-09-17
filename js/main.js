@@ -13,13 +13,13 @@ function menuHideExtraElements() {
 	$('.sf-more-li, .sf-logo-li').remove();
 	var windowWidth = $('body').innerWidth();
 	
-	$('.').each(function(){
+	$('.sf-menu').each(function(){
 		var $thisMenu = $(this);
 		var $menuWraper = $thisMenu.closest('.top-nav');
 		$menuWraper.attr('style', '');
 		if (windowWidth > 1199) {
 			//grab all main menu first level items 
-			var $menuLis = $menuWraper.find('. > li');
+			var $menuLis = $menuWraper.find('.sf-menu > li');
 			$menuLis.removeClass('sf-xl-hidden');
 
 			var $headerLogoCenter = $thisMenu.closest('.header_logo_center');
@@ -32,7 +32,7 @@ function menuHideExtraElements() {
 				logoWidth = $logo.outerWidth(true) + 70;
 			}
 
-			// var wrapperWidth = $('.').width();
+			// var wrapperWidth = $('.sf-menu').width();
 			var wrapperWidth = $menuWraper.outerWidth(true);
 			$menuLis.each(function(index) {
 				//4 - 4px additional width for inline-block LI element
@@ -51,7 +51,7 @@ function menuHideExtraElements() {
 
 			//processing center logo
 			if ( $headerLogoCenter.length ) {
-				var $menuLisVisible = $headerLogoCenter.find('. > li:not(.sf-xl-hidden)');
+				var $menuLisVisible = $headerLogoCenter.find('.sf-menu > li:not(.sf-xl-hidden)');
 				var menuLength = $menuLisVisible.length;
 				var summaryLiVisibleWidth = 0;
 				$menuLisVisible.each(function(){
@@ -647,7 +647,7 @@ function documentReadyInit() {
         }
     }
 	if ($().superfish) {
-		$('ul.').superfish({
+		$('ul.sf-menu').superfish({
 			popUpSelector: 'ul:not(.mega-menu ul), .mega-menu ',
 			delay:       700,
 			animation:   {opacity:'show', marginTop: 0},
@@ -659,8 +659,8 @@ function documentReadyInit() {
 			autoArrows:  true,
 			onInit: function () {
 				var $thisMenu = $(this);
-				$thisMenu.find('.sf-with-ul').after('<span class="-item-mobile-toggler"/>');
-				$thisMenu.find('.-item-mobile-toggler').on('click', function (e) {
+				$thisMenu.find('.sf-with-ul').after('<span class="sf-menu-item-mobile-toggler"/>');
+				$thisMenu.find('.sf-menu-item-mobile-toggler').on('click', function (e) {
 					var $parentLi = $(this).parent();
 					if($parentLi.hasClass('sfHover')) {
 						$parentLi.superfish('hide');
@@ -671,7 +671,7 @@ function documentReadyInit() {
 			}
 
 		});
-		$('ul.-side').superfish({
+		$('ul.sf-menu-side').superfish({
 			popUpSelector: 'ul:not(.mega-menu ul), .mega-menu ',
 			delay:       500,
 			animation:   {opacity:'show', height: 100 +'%'},
@@ -698,7 +698,7 @@ function documentReadyInit() {
 			.toggleClass('mobile-active');
 	});
 
-	$('. a').on('click', function(){
+	$('.sf-menu a').on('click', function(){
 		var $this = $(this);
 		//If this is a local link or item with sumbenu - not toggling menu
 		if (($this.hasClass('sf-with-ul')) || !($this.attr('href').charAt(0) === '#')) {
@@ -782,7 +782,7 @@ function documentReadyInit() {
 		MainWindowWidth = $(window).width();
 	});
 	//2/3/4 levels
-	$('.top-nav .').on('mouseover', 'ul li', function(){
+	$('.top-nav .sf-menu').on('mouseover', 'ul li', function(){
 		// $('.mainmenu').on('mouseover', 'ul li', function(){
 		if(MainWindowWidth > 991) {
 			var $this = $(this);
