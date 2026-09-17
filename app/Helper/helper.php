@@ -96,6 +96,7 @@ if (!function_exists('currentCityContry')) {
         /* $ip = request()->ip();
         $res = file_get_contents('https://www.iplocate.io/api/lookup/'.$ip );
         $res = json_decode($res); */
+        $res = null;
 
         $cityName = $res->city ?? "Indore";
         $stateName = $res->subdivision ?? 'Indore';
