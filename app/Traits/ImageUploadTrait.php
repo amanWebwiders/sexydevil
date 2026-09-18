@@ -22,15 +22,17 @@ trait ImageUploadTrait {
     public function uploadImage($image, $path)
     {
         try {
+            // Increase memory limit for image processing to prevent exhaustion
+            ini_set('memory_limit', '512M');
             $ext = strtolower($image->getClientOriginalExtension());
             $name = time() . rand(99,1000) . '.' . $ext;
             if ($path == "user_videos") {
                 $imageData = $image->storeAs($path, $name, 'public');                
             } else {
                 $img = Image::read($image->getRealPath());
-                // Scale down ultra-large camera photos to prevent memory spikes
-                if ($img->width() > 2500) {
-                    $img->scaleDown(width: 2500);
+                // Scale down large photos to prevent memory spikes
+                if ($img->width() > 1800) {
+                    $img->scaleDown(width: 1800);
                 }
                 $watermarkPath = public_path('watermark.png');
                 if (file_exists($watermarkPath)) {
@@ -50,6 +52,8 @@ trait ImageUploadTrait {
 
     public function uploadWatermarkImage($image, $path) {
         try {
+            // Increase memory limit for image processing to prevent exhaustion
+            ini_set('memory_limit', '512M');
             $ext = strtolower($image->getClientOriginalExtension());
             $name = time() . rand(99,1000) . '.' . $ext;
             $original = time() . rand(1001,9999) . '.' . $ext;
@@ -59,8 +63,8 @@ trait ImageUploadTrait {
                 $orignal = $imageData;
             } else {
                 $img = Image::read($image->getRealPath());
-                if ($img->width() > 2500) {
-                    $img->scaleDown(width: 2500);
+                if ($img->width() > 1800) {
+                    $img->scaleDown(width: 1800);
                 }
                 $watermarkPath = public_path('watermark.png');
                 if (file_exists($watermarkPath)) {
