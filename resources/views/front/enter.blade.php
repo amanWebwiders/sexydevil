@@ -6,6 +6,9 @@
         <div class="main-row">
             <div class="search-area">
                 <form method="get" action="{{ route('home.worldwide') }}" id="searchForm">
+                <h1 class="main-title text-center mb-4" style="font-size: 28px; font-weight: 700; color: #fff;">
+                    Sexy Devil Escorts
+                </h1>
                 <label for="search">WHERE DO YOU WANT TO HAVE FUN?</label>
 
                 <div class="search-field">                    

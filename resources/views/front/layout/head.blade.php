@@ -4,7 +4,7 @@
 <head>
 @php
     $seoObj = $locationSeoContent['data'] ?? $locationSeo['data'] ?? null;
-    $metaTitle = !empty($seoObj->meta_title) ? $seoObj->meta_title : ($pageTitle ?? env('APP_NAME', 'SexyDevil'));
+    $metaTitle = !empty($seoObj->meta_title) ? $seoObj->meta_title : ($pageTitle ?? env('APP_NAME', 'Sexy Devil Escorts | Global Directory & VIP Companions'));
     $metaDescription = !empty($seoObj->meta_description) ? $seoObj->meta_description : '';
     $seoImageAlt = !empty($seoObj->image_alt_text) ? $seoObj->image_alt_text : env('APP_NAME', 'SexyDevil Escorts');
     
