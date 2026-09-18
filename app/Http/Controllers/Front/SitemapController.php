@@ -115,7 +115,8 @@ class SitemapController extends Controller
             // Deduplicate URLs based on 'loc' key
             $uniqueUrls = collect($urls)->unique('loc')->values()->all();
 
-            return response()->view('front.sitemap', ['urls' => $uniqueUrls], 200)
+            $content = view('front.sitemap', ['urls' => $uniqueUrls])->render();
+            return response($content, 200)
                 ->header('Content-Type', 'text/xml');
 
         } catch (\Exception $e) {
