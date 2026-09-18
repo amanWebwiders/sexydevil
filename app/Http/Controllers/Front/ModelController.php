@@ -59,7 +59,7 @@ class ModelController extends Controller
             $filters['search_term'] = $request->name;
         }
         $all_request = $request->all();
-        if ($request->filled('country_id')) {
+        if ($request->filled('country_id') && $request->country_id !== 'worldwide') {
             $filters['users.country_id'] = $request->country_id;
             $country = $this->countryRepository->getSingleRecordWhere(["id" => $request->country_id]);
             $locationSeoCity = (int)$request->country_id;
@@ -372,7 +372,7 @@ class ModelController extends Controller
             $filters['search_term'] = $request->name;
         }
 
-        if ($request->filled('country_id')) {
+        if ($request->filled('country_id') && $request->country_id !== 'worldwide') {
             $filters['country_id'] = $request->country_id;
 
             $now = Carbon::now(config('app.timezone'));   
@@ -625,7 +625,7 @@ class ModelController extends Controller
             $filters['search_term'] = $request->name;
         }
 
-        if ($request->filled('country_id')) {
+        if ($request->filled('country_id') && $request->country_id !== 'worldwide') {
             $filters['country_id'] = $request->country_id;
         }
 
@@ -802,7 +802,7 @@ class ModelController extends Controller
             ->values()
             ->toArray();
         $locationSeoCity = (int)null;
-        if($request->has('country_id') && $request->country_id) {
+        if($request->has('country_id') && $request->country_id && $request->country_id !== 'worldwide') {
             $locationSeoCity = (int)$request->country_id;
         } else if($request->has('state_id') && $request->state_id) {
             $locationSeoCity = (int)$request->state_id;
@@ -841,7 +841,7 @@ class ModelController extends Controller
             $filters['search_term'] = $request->name;
         }
 
-        if ($request->filled('country_id')) {
+        if ($request->filled('country_id') && $request->country_id !== 'worldwide') {
             $filters['country_id'] = $request->country_id;
         }
 
@@ -1017,7 +1017,7 @@ class ModelController extends Controller
             ->toArray();
         // dd($results);
         $locationSeoCity = (int)null;
-        if($request->has('country_id') && $request->country_id) {
+        if($request->has('country_id') && $request->country_id && $request->country_id !== 'worldwide') {
             $locationSeoCity = (int)$request->country_id;
         } else if($request->has('state_id') && $request->state_id) {
             $locationSeoCity = (int)$request->state_id;
@@ -1054,7 +1054,7 @@ class ModelController extends Controller
             $filters['search_term'] = $request->name;
         }
 
-        if ($request->filled('country_id')) {
+        if ($request->filled('country_id') && $request->country_id !== 'worldwide') {
             $filters['country_id'] = $request->country_id;
         }
 
@@ -1229,7 +1229,7 @@ class ModelController extends Controller
             ->values()
             ->toArray();
         $locationSeoCity = (int)null;
-        if($request->has('country_id') && $request->country_id) {
+        if($request->has('country_id') && $request->country_id && $request->country_id !== 'worldwide') {
             $locationSeoCity = (int)$request->country_id;
         } else if($request->has('state_id') && $request->state_id) {
             $locationSeoCity = (int)$request->state_id;

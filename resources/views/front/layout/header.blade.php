@@ -95,7 +95,7 @@
                         <!-- Logo -->
                         <div class="logo-slogan ">
                             <div>
-                                <a href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}" class="logo">
+                                <a href="{{ route('landing') }}" class="logo">
                                     <img src="{{ asset('images/escort_logo1.png') }}" alt="img">
                                 </a>
                             </div>
@@ -127,7 +127,7 @@
                                     {{-- Not Logged In --}}
                                     @guest
                                         <ul class="nav main-nav align-items-center">
-                                            <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Home</a></li>
+                                            <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Rankings</a></li>
                                             <li class="{{ request()->routeIs('model.search*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">All Escorts</a></li>
                                             <li class="{{ request()->routeIs('new.escorts*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('new.escorts', ['city' => $city]) : route('new.escorts') }}">New Escorts</a></li>
                                             <li class="{{ request()->routeIs('reels*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('reels', ['city' => $city]) : route('reels') }}">Hot Stories</a></li>
@@ -159,7 +159,7 @@
                                         {{-- Full menu only if approved, verified and plan active (for type 2) --}}
                                         @if($user->user_status == 0 && $user->email_verified_at !== null && ($user->type == 1 || ($user->type == 2 && $user->plan_id && $user->admin_status == 'approved')))
                                             <ul class="nav main-nav align-items-center">
-                                                <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Home</a></li>
+                                                <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Rankings</a></li>
                                                 <li class="{{ request()->routeIs('model.search*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">All Escorts</a></li>
                                                 <li class="{{ request()->routeIs('new.escorts*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('new.escorts', ['city' => $city]) : route('new.escorts') }}">New Escorts</a></li>
                                                 <li class="{{ request()->routeIs('reels*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('reels', ['city' => $city]) : route('reels') }}">Hot Stories</a></li>

@@ -51,10 +51,11 @@
                 
                 <select id="filter_country" class="custom-select country-flag-select" name="country_id">
                     <option value="">Select Country</option>
+                    <option value="worldwide" {{ (request('country_id') == 'worldwide' || (!request('country_id') && empty($city))) ? 'selected' : '' }}>🌍 Worldwide (All Countries)</option>
                     
                     @foreach($country ?? [] as $countri)
                     <option value="{{ $countri['id'] }}" data-flag="{{ asset('images/flags/' . strtolower(emojiToCountryCode($countri['emoji'])) . '.svg') }}" 
-                    {{ (request('country_id') == $countri['id'] || (!request('country_id') && $countri['id'] == 48)) ? 'selected' : '' }}>
+                    {{ (request('country_id') == $countri['id'] || (!request('country_id') && !empty($city) && $countri['id'] == 48)) ? 'selected' : '' }}>
                         {{ $countri['country'] }} ({{ $countri['total_users'] }})
                     </option>
                     @endforeach
