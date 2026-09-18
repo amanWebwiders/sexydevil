@@ -161,7 +161,9 @@ class HomeController extends Controller
 
         $categories = EscortServiceCategory::with('services.selections')->get();
 
-        return view('front.index', compact('spotlightx', 'top3User', 'categories', 'top6User', 'devilYou', 'NewUser', 'allUsers', 'FreshSins', 'divineObessions', 'topRatedUsers', 'bestUsers', 'featuredUsers', 'city', 'favorite_users', 'locationSeo'));
+        $isWorldwide = empty($city);
+
+        return view('front.index', compact('spotlightx', 'top3User', 'categories', 'top6User', 'devilYou', 'NewUser', 'allUsers', 'FreshSins', 'divineObessions', 'topRatedUsers', 'bestUsers', 'featuredUsers', 'city', 'favorite_users', 'locationSeo', 'isWorldwide'));
     }
 
     public function aboutUs()
