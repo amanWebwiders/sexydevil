@@ -18,17 +18,36 @@
 
     RewriteEngine On
 
+    # Explicit route for dynamic sitemap to prevent 404 status code
+    RewriteRule ^sitemap\.xml$ public/index.php [L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Direct access to favicon, robots, and sitemaps from root
-    RewriteCond %{REQUEST_URI} ^/(favicon.*|apple-touch-icon.*|robots\.txt|sitemap.*\.xml)$ [NC]
-    RewriteRule ^ - [L]
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
 
-    # Route everything else safely to public folder
+    # 301 Redirect legacy /public/ favicon and icon requests to root
+    RewriteCond %{THE_REQUEST} \s/+public/(favicon[^\s\?]*|apple-touch-icon[^\s\?]*) [NC]
+    RewriteCond %{HTTP:X-Forwarded-Proto} =https [OR]
+    RewriteCond %{HTTPS} on
+    RewriteRule ^public/(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    RewriteCond %{THE_REQUEST} \s/+public/(favicon[^\s\?]*|apple-touch-icon[^\s\?]*) [NC]
+    RewriteRule ^public/(.*)$ /$1 [R=301,L]
+
+    # Serve static assets directly from public/ if requested from root
     RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
     RewriteRule ^(.*)$ public/$1 [L]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ public/index.php [L]
 </IfModule>
 
 <IfModule mod_mime.c>
