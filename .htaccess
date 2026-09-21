@@ -1,3 +1,5 @@
+DirectoryIndex public/index.php index.php
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -14,6 +16,9 @@
     Deny from all
 </Files>
     RewriteEngine On
+
+    # Route root URL directly to public/index.php to prevent 403 directory listing error
+    RewriteRule ^$ public/index.php [L]
 
     # Explicit route for dynamic sitemap to prevent 404 status code
     RewriteRule ^sitemap\.xml$ public/index.php [L]
