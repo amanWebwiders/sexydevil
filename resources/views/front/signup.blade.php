@@ -92,13 +92,13 @@
 
                             <div class="col-md-12 mb-3 px-0">
                                 <div class="form-group w-75 mx-auto mb-0">
-                                    <input type="password" class="form-control" placeholder="Password" name="password">
+                                    <input type="password" class="form-control" placeholder="Password" name="password" autocomplete="new-password">
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3 px-0">
                                 <div class="form-group w-75 mx-auto mb-0">
                                     <input type="password" class="form-control" placeholder="Confirm Password"
-                                        name="password_confirmation">
+                                        name="password_confirmation" autocomplete="new-password">
                                 </div>
                             </div>
 

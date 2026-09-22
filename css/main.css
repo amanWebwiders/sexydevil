@@ -20403,7 +20403,8 @@ a img.aligncenter {
 	}
 
 	.header_absolute .page_header.affix a.logo img {
-		height: 80px;
+		width: 170px;
+		height: auto;
 	}
 }
 
@@ -21934,7 +21935,7 @@ body.active-side-header.slide-right .page_header_side {
 
 .header_absolute .page_header.affix .container-fluid {
 	padding-bottom: 10px;
-	padding-top: 5px;
+	/* padding-top: 5px; */
 }
 
 .header_absolute .page_header.affix .header-phone>span:last-child,
@@ -27186,14 +27187,7 @@ ul.nav.nav-tabs {
 }
 
 button.select2-selection__clear {
-    padding: 0px;
-    color: #000;
-    order: 2;
+	padding: 0px;
+	color: #000;
+	order: 2;
 }
-
-
-
-
-
-
-
