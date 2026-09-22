@@ -2,16 +2,24 @@
 
 @section('content')
 <style>
-
-   
 .bg-top-element{
     display: none;
+}
+.radio-button-container {
+    width: 100%;
+}
+.radio-button {
+    width: 100%;
+    cursor: pointer;
+}
+.radio-button__label {
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
 }
 </style>
 
 <main class="login-container">
-
-
 
     <section class="login">
 
@@ -59,9 +67,20 @@
 </main>
 @endsection
 
+@push('js')
 <script>
+$(document).ready(function() {
+    $(document).on('click', '.radio-button', function (e) {
+        if (!$(e.target).is('input[type="radio"]')) {
+            var $input = $(this).find('input[type="radio"]');
+            if (!$input.is(':checked')) {
+                $input.prop('checked', true).trigger('change');
+            }
+        }
+    });
+});
+
 function handleRedirect() {
-    console.log('dsgfdhjsgfds');
     const selected = document.querySelector('input[name="user_type"]:checked');
     if (!selected) {
         alert('Please select an option.');
@@ -69,9 +88,10 @@ function handleRedirect() {
     }
 
     if (selected.value === 'member') {
-        window.location.href = "{{route('signup')}}"; // Update this URL as needed
+        window.location.href = "{{route('signup')}}";
     } else if (selected.value === 'advertiser') {
-        window.location.href = "{{route('user-signupadvertiser')}}"; // Update this URL as needed
+        window.location.href = "{{route('user-signupadvertiser')}}";
     }
 }
 </script>
+@endpush
