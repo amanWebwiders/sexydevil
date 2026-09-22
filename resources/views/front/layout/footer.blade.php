@@ -603,8 +603,6 @@ function denyConsent() {
             }
         });
 
-        console.log('jQuery version:', $.fn.jquery);
-
         // Country change
         $(document).on('change', '#filter_country', function() {
             var countryId = $(this).val();
@@ -1099,7 +1097,6 @@ function denyConsent() {
   }
     function translateFlag(lang) {
         var select = document.querySelector("select.goog-te-combo");
-        console.log("Translating to:", select);
         if (select) {
             select.value = lang;
             select.dispatchEvent(new Event("change"));
@@ -1159,7 +1156,6 @@ function denyConsent() {
 
         // Get current WhatsApp number from href
         let $waBtn = $('.profileWhatsApp');
-        console.log("ffff to:", $waBtn.length);
         if($waBtn.length == 0) {
             return;
         }
@@ -1247,5 +1243,6 @@ document.addEventListener('pause', function (e) {
 
    
 </script>
+@stack('js')
 </body>
 </html>

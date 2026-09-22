@@ -5,4 +5,3 @@
     @yield('content')
 
 @include('front.layout.footer')
-@stack('js')

@@ -62,16 +62,16 @@
                                     <input type="email" class="form-control" id="email" placeholder="Enter your email"
                                         name="email" required>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <!-- <label for="name">Password</label> -->
-                                    <input type="password" class="form-control" id="password"
-                                        placeholder="Enter your password" name="password" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <!-- <label for="password">Confirm Password</label> -->
-                                    <input type="password" class="form-control" id="password_confirmation" placeholder="Confirm Password"
-                                        name="password_confirmation" required>
-                                </div>
+                                 <div class="form-group col-md-6">
+                                     <!-- <label for="name">Password</label> -->
+                                     <input type="password" class="form-control" id="password"
+                                         placeholder="Enter your password" name="password" required autocomplete="new-password">
+                                 </div>
+                                 <div class="form-group col-md-6">
+                                     <!-- <label for="password">Confirm Password</label> -->
+                                     <input type="password" class="form-control" id="password_confirmation" placeholder="Confirm Password"
+                                         name="password_confirmation" required autocomplete="new-password">
+                                 </div>
 
                                 <div class="form-group flex-row col-md-12 phonefeild">
                                   
@@ -157,9 +157,9 @@
                             </div>
 
                             <div class=" text-center">
-                                <hr style="width: 60%; margin: 50px auto 30px; height: 1px; background: #fff;">
-                                <p class="mx-auto">Already have an account <a href="login.php">Login</a></p>
-                            </div>
+                                 <hr style="width: 60%; margin: 50px auto 30px; height: 1px; background: #fff;">
+                                 <p class="mx-auto">Already have an account <a href="{{ route('user-login') }}">Login</a></p>
+                             </div>
                         </div>
                     </form>
                 </div>
