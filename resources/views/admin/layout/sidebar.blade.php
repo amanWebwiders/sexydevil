@@ -1,74 +1,128 @@
 <style>
-	.dropdown-menu-toggle.show .menu-icon{
-    width: 1.25rem;
-    height: 1.25rem;
-    margin: -.25rem 0;
-    position: relative;
-    display: flex
-;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-    opacity: 1;
-    margin-right: 1rem;
-	
+	/* Sidebar scrollbar & container fix: smooth scroll without ugly native scrollbars */
+	.app-sidebar .app-sidebar-content {
+		overflow-y: auto !important;
+		overflow-x: hidden !important;
+		scrollbar-width: none !important;
+		-ms-overflow-style: none !important;
+	}
+	.app-sidebar .app-sidebar-content::-webkit-scrollbar {
+		display: none !important;
+		width: 0 !important;
+		height: 0 !important;
 	}
 
-		.dropdown-menu-toggle.show .menu-icon i{
-			color: #fff !important;
-		}
-
-
-	
-.dropdown-menu-toggle.show {
-	font-weight: 600;
-	color: #fff !important;
-    background: #bc1212 !important;
-    border-color: #bc1212 !important;
-    text-decoration: none;
-    position: relative;
-    padding: .5rem 1.25rem;
-    line-height: 1.45;
-    border-radius: 0 1.25rem 1.25rem 0;
-    color: var(--bs-app-sidebar-color);
-    display: flex;
-    align-items: center;
-    /* justify-content: flex-end; */
-}
-.dropdown-menu-toggle .menu-icon{
-    width: 1.25rem;
-    height: 1.25rem;
-    margin: -.25rem 0;
-    position: relative;
-    display: flex
-;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-    opacity: 0.25;
-    margin-right: 1rem;
-	
-	}
-
-.dropdown-menu-toggle:hover{
-	    background: var(--bs-app-sidebar-link-hover-bg);
+	.dropdown-menu-toggle {
 		text-decoration: none !important;
-		color: #111;
-}
+		position: relative !important;
+		padding: .5rem 1rem .5rem 1.25rem !important;
+		line-height: 1.45 !important;
+		border-radius: 0 1.25rem 1.25rem 0 !important;
+		color: var(--bs-app-sidebar-color) !important;
+		display: flex !important;
+		align-items: center !important;
+		font-size: .8125rem !important;
+		transition: all .2s ease-in-out;
+	}
 
-.dropdown-menu-toggle
-   {
-	 text-decoration: none;
-    position: relative;
-    padding: .5rem 1.25rem;
-    line-height: 1.45;
-    border-radius: 0 1.25rem 1.25rem 0;
-    color: var(--bs-app-sidebar-color);
-    display: flex
-;
-    align-items: center;
-   
-   }
+	.dropdown-menu-toggle::after {
+		display: none !important;
+	}
+
+	.dropdown-menu-toggle .menu-icon {
+		width: 1.25rem !important;
+		height: 1.25rem !important;
+		margin: -.25rem 0 !important;
+		position: relative !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		font-size: 1.05rem !important;
+		/* opacity: 0.25 !important; */
+		margin-right: 0.75rem !important;
+		flex-shrink: 0 !important;
+	}
+
+	.dropdown-menu-toggle .menu-text {
+		flex: 1 1 auto !important;
+		white-space: nowrap !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+		font-size: .8125rem !important;
+		color: var(--bs-app-sidebar-color) !important;
+	}
+
+	.dropdown-menu-toggle .menu-caret {
+		margin-left: auto !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		font-size: 0.65rem !important;
+		opacity: 0.5 !important;
+		transition: transform 0.2s ease, opacity 0.2s ease !important;
+		flex-shrink: 0 !important;
+		padding-left: 0.5rem !important;
+	}
+
+	.dropdown-menu-toggle:hover {
+		background: var(--bs-app-sidebar-link-hover-bg) !important;
+		text-decoration: none !important;
+		color: #111 !important;
+	}
+
+	.dropdown-menu-toggle.show {
+		font-weight: 600 !important;
+		color: #fff !important;
+		background: #bc1212 !important;
+		border-color: #bc1212 !important;
+		border-radius: 0 1.25rem 1.25rem 0 !important;
+		display: flex !important;
+		align-items: center !important;
+	}
+
+	.dropdown-menu-toggle.show .menu-icon i,
+	.dropdown-menu-toggle.show .menu-text,
+	.dropdown-menu-toggle.show .menu-caret {
+		color: #fff !important;
+		opacity: 1 !important;
+	}
+
+	.dropdown-menu-toggle.show .menu-caret {
+		transform: rotate(180deg) !important;
+	}
+
+	/* Sidebar dropdown inline accordion styling */
+	.app-sidebar .dropdown-menu {
+		position: static !important;
+		transform: none !important;
+		float: none !important;
+		width: 100% !important;
+		background: transparent !important;
+		border: none !important;
+		box-shadow: none !important;
+		padding: 0.25rem 0 0.5rem 2.5rem !important;
+		margin: 0 !important;
+	}
+
+	.app-sidebar .dropdown-menu .dropdown-item {
+		padding: 0.35rem 0.75rem !important;
+		color: var(--bs-app-sidebar-color, #333) !important;
+		font-size: 0.85rem !important;
+		font-weight: 500 !important;
+		border-radius: 0 1rem 1rem 0 !important;
+		transition: all 0.2s ease;
+	}
+
+	.app-sidebar .dropdown-menu .dropdown-item:hover,
+	.app-sidebar .dropdown-menu .dropdown-item:focus {
+		background: var(--bs-app-sidebar-link-hover-bg, rgba(0,0,0,0.05)) !important;
+		color: #bc1212 !important;
+	}
+
+	.app-sidebar .dropdown-menu .dropdown-item.active {
+		background: #bc1212 !important;
+		color: #fff !important;
+	}
 </style>
 <div class="overlay_menu"></div>
 <div id="sidebar" class="app-sidebar">
@@ -110,7 +164,7 @@
 					<a class="dropdown-item d-flex align-items-center" href=" "><i class="fa fa-arrow-right-from-bracket fa-fw fa-lg me-3"></i> Logout</a>
 				</div>
 			</div>
-			<div class="menu-header"><span>Navigation</span><label class="mobile_menuw"><i class="fa fa-times-circle" aria-hidden="true"></i></label> </div>
+			<div class="menu-header"><span>Navigation</span><label class="mobile_menuw" role="button" title="Close"><i class="fa fa-times-circle" aria-hidden="true"></i></label> </div>
 			<div class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
 				<a href="{{route('admin.dashboard')}}" class="menu-link">
 					<span class="menu-icon"><i class="fa fa-qrcode"></i></span>
@@ -131,28 +185,33 @@
 				</a>
 			</div>
 			<div class="menu-item">
-			<div class="dropdown ">
-				<a class=" dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown">
-					<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>
-					User Management
-				</a>
+				<div class="dropdown ">
+					<a class="dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
+						<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>
+						<span class="menu-text">User Management</span>
+						<span class="menu-caret"><i class="fa fa-chevron-down"></i></span>
+					</a>
 
-				<ul class="dropdown-menu">
-					<li><a class="dropdown-item" href="{{route('admin.incoming.advertiser')}}">Incoming Advertiser List</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.advertiser')}}">Approved Advertiser List</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.user')}}">Client List</a></li>
-				</ul>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="{{route('admin.incoming.advertiser')}}">Incoming Advertiser List</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.advertiser')}}">Approved Advertiser List</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.user')}}">Client List</a></li>
+					</ul>
+				</div>
 			</div>
-			<div class="dropdown ">
-				<a class=" dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown">
-					<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>
-					Translation history 
-				</a>
+			<div class="menu-item">
+				<div class="dropdown ">
+					<a class="dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
+						<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>
+						<span class="menu-text">Translation history</span>
+						<span class="menu-caret"><i class="fa fa-chevron-down"></i></span>
+					</a>
 
-				<ul class="dropdown-menu">
-					<li><a class="dropdown-item" href="{{route('admin.transaction-history')}}">Subscribtion history</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.boost-transaction-history')}}">Boost purachse history</a></li>
-				</ul>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="{{route('admin.transaction-history')}}">Subscribtion history</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.boost-transaction-history')}}">Boost purachse history</a></li>
+					</ul>
+				</div>
 			</div>
 			<div class="menu-item {{ request()->routeIs('admin.agencies.index') ? 'active' : '' }}">
 				<a href="{{route('admin.agencies.index')}}" class="menu-link">
@@ -172,15 +231,19 @@
 					<span class="menu-text">Manually Boost request</span>
 				</a>
 			</div>
-			<div class="dropdown ">
-				<a class=" dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown">
-					<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>Image/Video Verification
-				</a>
+			<div class="menu-item">
+				<div class="dropdown ">
+					<a class="dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
+						<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>
+						<span class="menu-text">Image/Video Verification</span>
+						<span class="menu-caret"><i class="fa fa-chevron-down"></i></span>
+					</a>
 
-				<ul class="dropdown-menu">
-					<li><a class="dropdown-item" href="{{route('admin.image-approval')}}">Image</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.video-approval')}}">Video</a></li>
-				</ul>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="{{route('admin.image-approval')}}">Image</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.video-approval')}}">Video</a></li>
+					</ul>
+				</div>
 			</div>
 			<div class="menu-item {{ request()->routeIs('admin.hot-stories.*') ? 'active' : '' }}">
 				<a href="{{route('admin.hot-stories.index')}}" class="menu-link">
@@ -188,18 +251,22 @@
 					<span class="menu-text">Hot Stories</span>
 				</a>
 			</div>
-			<div class="dropdown ">
-				<a class=" dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown">
-					<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>Settings
-				</a>
+			<div class="menu-item">
+				<div class="dropdown ">
+					<a class="dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
+						<span class="menu-icon"><i class="fa-brands fa-wpforms"></i></span>
+						<span class="menu-text">Settings</span>
+						<span class="menu-caret"><i class="fa fa-chevron-down"></i></span>
+					</a>
 
-				<ul class="dropdown-menu">
-					<li><a class="dropdown-item" href="{{route('admin.terms-conditions')}}">Terms & Conditions</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.privacy-policy')}}">Privacy Policy</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.contact-page-content')}}">Content Page</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.location-seo-content')}}">Location SEO Content</a></li>
-					<li><a class="dropdown-item" href="{{route('admin.faqs.index')}}">FAQ Management</a></li>
-				</ul>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" href="{{route('admin.terms-conditions')}}">Terms & Conditions</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.privacy-policy')}}">Privacy Policy</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.contact-page-content')}}">Content Page</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.location-seo-content')}}">Location SEO Content</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.faqs.index')}}">FAQ Management</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 

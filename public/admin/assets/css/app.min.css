@@ -26368,7 +26368,7 @@ body:not(.app-init) * {
 
 .app-header .brand .brand-logo img {
     max-width: 100%;
-    height: 90px;
+    /* height: 90px; */
 }
 
 .app-header .menu {
@@ -26521,7 +26521,8 @@ body:not(.app-init) * {
     bottom: 0;
     z-index: 1010;
     padding: 0;
-    left: 0
+    left: 0;
+    border-right: 1px solid #80808040;
 }
 
 @media (max-width:767.98px) {
@@ -26596,7 +26597,8 @@ body:not(.app-init) * {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    transition: all .2s ease-in-out
+    transition: all .2s ease-in-out;
+    font-size: 14px;
 }
 
 .app-sidebar .app-sidebar-content .menu .menu-item .menu-link .menu-icon {
@@ -26608,7 +26610,7 @@ body:not(.app-init) * {
     align-items: center;
     justify-content: center;
     font-size: 1.05rem;
-    opacity: .25;
+    opacity: 1 !important;
     margin-right: 1rem
 }
 
@@ -29439,7 +29441,7 @@ body .typeahead__container .typeahead__result .typeahead__list .typeahead__item.
 .pace .pace-progress {
     position: fixed;
     z-index: 2000;
-    top: 3.4375rem;
+    top: 5.4375rem;
     width: 100%;
     height: .1875rem;
     background: var(--bs-theme);
@@ -29461,7 +29463,7 @@ body .typeahead__container .typeahead__result .typeahead__list .typeahead__item.
 }
 
 .pace .pace-activity {
-    display: block;
+    display: none;
     position: fixed;
     z-index: 2000;
     top: 4.5rem;
@@ -33507,7 +33509,7 @@ td {
 
 .btn-maincolor:hover {
     transform: translateY(-2px);
-        opacity: 1 !important;
+    opacity: 1 !important;
     color: white !important;
 }
 
@@ -33562,4 +33564,82 @@ td {
     font-size: 12px;
     font-weight: 600;
     z-index: 1;
+}
+
+
+/* Table ko checkbox ki ID se target karein (Bina HTML badle) */
+table:has(#selectAllStories) {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+/* 1. Sare TD aur TH ki padding, vertical alignment aur text cleanup */
+table:has(#selectAllStories) th,
+table:has(#selectAllStories) td {
+    padding: 12px 14px !important;
+    vertical-align: middle !important;
+    white-space: nowrap;
+    /* Data ek line me clean dikhane ke liye */
+}
+
+/* Caption wale column ko auto-wrap aur limit karein taaki table break na ho */
+table:has(#selectAllStories) td:nth-child(5) {
+    white-space: normal !important;
+    max-width: 220px;
+    line-height: 1.4;
+}
+
+/* 2. Checkbox aur uske cell (TD/TH) ko bilkul center aur perfect size me lana */
+table:has(#selectAllStories) th:first-child,
+table:has(#selectAllStories) td:first-child {
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    text-align: center !important;
+    padding-left: 10px !important;
+    padding-right: 0 !important;
+}
+
+/* Checkbox ka design, sizing aur alignment */
+table:has(#selectAllStories) input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 auto !important;
+    display: block !important;
+    cursor: pointer !important;
+    vertical-align: middle !important;
+}
+
+/* 3. Media thumbnail box ka size aur play badge alignment */
+table:has(#selectAllStories) .story-thumb-box {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+table:has(#selectAllStories) .story-thumb-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+table:has(#selectAllStories) .play-badge {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    font-size: 11px;
+}
+
+table:has(#selectAllStories) .form-check-input {
+    position: static;
 }
