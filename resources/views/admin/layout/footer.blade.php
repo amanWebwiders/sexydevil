@@ -43,12 +43,17 @@
 }
 .mobile_menuw{
 	display:none;		
+	cursor: pointer;
 }
-@media (min-width:100px) and (max-width:767px){
+@media (max-width:767.98px){
 .mobile_menuw{
 	display:block;	
 	font-size:24px;
 	z-index: 999999;
+	cursor: pointer;
+}
+.mobile_menuw i{
+	cursor: pointer;
 }
 .menu-header {
 	display: flex;
@@ -71,20 +76,34 @@
 }
 </style>
 <script>
+function closeMobileSidebar() {
+	var app = document.querySelector(".app") || document.getElementById("app");
+	var sidebar = document.querySelector(".app-sidebar") || document.getElementById("sidebar");
+	var overlay = document.querySelector(".overlay_menu");
+	if (app) app.classList.remove("app-sidebar-mobile-toggled");
+	if (sidebar) sidebar.classList.remove("show-left");
+	if (overlay) overlay.classList.remove("showover");
+}
+
+document.addEventListener("click", function(e) {
+	if (e.target.closest(".mobile_menuw") || e.target.closest(".overlay_menu") || e.target.closest(".app-sidebar-mobile-backdrop")) {
+		closeMobileSidebar();
+	}
+});
+
 $(document).ready(function(){
 	$(".menu-toggler").click(function(){
 		$(".app-sidebar").toggleClass("show-left");
 		$(".overlay_menu").toggleClass("showover");
 	});
-	$(".mobile_menuw").click(function(){
-		$(".app-sidebar").removeClass("show-left");
-		$(".overlay_menu").removeClass("showover");
+	$(document).on("click", ".mobile_menuw", function(e){
+		e.preventDefault();
+		closeMobileSidebar();
 	});
-	$(".overlay_menu").click(function(){
-		$(".app-sidebar").removeClass("show-left"); 
-		$(".overlay_menu").removeClass("showover");
+	$(document).on("click", ".overlay_menu, .app-sidebar-mobile-backdrop", function(e){
+		e.preventDefault();
+		closeMobileSidebar();
 	});
-	
 });
 </script>
 
