@@ -29,7 +29,8 @@ class SitemapController extends Controller
 
             // 2. Static Pages
             $staticPages = [
-                ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d'), 'title' => 'Home'],
+                ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d'), 'title' => 'Entry Page'],
+                ['loc' => url('/home'), 'priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d'), 'title' => 'Home'],
                 ['loc' => url('/about-us'), 'priority' => '0.8', 'changefreq' => 'monthly', 'lastmod' => now()->format('Y-m-d'), 'title' => 'About Us'],
                 ['loc' => url('/contact-us'), 'priority' => '0.8', 'changefreq' => 'monthly', 'lastmod' => now()->format('Y-m-d'), 'title' => 'Contact Us'],
                 ['loc' => url('/terms-condition'), 'priority' => '0.8', 'changefreq' => 'monthly', 'lastmod' => now()->format('Y-m-d'), 'title' => 'Terms & Conditions'],

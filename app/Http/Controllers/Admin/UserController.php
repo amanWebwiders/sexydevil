@@ -562,7 +562,7 @@ class UserController extends Controller
                 $userDetails = $this->userRepository->getOne(['id' => $id]);
                 // dd($userDetails);
                 Mail::to($userDetails->email)->send(new AcceptbyAdminMail($userDetails));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Log::error("UserAdminController : mail() " . $e->getLine() . " " . $e->getMessage());
             }
 
@@ -573,7 +573,7 @@ class UserController extends Controller
             } else {
                 return response()->json(['status' => false], 500);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("UserAdminController : accept() " . $e->getLine() . " " . $e->getMessage());
             return response()->json(['status' => false, 'message' => __('message.something_went_wrong')], 500);
         }
@@ -586,7 +586,7 @@ class UserController extends Controller
                 $userDetails = $this->userRepository->getOne(['id' => $id]);
                 $userDetails['message'] = $request->reason;
                 Mail::to($userDetails->email)->send(new RejectbyAdminMail($userDetails));
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Log::error("UserAdminController : mail() " . $e->getLine() . " " . $e->getMessage());
             }
             $success = $this->userRepository->delete(['id' => $id]);
@@ -595,7 +595,7 @@ class UserController extends Controller
             } else {
                 return response()->json(['status' => false], 500);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("UserAdminController : reject() " . $e->getLine() . " " . $e->getMessage());
             return response()->json(['status' => false, 'message' => __('message.something_went_wrong')], 500);
         }

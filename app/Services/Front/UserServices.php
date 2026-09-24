@@ -798,10 +798,8 @@ class UserServices
 
             // 4. Fallback to Worldwide / Global Page SEO
             if (!$run) {
-                $titles = [$pageType];
-                if (in_array(strtolower($pageType), ['home', 'entry page'])) {
-                    $titles = ['Home', 'Entry Page', 'home', 'entry page'];
-                }
+                // Strictly match the requested page title without merging Home and Entry Page
+                $titles = array_values(array_unique([$pageType, ucfirst($pageType), strtolower($pageType)]));
 
                 $run = \App\Models\LocationSeoContent::whereIn('title', $titles)
                     ->where(function($q) {

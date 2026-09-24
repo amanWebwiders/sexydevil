@@ -113,7 +113,12 @@ class UserAuthController extends Controller
             ];
 
             //$run2 =  Mail::to('shivania.webwiders@gmail.com')->send(new \App\Mail\DemoMail($mailData));
-            $run3 =  Mail::to($user->email)->send(new \App\Mail\DemoMail($mailData));
+            try {
+                $run3 = Mail::to($user->email)->send(new \App\Mail\DemoMail($mailData));
+            } catch (\Exception $e) {
+                Log::error("resendVerification Mail Error: " . $e->getMessage());
+                return response()->json(['status' => 0, 'message' => 'Failed to send verification email. Please try again later.']);
+            }
         }
 
         return response()->json(['status' => 1, 'message' => 'Verification email resent successfully!']);
