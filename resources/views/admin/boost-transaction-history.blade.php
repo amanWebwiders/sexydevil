@@ -16,7 +16,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="">
-                <h3 class="">Boost Purachse History</h3>
+                <h3 class="">Boost Purchase History</h3>
             </div>
             <div class="row">
                 <div class="col-12 mt-3">

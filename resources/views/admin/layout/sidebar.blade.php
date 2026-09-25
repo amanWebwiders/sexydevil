@@ -209,7 +209,7 @@
 
 					<ul class="dropdown-menu">
 						<li><a class="dropdown-item" href="{{route('admin.transaction-history')}}">Subscribtion history</a></li>
-						<li><a class="dropdown-item" href="{{route('admin.boost-transaction-history')}}">Boost purachse history</a></li>
+						<li><a class="dropdown-item" href="{{route('admin.boost-transaction-history')}}">Boost purchase history</a></li>
 					</ul>
 				</div>
 			</div>
