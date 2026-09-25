@@ -71,9 +71,6 @@ class HomeController extends Controller
             session()->forget('selected_location');
         }
         $locationSeo = $this->userServices->getLocationSeoContent($city, "Home");
-        if (empty($locationSeo['data'])) {
-            $locationSeo = $this->userServices->getLocationSeoContent($city, "Entry Page");
-        }
         $topRatedUsers = $this->userRepository->getTopRatedUsers($city);
 
         $bestUsers = []; //$this->userRepository->getBestUsers();
@@ -289,7 +286,7 @@ class HomeController extends Controller
                     ]);
                 }
 
-                if ($user->type == 2 && $user->admin_status = 'pending') {
+                if ($user->type == 2 && $user->admin_status == 'pending') {
                     return response()->json([
                         'status' => 2,
                         'redirect_url' => route('user.waiting'),
@@ -454,10 +451,7 @@ class HomeController extends Controller
         $Mystate = $this->stateRepository->getAllRecordWhere(["name" => $cityCountry["state"] ?? 1 ], ["id", "name", 'country_id'], 1);
         $MyCity = $this->cityRepository->getAllRecordWhere(["state_id" => $Mystate[0]->id ?? 1], ["id", "name"], 6);
         $allCountry = $this->countryRepository->getCountryWithUserCount([]);
-        $locationSeo = $this->userServices->getLocationSeoContent("home", "Entry Page");
-        if (empty($locationSeo['data'])) {
-            $locationSeo = $this->userServices->getLocationSeoContent("home", "Home");
-        }
+        $locationSeo = $this->userServices->getLocationSeoContent(null, "Entry Page");
 
         //dd($allCountry); 
                     /* $allCountry->map(function ($country) {
