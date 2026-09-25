@@ -97,6 +97,7 @@
                         <div class="form-group">
                             <label for="canonical_url">Canonical URL</label>
                             <input type="text" class="form-control" name="canonical_url" id="canonical_url" placeholder="Canonical URL">
+                            <small id="canonical_url_hint" class="form-text text-muted" style="font-size: 11px;"></small>
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
@@ -257,7 +258,44 @@ function AddSeoContent() {
     });
     return false;
 }
+function updateCanonicalHint(title) {
+    var baseUrl = "{{ url('/') }}";
+    var hint = "";
+    if (title === "Entry Page") {
+        hint = baseUrl + " (Root Landing Page)";
+    } else if (title === "Home") {
+        hint = baseUrl + "/home (Rankings / Worldwide Home)";
+    } else if (title === "All Escorts") {
+        hint = baseUrl + "/model-search";
+    } else if (title === "New Escorts") {
+        hint = baseUrl + "/new-escorts";
+    } else if (title === "Active Escorts") {
+        hint = baseUrl + "/active-escorts";
+    } else if (title === "Lowcost Escorts") {
+        hint = baseUrl + "/lowcost-escorts";
+    } else if (title === "Recommend Escorts") {
+        hint = baseUrl + "/recommend-escorts";
+    } else if (title === "Hot Stories") {
+        hint = baseUrl + "/reels";
+    } else if (title === "About Us") {
+        hint = baseUrl + "/about-us";
+    } else if (title === "Contact Us") {
+        hint = baseUrl + "/contact-us";
+    } else if (title === "Terms & Conditions") {
+        hint = baseUrl + "/terms-condition";
+    }
+    
+    if (hint) {
+        $('#canonical_url_hint').html('<i class="fa fa-info-circle text-info"></i> Recommended: <code>' + hint + '</code>');
+        $('#canonical_url').attr('placeholder', hint.split(' ')[0]);
+    } else {
+        $('#canonical_url_hint').text('');
+        $('#canonical_url').attr('placeholder', 'Canonical URL');
+    }
+}
+
 $(document).on('change', '#country, #title, #state, #city', function() {
+    updateCanonicalHint($('#title').val());
     $.ajax({
         url: "{{ route('admin.get-location-seo-content') }}",
         type:"post",
