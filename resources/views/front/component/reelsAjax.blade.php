@@ -44,6 +44,10 @@
               <div class="play-btn">
                 <i class="fa fa-play"></i>
               </div>
+              <!-- Mute/Unmute Button -->
+              <button class="mute-toggle-btn" title="Toggle Sound" onclick="toggleMute(this)">
+                <i class="fas fa-volume-mute"></i>
+              </button>
             </div>
           @else
             <div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">
