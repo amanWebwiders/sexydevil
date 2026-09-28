@@ -678,28 +678,31 @@
     // User can toggle; state persists across reels
     var globalMuted = true;
 
-    function toggleMute(btn) {
+    function toggleMute(btn, event) {
+      // Stop click from bubbling to .video-wrapper (which plays/pauses)
+      if (event) event.stopPropagation();
+
       globalMuted = !globalMuted;
       var icon = btn.querySelector('i');
 
-      // Update icon
+      // Update icon on this button
       if (globalMuted) {
         icon.className = 'fas fa-volume-mute';
       } else {
         icon.className = 'fas fa-volume-up';
       }
 
-      // Apply to the video in this wrapper
+      // Apply mute to the video in THIS wrapper
       var video = btn.closest('.video-wrapper').querySelector('video');
       if (video) {
         video.muted = globalMuted;
       }
 
-      // Sync all other currently visible mute buttons
+      // Sync ALL mute button icons across all reels
       document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
         ic.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
       });
-      // Sync all videos
+      // Sync ALL videos mute state
       document.querySelectorAll('.active-media-box video').forEach(function(v) {
         v.muted = globalMuted;
       });
@@ -1190,7 +1193,8 @@
 
     // Toggle video play / pause on click
     $(document).on('click', '.video-wrapper', function (e) {
-      if ($(e.target).closest('.action-icons, .profile-overlay').length) return;
+      // Exclude: action icons, profile overlay, AND mute button
+      if ($(e.target).closest('.action-icons, .profile-overlay, .mute-toggle-btn').length) return;
       var video = $(this).find('video')[0];
       var playBtn = $(this).find('.play-btn');
       if (video) {
