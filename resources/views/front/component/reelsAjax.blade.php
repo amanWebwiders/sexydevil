@@ -38,14 +38,14 @@
         <div class="active-media-box w-100 h-100 position-relative">
           @if($isVideo)
             <div class="video-wrapper position-relative w-100 h-100">
-              <video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="{{ $posterUrl }}" playsinline loop muted preload="none" data-src="{{ $mediaUrl }}">
+              <video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="{{ $posterUrl }}" playsinline loop muted data-src="{{ $mediaUrl }}">
                 <source data-src="{{ $mediaUrl }}" type="video/mp4">
               </video>
               <div class="play-btn">
                 <i class="fa fa-play"></i>
               </div>
               <!-- Mute/Unmute Button -->
-              <button class="mute-toggle-btn" title="Toggle Sound">
+              <button class="mute-toggle-btn" type="button" title="Toggle Sound" aria-label="Toggle Sound">
                 <i class="fas fa-volume-mute"></i>
               </button>
             </div>
