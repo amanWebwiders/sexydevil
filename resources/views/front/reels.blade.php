@@ -1090,7 +1090,7 @@
       if (isVideo) {
         $mediaBox.html(
           '<div class="video-wrapper position-relative w-100 h-100">' +
-            '<video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="' + posterUrl + '" playsinline loop autoplay>' +
+            '<video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="' + posterUrl + '" playsinline loop muted autoplay>' +
               '<source src="' + mediaUrl + '" type="video/mp4">' +
             '</video>' +
             '<div class="play-btn d-none"><i class="fa fa-play"></i></div>' +
@@ -1100,6 +1100,7 @@
         if (vid) {
           vid.play().catch(function(){});
         }
+
       } else {
         $mediaBox.html(
           '<div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">' +
@@ -1153,20 +1154,46 @@
       if (videoObserver) {
         videoObserver.disconnect();
       }
+
+      var reelsCard = document.querySelector('.reels-card');
+
       videoObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          var video = entry.target.querySelector('.active-media-box video');
-          if (video) {
-            if (entry.isIntersecting) {
-              video.play().catch(function(){});
-              var playBtn = entry.target.querySelector('.active-media-box .play-btn');
-              if (playBtn) playBtn.classList.add('d-none');
-            } else {
-              video.pause();
+          var section = entry.target;
+          var video = section.querySelector('.active-media-box video');
+          if (!video) return;
+
+          if (entry.isIntersecting) {
+            // Lazy-load src if not yet set
+            var dataSrc = video.getAttribute('data-src');
+            if (dataSrc && !video.getAttribute('src')) {
+              video.src = dataSrc;
+              var source = video.querySelector('source[data-src]');
+              if (source) {
+                source.src = source.getAttribute('data-src');
+              }
+              video.load();
             }
+            // Play the video
+            var playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(function () {
+                // Autoplay blocked — show play button
+                var playBtn = section.querySelector('.active-media-box .play-btn');
+                if (playBtn) playBtn.classList.remove('d-none');
+              });
+            }
+            // Hide play button when playing
+            var playBtn = section.querySelector('.active-media-box .play-btn');
+            if (playBtn) playBtn.classList.add('d-none');
+          } else {
+            video.pause();
           }
         });
-      }, { threshold: 0.5 });
+      }, {
+        root: reelsCard,
+        threshold: 0.6
+      });
 
       document.querySelectorAll('.profile-section').forEach(function (sec) {
         videoObserver.observe(sec);
