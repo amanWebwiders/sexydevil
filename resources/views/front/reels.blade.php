@@ -1228,36 +1228,53 @@
             if (dataSrc && !video.getAttribute('src')) {
               video.src = dataSrc;
               var source = video.querySelector('source[data-src]');
-              if (source) {
-                source.src = source.getAttribute('data-src');
-              }
+              if (source) { source.src = source.getAttribute('data-src'); }
               video.load();
             }
+
             // Apply user's chosen mute state
             video.muted = globalMuted;
+
             // Sync mute button icon
             var muteIcon = section.querySelector('.mute-toggle-btn i');
             if (muteIcon) {
               muteIcon.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
             }
-            // Play the video
-            var playPromise = video.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(function () {
-                // Autoplay blocked — force muted and retry
-                video.muted = true;
-                globalMuted = true;
-                if (muteIcon) muteIcon.className = 'fas fa-volume-mute';
-                video.play().catch(function(){});
-                var playBtn = section.querySelector('.active-media-box .play-btn');
-                if (playBtn) playBtn.classList.remove('d-none');
-              });
-            }
+
             // Hide play button
             var playBtn = section.querySelector('.active-media-box .play-btn');
             if (playBtn) playBtn.classList.add('d-none');
+
+            // Play — store promise to handle pause() race condition
+            var playPromise = video.play();
+            video._playPromise = playPromise;
+
+            if (playPromise !== undefined) {
+              playPromise.then(function() {
+                video._playPromise = null;
+              }).catch(function (err) {
+                video._playPromise = null;
+                // AbortError = pause() raced with play() — safe to ignore
+                if (err.name === 'AbortError') return;
+                // NotAllowedError = autoplay blocked — force muted and retry
+                video.muted = true;
+                globalMuted = true;
+                if (muteIcon) muteIcon.className = 'fas fa-volume-mute';
+                document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
+                  ic.className = 'fas fa-volume-mute';
+                });
+                video.play().catch(function(){});
+              });
+            }
+
           } else {
-            video.pause();
+            // Pause safely — wait for any pending play() promise first
+            var pp = video._playPromise;
+            if (pp) {
+              pp.then(function() { video.pause(); }).catch(function(){ video.pause(); });
+            } else {
+              if (!video.paused) video.pause();
+            }
           }
         });
       }, {
