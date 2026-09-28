@@ -477,6 +477,32 @@
     justify-content: center;
 }
 
+/* Mute/Unmute toggle button — Instagram style */
+.mute-toggle-btn {
+    position: absolute;
+    bottom: 70px;
+    left: 15px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.55);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.mute-toggle-btn:hover {
+    background: rgba(0,0,0,0.8);
+}
+.mute-toggle-btn i {
+    color: #fff !important;
+    font-size: 16px !important;
+    margin-bottom: 0 !important;
+}
+
   </style>
 
 
@@ -647,6 +673,37 @@
 
   <script>
     const isLoggedIn = @json(Auth::check());
+
+    // Global mute state — starts muted (browser autoplay requirement)
+    // User can toggle; state persists across reels
+    var globalMuted = true;
+
+    function toggleMute(btn) {
+      globalMuted = !globalMuted;
+      var icon = btn.querySelector('i');
+
+      // Update icon
+      if (globalMuted) {
+        icon.className = 'fas fa-volume-mute';
+      } else {
+        icon.className = 'fas fa-volume-up';
+      }
+
+      // Apply to the video in this wrapper
+      var video = btn.closest('.video-wrapper').querySelector('video');
+      if (video) {
+        video.muted = globalMuted;
+      }
+
+      // Sync all other currently visible mute buttons
+      document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
+        ic.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+      });
+      // Sync all videos
+      document.querySelectorAll('.active-media-box video').forEach(function(v) {
+        v.muted = globalMuted;
+      });
+    }
 
     function shareReel(reelId) {
       const url = `${window.location.origin}${window.location.pathname}?reel_id=${reelId}`;
@@ -1174,16 +1231,27 @@
               }
               video.load();
             }
+            // Apply user's chosen mute state
+            video.muted = globalMuted;
+            // Sync mute button icon
+            var muteIcon = section.querySelector('.mute-toggle-btn i');
+            if (muteIcon) {
+              muteIcon.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+            }
             // Play the video
             var playPromise = video.play();
             if (playPromise !== undefined) {
               playPromise.catch(function () {
-                // Autoplay blocked — show play button
+                // Autoplay blocked — force muted and retry
+                video.muted = true;
+                globalMuted = true;
+                if (muteIcon) muteIcon.className = 'fas fa-volume-mute';
+                video.play().catch(function(){});
                 var playBtn = section.querySelector('.active-media-box .play-btn');
                 if (playBtn) playBtn.classList.remove('d-none');
               });
             }
-            // Hide play button when playing
+            // Hide play button
             var playBtn = section.querySelector('.active-media-box .play-btn');
             if (playBtn) playBtn.classList.add('d-none');
           } else {
