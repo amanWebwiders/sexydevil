@@ -482,25 +482,34 @@
     position: absolute;
     bottom: 70px;
     left: 15px;
-    z-index: 10;
-    background: rgba(0, 0, 0, 0.55);
+    z-index: 25;
+    background: rgba(0, 0, 0, 0.65);
     border: none;
     border-radius: 50%;
     width: 40px;
     height: 40px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto !important;
 }
 .mute-toggle-btn:hover {
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
+}
+.mute-toggle-btn:active {
+    transform: scale(0.92);
 }
 .mute-toggle-btn i {
     color: #fff !important;
     font-size: 16px !important;
-    margin-bottom: 0 !important;
+    margin: 0 !important;
+    pointer-events: none !important;
 }
 
   </style>
@@ -678,30 +687,51 @@
     // User can toggle; state persists across reels
     var globalMuted = true;
 
+    function applyMuteState(muted) {
+      globalMuted = muted;
+      var iconClass = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+
+      // Update ALL mute button icons (so they stay in sync across all reels)
+      document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
+        ic.className = iconClass;
+      });
+
+      // Apply mute state & volume to ALL active-media-box videos
+      document.querySelectorAll('.active-media-box video').forEach(function(v) {
+        v.muted = globalMuted;
+        if (!globalMuted) {
+          v.volume = 1.0;
+        }
+      });
+    }
+
     // ================================================
-    // Mute / Unmute button — delegated jQuery handler
-    // Registered BEFORE video-wrapper so stopPropagation works
+    // Mute / Unmute button handlers
+    // Prevent focus shift & scroll jump on pointerdown / mousedown / touchstart
     // ================================================
+    $(document).on('mousedown touchstart pointerdown', '.mute-toggle-btn', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    });
+
     $(document).on('click', '.mute-toggle-btn', function (e) {
+      e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
 
-      globalMuted = !globalMuted;
+      applyMuteState(!globalMuted);
 
-      // Update ALL mute button icons (so they stay in sync when scrolling)
-      document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
-        ic.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
-      });
-
-      // Apply mute state to ALL active-media-box videos
-      document.querySelectorAll('.active-media-box video').forEach(function(v) {
-        v.muted = globalMuted;
-      });
-
-      // Also apply to the specific video in this wrapper
+      // Ensure the specific video in this wrapper has the new mute state
       var video = $(this).closest('.video-wrapper').find('video')[0];
       if (video) {
         video.muted = globalMuted;
+        if (!globalMuted) {
+          video.volume = 1.0;
+          if (video.paused) {
+            video.play().catch(function(){});
+          }
+        }
       }
     });
 
@@ -1146,18 +1176,25 @@
       $item.addClass('active-story-item');
 
       if (isVideo) {
+        var currentMuteIcon = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
         $mediaBox.html(
           '<div class="video-wrapper position-relative w-100 h-100">' +
-            '<video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="' + posterUrl + '" playsinline loop muted autoplay>' +
+            '<video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="' + posterUrl + '" playsinline loop ' + (globalMuted ? 'muted' : '') + ' autoplay>' +
               '<source src="' + mediaUrl + '" type="video/mp4">' +
             '</video>' +
             '<div class="play-btn d-none"><i class="fa fa-play"></i></div>' +
+            '<button class="mute-toggle-btn" type="button" title="Toggle Sound" aria-label="Toggle Sound">' +
+              '<i class="' + currentMuteIcon + '"></i>' +
+            '</button>' +
           '</div>'
         );
         var vid = $mediaBox.find('video')[0];
         if (vid) {
+          vid.muted = globalMuted;
+          if (!globalMuted) vid.volume = 1.0;
           vid.play().catch(function(){});
         }
+      }
 
       } else {
         $mediaBox.html(
@@ -1222,79 +1259,57 @@
           var video = section.querySelector('.active-media-box video');
           if (!video) return;
 
+          var playBtn = section.querySelector('.active-media-box .play-btn');
+
           if (entry.isIntersecting) {
+            // Lazy-load src if not yet set
+            var dataSrc = video.getAttribute('data-src');
+            if (dataSrc && (!video.src || video.src === window.location.href)) {
+              video.src = dataSrc;
+              var source = video.querySelector('source[data-src]');
+              if (source) { source.src = source.getAttribute('data-src'); }
+            }
+
             // Apply mute state & sync icon
             video.muted = globalMuted;
+            if (!globalMuted) video.volume = 1.0;
             var muteIcon = section.querySelector('.mute-toggle-btn i');
             if (muteIcon) {
               muteIcon.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
             }
 
             // Hide play button
-            var playBtn = section.querySelector('.active-media-box .play-btn');
             if (playBtn) playBtn.classList.add('d-none');
 
-            // Helper: safe play with race-condition guard
-            function safePlay() {
-              video.muted = globalMuted;
-              var pp = video.play();
-              video._playPromise = pp;
-              if (pp !== undefined) {
-                pp.then(function() {
-                  video._playPromise = null;
-                }).catch(function(err) {
-                  video._playPromise = null;
-                  if (err.name === 'AbortError') return; // harmless race
-                  // Autoplay blocked — force muted retry
-                  video.muted = true;
-                  globalMuted = true;
-                  document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
-                    ic.className = 'fas fa-volume-mute';
-                  });
-                  video.play().catch(function(){});
-                });
+            // Pause all other reels videos
+            document.querySelectorAll('.active-media-box video').forEach(function(v) {
+              if (v !== video && !v.paused) {
+                v.pause();
               }
-            }
+            });
 
-            // Lazy-load src if not yet set
-            var dataSrc = video.getAttribute('data-src');
-            if (dataSrc && !video.src) {
-              video.src = dataSrc;
-              var source = video.querySelector('source[data-src]');
-              if (source) { source.src = source.getAttribute('data-src'); }
-
-              // Wait for canplay before calling play()
-              video.addEventListener('canplay', function onCanPlay() {
-                video.removeEventListener('canplay', onCanPlay);
-                safePlay();
+            // Play active video immediately
+            var pp = video.play();
+            if (pp !== undefined) {
+              pp.catch(function(err) {
+                if (err.name === 'AbortError') return;
+                // Autoplay with audio blocked by browser policy — fallback to muted autoplay
+                video.muted = true;
+                globalMuted = true;
+                applyMuteState(true);
+                video.play().catch(function(){});
               });
-              video.load();
-
-            } else {
-              // src already set — play directly if enough data loaded
-              if (video.readyState >= 3) {
-                safePlay();
-              } else {
-                video.addEventListener('canplay', function onReady() {
-                  video.removeEventListener('canplay', onReady);
-                  safePlay();
-                });
-              }
             }
 
           } else {
-            // Pause safely — wait for any pending play() promise first
-            var pp = video._playPromise;
-            if (pp) {
-              pp.then(function() { video.pause(); }).catch(function() { video.pause(); });
-            } else {
-              if (!video.paused) video.pause();
+            // Section left viewport — pause video immediately
+            if (!video.paused) {
+              video.pause();
             }
           }
         });
       }, {
-        root: null,        // window viewport — works universally on all devices
-        rootMargin: '0px',
+        root: (reelsCard && reelsCard.scrollHeight > reelsCard.clientHeight) ? reelsCard : null,
         threshold: 0.5
       });
 

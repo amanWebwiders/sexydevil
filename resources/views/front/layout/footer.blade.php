@@ -1167,6 +1167,9 @@ function denyConsent() {
     }, 3000);
 // Handle Play Button Click
 document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('.reels-card')) {
+        return;
+    }
 
     // Play button clicked
     if(e.target.hasAttribute('preload')){
@@ -1205,6 +1208,9 @@ document.addEventListener('click', function (e) {
 
 // When video plays
 document.addEventListener('play', function (e) {
+    if (e.target.closest && e.target.closest('.reels-card')) {
+        return;
+    }
     if(e.target.hasAttribute('preload')){
         e.preventDefault();   // prevent inline play
         e.stopPropagation();
@@ -1227,6 +1233,9 @@ document.addEventListener('play', function (e) {
 
 // When video pauses
 document.addEventListener('pause', function (e) {
+    if (e.target.closest && e.target.closest('.reels-card')) {
+        return;
+    }
     if(e.target.hasAttribute('preload')){
         e.preventDefault();   // prevent inline play
         e.stopPropagation();
