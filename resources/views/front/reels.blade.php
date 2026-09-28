@@ -678,35 +678,33 @@
     // User can toggle; state persists across reels
     var globalMuted = true;
 
-    function toggleMute(btn, event) {
-      // Stop click from bubbling to .video-wrapper (which plays/pauses)
-      if (event) event.stopPropagation();
+    // ================================================
+    // Mute / Unmute button — delegated jQuery handler
+    // Registered BEFORE video-wrapper so stopPropagation works
+    // ================================================
+    $(document).on('click', '.mute-toggle-btn', function (e) {
+      e.stopPropagation();
+      e.stopImmediatePropagation();
 
       globalMuted = !globalMuted;
-      var icon = btn.querySelector('i');
 
-      // Update icon on this button
-      if (globalMuted) {
-        icon.className = 'fas fa-volume-mute';
-      } else {
-        icon.className = 'fas fa-volume-up';
-      }
-
-      // Apply mute to the video in THIS wrapper
-      var video = btn.closest('.video-wrapper').querySelector('video');
-      if (video) {
-        video.muted = globalMuted;
-      }
-
-      // Sync ALL mute button icons across all reels
+      // Update ALL mute button icons (so they stay in sync when scrolling)
       document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
         ic.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
       });
-      // Sync ALL videos mute state
+
+      // Apply mute state to ALL active-media-box videos
       document.querySelectorAll('.active-media-box video').forEach(function(v) {
         v.muted = globalMuted;
       });
-    }
+
+      // Also apply to the specific video in this wrapper
+      var video = $(this).closest('.video-wrapper').find('video')[0];
+      if (video) {
+        video.muted = globalMuted;
+      }
+    });
+
 
     function shareReel(reelId) {
       const url = `${window.location.origin}${window.location.pathname}?reel_id=${reelId}`;
@@ -1230,36 +1228,53 @@
             if (dataSrc && !video.getAttribute('src')) {
               video.src = dataSrc;
               var source = video.querySelector('source[data-src]');
-              if (source) {
-                source.src = source.getAttribute('data-src');
-              }
+              if (source) { source.src = source.getAttribute('data-src'); }
               video.load();
             }
+
             // Apply user's chosen mute state
             video.muted = globalMuted;
+
             // Sync mute button icon
             var muteIcon = section.querySelector('.mute-toggle-btn i');
             if (muteIcon) {
               muteIcon.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
             }
-            // Play the video
-            var playPromise = video.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(function () {
-                // Autoplay blocked — force muted and retry
-                video.muted = true;
-                globalMuted = true;
-                if (muteIcon) muteIcon.className = 'fas fa-volume-mute';
-                video.play().catch(function(){});
-                var playBtn = section.querySelector('.active-media-box .play-btn');
-                if (playBtn) playBtn.classList.remove('d-none');
-              });
-            }
+
             // Hide play button
             var playBtn = section.querySelector('.active-media-box .play-btn');
             if (playBtn) playBtn.classList.add('d-none');
+
+            // Play — store promise to handle pause() race condition
+            var playPromise = video.play();
+            video._playPromise = playPromise;
+
+            if (playPromise !== undefined) {
+              playPromise.then(function() {
+                video._playPromise = null;
+              }).catch(function (err) {
+                video._playPromise = null;
+                // AbortError = pause() raced with play() — safe to ignore
+                if (err.name === 'AbortError') return;
+                // NotAllowedError = autoplay blocked — force muted and retry
+                video.muted = true;
+                globalMuted = true;
+                if (muteIcon) muteIcon.className = 'fas fa-volume-mute';
+                document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
+                  ic.className = 'fas fa-volume-mute';
+                });
+                video.play().catch(function(){});
+              });
+            }
+
           } else {
-            video.pause();
+            // Pause safely — wait for any pending play() promise first
+            var pp = video._playPromise;
+            if (pp) {
+              pp.then(function() { video.pause(); }).catch(function(){ video.pause(); });
+            } else {
+              if (!video.paused) video.pause();
+            }
           }
         });
       }, {
