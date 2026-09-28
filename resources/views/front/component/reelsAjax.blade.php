@@ -38,8 +38,8 @@
         <div class="active-media-box w-100 h-100 position-relative">
           @if($isVideo)
             <div class="video-wrapper position-relative w-100 h-100">
-              <video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="{{ $posterUrl }}" playsinline loop>
-                <source src="{{ $mediaUrl }}" type="video/mp4">
+              <video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="{{ $posterUrl }}" playsinline loop muted preload="none" data-src="{{ $mediaUrl }}">
+                <source data-src="{{ $mediaUrl }}" type="video/mp4">
               </video>
               <div class="play-btn">
                 <i class="fa fa-play"></i>
