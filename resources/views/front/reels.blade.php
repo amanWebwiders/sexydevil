@@ -1223,19 +1223,8 @@
           if (!video) return;
 
           if (entry.isIntersecting) {
-            // Lazy-load src if not yet set
-            var dataSrc = video.getAttribute('data-src');
-            if (dataSrc && !video.getAttribute('src')) {
-              video.src = dataSrc;
-              var source = video.querySelector('source[data-src]');
-              if (source) { source.src = source.getAttribute('data-src'); }
-              video.load();
-            }
-
-            // Apply user's chosen mute state
+            // Apply mute state & sync icon
             video.muted = globalMuted;
-
-            // Sync mute button icon
             var muteIcon = section.querySelector('.mute-toggle-btn i');
             if (muteIcon) {
               muteIcon.className = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
@@ -1245,50 +1234,79 @@
             var playBtn = section.querySelector('.active-media-box .play-btn');
             if (playBtn) playBtn.classList.add('d-none');
 
-            // Play — store promise to handle pause() race condition
-            var playPromise = video.play();
-            video._playPromise = playPromise;
-
-            if (playPromise !== undefined) {
-              playPromise.then(function() {
-                video._playPromise = null;
-              }).catch(function (err) {
-                video._playPromise = null;
-                // AbortError = pause() raced with play() — safe to ignore
-                if (err.name === 'AbortError') return;
-                // NotAllowedError = autoplay blocked — force muted and retry
-                video.muted = true;
-                globalMuted = true;
-                if (muteIcon) muteIcon.className = 'fas fa-volume-mute';
-                document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
-                  ic.className = 'fas fa-volume-mute';
+            // Helper: safe play with race-condition guard
+            function safePlay() {
+              video.muted = globalMuted;
+              var pp = video.play();
+              video._playPromise = pp;
+              if (pp !== undefined) {
+                pp.then(function() {
+                  video._playPromise = null;
+                }).catch(function(err) {
+                  video._playPromise = null;
+                  if (err.name === 'AbortError') return; // harmless race
+                  // Autoplay blocked — force muted retry
+                  video.muted = true;
+                  globalMuted = true;
+                  document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
+                    ic.className = 'fas fa-volume-mute';
+                  });
+                  video.play().catch(function(){});
                 });
-                video.play().catch(function(){});
+              }
+            }
+
+            // Lazy-load src if not yet set
+            var dataSrc = video.getAttribute('data-src');
+            if (dataSrc && !video.src) {
+              video.src = dataSrc;
+              var source = video.querySelector('source[data-src]');
+              if (source) { source.src = source.getAttribute('data-src'); }
+
+              // Wait for canplay before calling play()
+              video.addEventListener('canplay', function onCanPlay() {
+                video.removeEventListener('canplay', onCanPlay);
+                safePlay();
               });
+              video.load();
+
+            } else {
+              // src already set — play directly if enough data loaded
+              if (video.readyState >= 3) {
+                safePlay();
+              } else {
+                video.addEventListener('canplay', function onReady() {
+                  video.removeEventListener('canplay', onReady);
+                  safePlay();
+                });
+              }
             }
 
           } else {
             // Pause safely — wait for any pending play() promise first
             var pp = video._playPromise;
             if (pp) {
-              pp.then(function() { video.pause(); }).catch(function(){ video.pause(); });
+              pp.then(function() { video.pause(); }).catch(function() { video.pause(); });
             } else {
               if (!video.paused) video.pause();
             }
           }
         });
       }, {
-        root: reelsCard,
-        threshold: 0.6
+        root: null,        // window viewport — works universally on all devices
+        rootMargin: '0px',
+        threshold: 0.5
       });
 
       document.querySelectorAll('.profile-section').forEach(function (sec) {
         videoObserver.observe(sec);
       });
-    }
+
+    }  // end initVideoObserver
 
     // Filter Search
     function getReels() {
+
       search = 1;
       page = 1;
       hasMore = true;
