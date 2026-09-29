@@ -707,22 +707,19 @@
 
     // ================================================
     // Mute / Unmute button handlers
-    // Prevent focus shift & scroll jump on pointerdown / mousedown / touchstart
+    // Prevent focus shift & scroll jump on desktop mousedown
     // ================================================
-    $(document).on('mousedown touchstart pointerdown', '.mute-toggle-btn', function (e) {
+    $(document).on('mousedown', '.mute-toggle-btn', function (e) {
       e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
     });
 
     $(document).on('click', '.mute-toggle-btn', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      e.stopImmediatePropagation();
 
-      applyMuteState(!globalMuted);
+      globalMuted = !globalMuted;
 
-      // Ensure the specific video in this wrapper has the new mute state
+      // 1. Immediately update active video in this wrapper
       var video = $(this).closest('.video-wrapper').find('video')[0];
       if (video) {
         video.muted = globalMuted;
@@ -733,6 +730,20 @@
           }
         }
       }
+
+      // 2. Update ALL mute button icons across all reels
+      var iconClass = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+      document.querySelectorAll('.mute-toggle-btn i').forEach(function(ic) {
+        ic.className = iconClass;
+      });
+
+      // 3. Sync mute state to ALL other videos
+      document.querySelectorAll('.active-media-box video').forEach(function(v) {
+        if (v !== video) {
+          v.muted = globalMuted;
+          if (!globalMuted) v.volume = 1.0;
+        }
+      });
     });
 
 
