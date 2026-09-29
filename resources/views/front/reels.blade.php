@@ -503,8 +503,12 @@
     background: rgba(0,0,0,0.85);
 }
 .mute-toggle-btn:active {
-    transform: scale(0.92);
+    position: absolute !important;
+    top: unset;
+    /* transform: scale(0.92); */
 }
+
+
 .mute-toggle-btn i {
     color: #fff !important;
     font-size: 16px !important;
@@ -1205,10 +1209,8 @@
           '<div class="video-wrapper position-relative w-100 h-100">' +
             '<video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="' + posterUrl + '" playsinline loop ' + (globalMuted ? 'muted' : '') + ' autoplay>' +
               '<source src="' + mediaUrl + '" type="video/mp4">' +
-            '</video>' +
-            '<div class="play-btn d-none"><i class="fa fa-play"></i></div>' +
-            '<button class="mute-toggle-btn" type="button" onclick="toggleMute(this, event)" title="Toggle Sound" aria-label="Toggle Sound">' +
-              '<i class="' + currentMuteIcon + '"></i>' +
+            '</video>' +'<button class="mute-toggle-btn" type="button" onclick="toggleMute(this, event)" title="Toggle Sound" aria-label="Toggle Sound">' +
+             '<i class="' + currentMuteIcon + '"></i>' +
             '</button>' +
           '</div>'
         );
