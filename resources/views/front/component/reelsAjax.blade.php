@@ -158,7 +158,7 @@
                  title="Click to view in main reel">
               @if($sIsVideo)
                 <div class="video-wrapper position-relative">
-                  <video class="w-100 object-cover reels-bg-video" poster="{{ $sThumbUrl }}" preload="metadata">
+                  <video class="w-100 object-cover reels-bg-video" poster="{{ $sThumbUrl }}" preload="metadata" muted playsinline>
                     <source src="{{ $sMediaUrl }}" type="video/mp4">
                   </video>
                   <div class="play-btn">
