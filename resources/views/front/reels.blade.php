@@ -722,7 +722,10 @@ button.mute-toggle-btn i,
       document.querySelectorAll('.active-media-box video').forEach(function(v) {
         v.muted = globalMuted;
         if (!globalMuted) {
+          v.removeAttribute('muted');
           v.volume = 1.0;
+        } else {
+          v.setAttribute('muted', 'muted');
         }
       });
     }
@@ -744,17 +747,30 @@ button.mute-toggle-btn i,
 
       globalMuted = !globalMuted;
 
-      // 1. Immediately update active video in this wrapper
-      var $btn = btn ? $(btn) : $('.active-media-box .mute-toggle-btn');
-      var $wrapper = $btn.closest('.video-wrapper');
-      var video = $wrapper.length ? $wrapper.find('video')[0] : document.querySelector('.active-media-box video');
+      // 1. Immediately update active video in this section
+      var $btn = btn ? $(btn) : null;
+      var video = null;
+      if ($btn && $btn.length) {
+        var $sec = $btn.closest('.profile-section');
+        video = $sec.length ? $sec.find('.active-media-box video')[0] : $btn.closest('.video-wrapper').find('video')[0];
+      }
+      if (!video) {
+        document.querySelectorAll('.active-media-box video').forEach(function(v) {
+          if (!v.paused && !video) video = v;
+        });
+        if (!video) video = document.querySelector('.active-media-box video');
+      }
+
       if (video) {
         video.muted = globalMuted;
         if (!globalMuted) {
+          video.removeAttribute('muted');
           video.volume = 1.0;
           if (video.paused) {
             video.play().catch(function(){});
           }
+        } else {
+          video.setAttribute('muted', 'muted');
         }
       }
 
@@ -768,7 +784,12 @@ button.mute-toggle-btn i,
       document.querySelectorAll('.active-media-box video').forEach(function(v) {
         if (v !== video) {
           v.muted = globalMuted;
-          if (!globalMuted) v.volume = 1.0;
+          if (!globalMuted) {
+            v.removeAttribute('muted');
+            v.volume = 1.0;
+          } else {
+            v.setAttribute('muted', 'muted');
+          }
         }
       });
     };
@@ -1225,24 +1246,45 @@ button.mute-toggle-btn i,
       var $mediaBox = $section.find('.active-media-box');
       var $mediaContainer = $section.find('.profile-media');
 
+      // Pause any gallery thumbnail videos so they don't play in background
+      $('.gallery video').each(function() {
+        this.pause();
+        this.currentTime = 0;
+        this.muted = true;
+      });
+
+      // Pause previous active video
+      var oldVid = $mediaBox.find('video')[0];
+      if (oldVid) {
+        oldVid.pause();
+      }
+
       $section.find('.gallery-story-item').removeClass('active-story-item');
       $item.addClass('active-story-item');
 
       if (isVideo) {
         var currentMuteIcon = globalMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+        var mutedAttr = globalMuted ? 'muted' : '';
         $mediaBox.html(
           '<div class="video-wrapper position-relative w-100 h-100">' +
-            '<video class="w-100 h-100 object-cover reels-bg-video myVideo" poster="' + posterUrl + '" playsinline loop ' + (globalMuted ? 'muted' : '') + ' autoplay>' +
+            '<video class="w-100 h-100 object-cover reels-bg-video myVideo" src="' + mediaUrl + '" data-src="' + mediaUrl + '" poster="' + posterUrl + '" playsinline loop ' + mutedAttr + ' autoplay>' +
               '<source src="' + mediaUrl + '" type="video/mp4">' +
-            '</video>' +'<button class="mute-toggle-btn" type="button" onclick="toggleMute(this, event)" title="Toggle Sound" aria-label="Toggle Sound">' +
-             '<i class="' + currentMuteIcon + '"></i>' +
+            '</video>' +
+            '<div class="play-btn d-none"><i class="fa fa-play"></i></div>' +
+            '<button class="mute-toggle-btn" type="button" onclick="toggleMute(this, event)" title="Toggle Sound" aria-label="Toggle Sound">' +
+              '<i class="' + currentMuteIcon + '"></i>' +
             '</button>' +
           '</div>'
         );
         var vid = $mediaBox.find('video')[0];
         if (vid) {
           vid.muted = globalMuted;
-          if (!globalMuted) vid.volume = 1.0;
+          if (!globalMuted) {
+            vid.removeAttribute('muted');
+            vid.volume = 1.0;
+          } else {
+            vid.setAttribute('muted', 'muted');
+          }
           vid.play().catch(function(){});
         }
       } else {
@@ -1273,10 +1315,15 @@ button.mute-toggle-btn i,
       if ($shareBtn.length) {
         $shareBtn.attr('onclick', 'shareReel(' + storyId + ')');
       }
+
+      // Close mobile drawer on selection so the active video is immediately interactive
+      if (window.innerWidth <= 1024 && typeof closeAll === 'function') {
+        closeAll();
+      }
     });
 
-    // Toggle video play / pause on click
-    $(document).on('click', '.video-wrapper', function (e) {
+    // Toggle video play / pause on click (only for the main reel active player, never gallery)
+    $(document).on('click', '.active-media-box .video-wrapper', function (e) {
       // Exclude: action icons, profile overlay, AND mute button
       if ($(e.target).closest('.action-icons, .profile-overlay, .mute-toggle-btn').length) return;
       var video = $(this).find('video')[0];
