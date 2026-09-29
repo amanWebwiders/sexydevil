@@ -478,41 +478,59 @@
 }
 
 /* Mute/Unmute toggle button — Instagram style */
-.mute-toggle-btn {
-    position: absolute;
-    bottom: 70px;
-    left: 15px;
-    z-index: 25;
-    background: rgba(0, 0, 0, 0.65);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s ease;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    pointer-events: auto !important;
-}
-.mute-toggle-btn:hover {
-    background: rgba(0,0,0,0.85);
-}
+button.mute-toggle-btn,
+button.mute-toggle-btn:hover,
+button.mute-toggle-btn:focus,
+button.mute-toggle-btn:focus-visible,
+button.mute-toggle-btn:active,
+.mute-toggle-btn,
+.mute-toggle-btn:hover,
+.mute-toggle-btn:focus,
 .mute-toggle-btn:active {
     position: absolute !important;
-    top: unset;
-    /* transform: scale(0.92); */
+    bottom: 70px !important;
+    top: auto !important;
+    left: 15px !important;
+    right: auto !important;
+    margin: 0 !important;
+    z-index: 30 !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    padding: 0 !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    outline: none !important;
+    box-shadow: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    pointer-events: auto !important;
+    transition: background 0.2s, transform 0.15s ease !important;
 }
 
+button.mute-toggle-btn:hover,
+.mute-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.85) !important;
+}
 
+button.mute-toggle-btn:active,
+.mute-toggle-btn:active {
+    background: rgba(0, 0, 0, 0.95) !important;
+    transform: scale(0.92) !important;
+}
+
+button.mute-toggle-btn i,
 .mute-toggle-btn i {
     color: #fff !important;
     font-size: 16px !important;
     margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
     pointer-events: none !important;
 }
 
@@ -718,12 +736,17 @@
         if (event.preventDefault) event.preventDefault();
         if (event.stopPropagation) event.stopPropagation();
       }
-      window._lastMuteToggle = Date.now();
+      var now = Date.now();
+      if (window._lastMuteToggle && (now - window._lastMuteToggle < 250)) {
+        return;
+      }
+      window._lastMuteToggle = now;
 
       globalMuted = !globalMuted;
 
       // 1. Immediately update active video in this wrapper
-      var $wrapper = btn ? $(btn).closest('.video-wrapper') : $('.active-media-box .video-wrapper');
+      var $btn = btn ? $(btn) : $('.active-media-box .mute-toggle-btn');
+      var $wrapper = $btn.closest('.video-wrapper');
       var video = $wrapper.length ? $wrapper.find('video')[0] : document.querySelector('.active-media-box video');
       if (video) {
         video.muted = globalMuted;
@@ -750,16 +773,13 @@
       });
     };
 
-    // Prevent focus shift & scroll jump on desktop mousedown
-    $(document).on('mousedown', '.mute-toggle-btn', function (e) {
-      e.preventDefault();
-    });
-
     $(document).on('click', '.mute-toggle-btn', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       var now = Date.now();
-      if (window._lastMuteToggle && (now - window._lastMuteToggle < 300)) return;
+      if (window._lastMuteToggle && (now - window._lastMuteToggle < 250)) return;
       toggleMute(this, e);
     });
 
@@ -1113,6 +1133,11 @@
 
     // ✅ AJAX-SAFE CLICK HANDLER
     document.addEventListener('click', function (e) {
+
+        // Ignore clicks on or inside mute toggle button
+        if (e.target.closest('.mute-toggle-btn')) {
+            return;
+        }
 
         // Open drawer
         const trigger = e.target.closest('.profile-overlay');
