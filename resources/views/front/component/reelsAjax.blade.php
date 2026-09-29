@@ -45,7 +45,7 @@
                 <i class="fa fa-play"></i>
               </div>
               <!-- Mute/Unmute Button -->
-              <button class="mute-toggle-btn" type="button" title="Toggle Sound" aria-label="Toggle Sound">
+              <button class="mute-toggle-btn" type="button" onclick="toggleMute(this, event)" title="Toggle Sound" aria-label="Toggle Sound">
                 <i class="fas fa-volume-mute"></i>
               </button>
             </div>

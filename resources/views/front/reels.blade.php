@@ -707,20 +707,20 @@
 
     // ================================================
     // Mute / Unmute button handlers
-    // Prevent focus shift & scroll jump on desktop mousedown
+    // Direct toggle function (callable via inline onclick or click listener)
     // ================================================
-    $(document).on('mousedown', '.mute-toggle-btn', function (e) {
-      e.preventDefault();
-    });
-
-    $(document).on('click', '.mute-toggle-btn', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
+    window.toggleMute = function (btn, event) {
+      if (event) {
+        if (event.preventDefault) event.preventDefault();
+        if (event.stopPropagation) event.stopPropagation();
+      }
+      window._lastMuteToggle = Date.now();
 
       globalMuted = !globalMuted;
 
       // 1. Immediately update active video in this wrapper
-      var video = $(this).closest('.video-wrapper').find('video')[0];
+      var $wrapper = btn ? $(btn).closest('.video-wrapper') : $('.active-media-box .video-wrapper');
+      var video = $wrapper.length ? $wrapper.find('video')[0] : document.querySelector('.active-media-box video');
       if (video) {
         video.muted = globalMuted;
         if (!globalMuted) {
@@ -744,6 +744,19 @@
           if (!globalMuted) v.volume = 1.0;
         }
       });
+    };
+
+    // Prevent focus shift & scroll jump on desktop mousedown
+    $(document).on('mousedown', '.mute-toggle-btn', function (e) {
+      e.preventDefault();
+    });
+
+    $(document).on('click', '.mute-toggle-btn', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var now = Date.now();
+      if (window._lastMuteToggle && (now - window._lastMuteToggle < 300)) return;
+      toggleMute(this, e);
     });
 
 
@@ -1194,7 +1207,7 @@
               '<source src="' + mediaUrl + '" type="video/mp4">' +
             '</video>' +
             '<div class="play-btn d-none"><i class="fa fa-play"></i></div>' +
-            '<button class="mute-toggle-btn" type="button" title="Toggle Sound" aria-label="Toggle Sound">' +
+            '<button class="mute-toggle-btn" type="button" onclick="toggleMute(this, event)" title="Toggle Sound" aria-label="Toggle Sound">' +
               '<i class="' + currentMuteIcon + '"></i>' +
             '</button>' +
           '</div>'
