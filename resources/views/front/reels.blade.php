@@ -1194,8 +1194,6 @@
           if (!globalMuted) vid.volume = 1.0;
           vid.play().catch(function(){});
         }
-      }
-
       } else {
         $mediaBox.html(
           '<div class="w-100 h-100 position-relative d-flex align-items-center justify-content-center bg-black overflow-hidden">' +
