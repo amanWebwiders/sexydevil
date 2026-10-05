@@ -22072,7 +22072,7 @@ body.active-side-header.slide-right .page_header_side {
 
 @media (max-width: 1200px) {
 	.header_absolute .page_header.affix a.logo img {
-		height: 70px;
+		height: auto;
 	}
 }
 
