@@ -20458,7 +20458,7 @@ a img.aligncenter {
 	}
 
 	.header_absolute .page_header.affix a.logo img {
-		width: 170px;
+		width: auto;
 		height: auto;
 	}
 }
