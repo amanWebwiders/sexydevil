@@ -28,11 +28,19 @@ class HomeController extends Controller
     protected $PlanRepository;
     protected $AdminRepository, $CommonRepository, $NewsandstoryRepository, $termsConditionsRepository, $featureDevilRepository;
     private $dataObject, $countryRepository, $stateRepository, $cityRepository;
-    public function __construct(NewsandstoryRepository $NewsandstoryRepository, CommonRepository $CommonRepository, AdminRepository $AdminRepository, UserServices $userServices, UserRepository $userRepository, PlanRepository $PlanRepository, TermsConditionsRepository $termsConditionsRepository,
+    public function __construct(
+        NewsandstoryRepository $NewsandstoryRepository,
+        CommonRepository $CommonRepository,
+        AdminRepository $AdminRepository,
+        UserServices $userServices,
+        UserRepository $userRepository,
+        PlanRepository $PlanRepository,
+        TermsConditionsRepository $termsConditionsRepository,
         FeatureDevilRepository $featureDevilRepository,
         CountryRepository $countryRepository,
-        StateRepository $stateRepository, CityRepository $cityRepository)
-    {
+        StateRepository $stateRepository,
+        CityRepository $cityRepository
+    ) {
         $this->userServices = $userServices;
         $this->userRepository = $userRepository;
         $this->AdminRepository = $AdminRepository;
@@ -52,12 +60,12 @@ class HomeController extends Controller
         if ($request->has('city') && !empty($request->city)) {
             session()->put('SeoType', $request->type);
             return redirect()->to('/' . urlencode($request->city));
-        } else if($request->has('city') && empty($request->city)) {
+        } else if ($request->has('city') && empty($request->city)) {
             session()->put('SeoType', 'worldwide');
             session()->forget('selected_location');
             return redirect()->route('home.worldwide');
         }
-        
+
 
         $top3User = [];//$this->userRepository->top3User(['users.type' => 2, 'top3status' => 1, 'user_status' => 0, 'admin_status' => 'approved'], ['users.*'], [], $city);
         //$this->userRepository->getByWhereWithLimit(['type' => 2, 'top3status' => 1, 'user_status' => 0, 'admin_status' => 'approved'], 3);
@@ -77,14 +85,15 @@ class HomeController extends Controller
         $allUsers = []; //$this->userRepository->getByWhereWithLimit(['type' => 2, 'user_status' => 0, 'admin_status' => 'approved'], 6);
         // dd($allUser);
         $current_date = now()->format('Y-m-d');
-        $whereFeature = ['users.type' => 2, 
-            'user_status' => 0, 
-            'admin_status' => 'approved', 
+        $whereFeature = [
+            'users.type' => 2,
+            'user_status' => 0,
+            'admin_status' => 'approved',
             'feature_devils.date' => $current_date
-        ]; 
+        ];
         $featuredUsers = $this->userRepository->getFeaturedModels($whereFeature, $city);
         //dd($featuredUsers);
-         //weekly top 3 divine obessions  
+        //weekly top 3 divine obessions  
         $divineObessions = $this->userRepository->top3User([
             'users.type' => 2,
             'user_status' => 0,
@@ -236,7 +245,7 @@ class HomeController extends Controller
             } else {
                 return response()->json([
                     'status' => 0,
-                    'message' =>  __('message.statusZero'),
+                    'message' => __('message.statusZero'),
                     'data' => [],
                     'success' => false,
                 ]);
@@ -258,7 +267,6 @@ class HomeController extends Controller
     }
 
     public function loginSubmit(LoginRequest $request)
-
     {
 
         try {
@@ -312,7 +320,6 @@ class HomeController extends Controller
         }
     }
     public function logout()
-
     {
 
         try {
@@ -372,13 +379,13 @@ class HomeController extends Controller
             return view('front.after-pricing', compact('data', 'admindata', 'user'));
         } catch (\Exception $e) {
             Log::error("Error in HomeController.Register(): " . $e->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong.');            
-            
+            return redirect()->back()->with('error', 'Something went wrong.');
+
             //return response()->json(['status' => 0, 'message' => __('message.statusZero'), 'data' => $this->dataObject, 'error' => $this->dataObject], 500);
         }
     }
 
-    
+
 
 
     public function modelDetail($id, Request $request)
@@ -412,15 +419,17 @@ class HomeController extends Controller
                 $favorites = json_decode($request->cookie('favorites', '[]'), true);
                 $favorite_users = collect(["id" => isset($user->favouritedBy) && $user->favouritedBy->isNotEmpty() ? $user->favouritedBy->pluck('id')->toArray() : []])
                     ->merge($favorites)
-                    ->map(function ($id) { return (int) $id; })  // ensure integer
+                    ->map(function ($id) {
+                        return (int) $id;
+                    })  // ensure integer
                     ->unique()
                     ->values()
                     ->toArray();
-                $newsstory =  $data = $this->NewsandstoryRepository->getByWhere(['user_id' => $user->id]);
+                $newsstory = $data = $this->NewsandstoryRepository->getByWhere(['user_id' => $user->id]);
                 $locationSeoContent = $this->userServices->getLocationSeoContent($user->city_id ?? null, "Model Profile");
                 $pageTitle = $user->nickname ?? $user->name;
                 $seoOgImage = !empty($user->profile_image) ? config('app.img_url') . $user->profile_image : null;
-                return view('front.model_detail', compact('newsstory', 'user', 'selectedServices', 'selectedSelections', 'categories', 'uploadedPhotos', 'uploadedVideos', 'availabilities', 'countryCodes', 'language' ,'favorite_users', 'locationSeoContent', 'pageTitle', 'seoOgImage'));
+                return view('front.model_detail', compact('newsstory', 'user', 'selectedServices', 'selectedSelections', 'categories', 'uploadedPhotos', 'uploadedVideos', 'availabilities', 'countryCodes', 'language', 'favorite_users', 'locationSeoContent', 'pageTitle', 'seoOgImage'));
             }
             abort(404);
         } catch (\Exception $e) {
@@ -429,18 +438,20 @@ class HomeController extends Controller
         }
     }
 
-    public function termsConditions() {
+    public function termsConditions()
+    {
         try {
-        $terms = $this->termsConditionsRepository->getAllData();
-        $locationSeoContent = $this->userServices->getLocationSeoContent(null, "Terms & Conditions");
-        return view('front.terms', compact('terms', 'locationSeoContent'));
+            $terms = $this->termsConditionsRepository->getAllData();
+            $locationSeoContent = $this->userServices->getLocationSeoContent(null, "Terms & Conditions");
+            return view('front.terms', compact('terms', 'locationSeoContent'));
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
-            return redirect()->back()->with('error', 'Something went wrong.');            
+            return redirect()->back()->with('error', 'Something went wrong.');
         }
     }
 
-    public function landing() {
+    public function landing()
+    {
         session()->forget('SeoType');
         session()->forget('selected_location');
         $cityCountry = currentCityContry();
@@ -448,25 +459,26 @@ class HomeController extends Controller
         //dump($country[0]->id);
         $state = $this->stateRepository->getAllRecordWhere(["country_id" => $country[0]->id ?? 1], ["id", "name", 'country_id'], 17);
         //dd($state->toArray());
-        $Mystate = $this->stateRepository->getAllRecordWhere(["name" => $cityCountry["state"] ?? 1 ], ["id", "name", 'country_id'], 1);
+        $Mystate = $this->stateRepository->getAllRecordWhere(["name" => $cityCountry["state"] ?? 1], ["id", "name", 'country_id'], 1);
         $MyCity = $this->cityRepository->getAllRecordWhere(["state_id" => $Mystate[0]->id ?? 1], ["id", "name"], 6);
         $allCountry = $this->countryRepository->getCountryWithUserCount([]);
         $locationSeo = $this->userServices->getLocationSeoContent(null, "Entry Page");
 
         //dd($allCountry); 
-                    /* $allCountry->map(function ($country) {
-                $country['flag'] = asset('images/flags/'.strtolower(emojiToCountryCode($country['emoji']).'.svg')); // or make URL if using image flags
-                return $country;
-            }); */
+        /* $allCountry->map(function ($country) {
+    $country['flag'] = asset('images/flags/'.strtolower(emojiToCountryCode($country['emoji']).'.svg')); // or make URL if using image flags
+    return $country;
+}); */
         return view('front.enter', compact('country', 'state', 'MyCity', 'cityCountry', 'allCountry', 'locationSeo'));
     }
-    public function getCitiesUsers(Request $request) {
+    public function getCitiesUsers(Request $request)
+    {
         try {
             $current_date = now()->format('Y-m-d');
             $user_id = Auth::guard('web')->user() ?? 0;
             $where = [
-                'users.type' => 2, 
-                'user_status' => 0, 
+                'users.type' => 2,
+                'user_status' => 0,
                 'admin_status' => 'approved',
                 ['plan_start_date', '<=', $current_date],
                 ['plan_end_date', '>=', $current_date],
@@ -474,10 +486,21 @@ class HomeController extends Controller
             ];
             $MyCity = $this->cityRepository->getUsersCount($where, $request->all());
             //dd($MyCity);
-            return response()->json(["status" => $MyCity->isNotEmpty() ? 200:400, "data" => $MyCity->toArray()]);
+            return response()->json(["status" => $MyCity->isNotEmpty() ? 200 : 400, "data" => $MyCity->toArray()]);
         } catch (\Exception $exception) {
             Log::error("Error in " . __CLASS__ . "::" . __FUNCTION__ . ": " . $exception->getMessage());
             return response()->json(["status" => 400]);
-        }  
+        }
+    }
+
+    public function blogs()
+    {
+        $locationSeoContent = $this->userServices->getLocationSeoContent(null, "Blog");
+        return view('front.blog', compact('locationSeoContent'));
+    }
+    public function blogDetail()
+    {
+        $locationSeoContent = $this->userServices->getLocationSeoContent(null, "Blog");
+        return view('front.blog_detail', compact('locationSeoContent'));
     }
 }

@@ -5,6 +5,15 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+if (
+    str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/admin/')
+    && str_starts_with($_SERVER['SCRIPT_NAME'] ?? '', '/admin/')
+) {
+    unset($_SERVER['PATH_INFO']);
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+    $_SERVER['PHP_SELF'] = '/index.php';
+}
+
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
