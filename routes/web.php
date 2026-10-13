@@ -111,6 +111,11 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
          Route::resource('faqs', 'FaqController')->except(['show']);
          Route::post('faqs/toggle-status/{id}', 'FaqController@toggleStatus')->name('faqs.toggle-status');
 
+         /* Blogs */
+         Route::get('blogs', 'BlogController@index')->name('blogs.index');
+         Route::resource('blog-categories', 'BlogCategoryController')->except(['show', 'create']);
+         Route::post('blog-categories/toggle-status/{id}', 'BlogCategoryController@toggleStatus')->name('blog-categories.toggle-status');
+
          /* Hot Stories Moderation & Control */
          Route::get('hot-stories', 'HotStoryController@index')->name('hot-stories.index');
          Route::delete('hot-stories/{id}', 'HotStoryController@destroy')->name('hot-stories.destroy');

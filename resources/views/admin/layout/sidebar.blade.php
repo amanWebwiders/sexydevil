@@ -251,6 +251,12 @@
 					<span class="menu-text">Hot Stories</span>
 				</a>
 			</div>
+			<div class="menu-item {{ request()->routeIs('admin.blogs.*', 'admin.blog-categories.*') ? 'active' : '' }}">
+				<a href="{{route('admin.blogs.index')}}" class="menu-link">
+					<span class="menu-icon"><i class="fa fa-blog"></i></span>
+					<span class="menu-text">Blogs</span>
+				</a>
+			</div>
 			<div class="menu-item">
 				<div class="dropdown ">
 					<a class="dropdown-toggle w-100 dropdown-menu-toggle" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
