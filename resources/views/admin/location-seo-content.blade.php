@@ -38,6 +38,7 @@
                         <option value="Contact Us">Contact Us</option>
                         <option value="Terms & Conditions">Terms & Conditions</option>
                         <option value="Model Profile">Model Profile</option>
+                        <option value="Blog">Blog</option>
                     </select>
                 </div>
                     <div class="col-md-4 mb-3">

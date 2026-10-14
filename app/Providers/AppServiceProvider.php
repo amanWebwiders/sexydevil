@@ -12,7 +12,14 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(
+            \App\Repository\BlogCategoryRepositoryInterface::class,
+            \App\Repository\Eloquent\BlogCategoryRepository::class
+        );
+        $this->app->bind(
+            \App\Repository\BlogRepositoryInterface::class,
+            \App\Repository\Eloquent\BlogRepository::class
+        );
     }
 
     public function boot(): void
