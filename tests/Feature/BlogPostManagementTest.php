@@ -6,10 +6,12 @@ use App\Models\Admin;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\City;
+use App\Models\Country;
 use App\Models\State;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -252,15 +254,20 @@ class BlogPostManagementTest extends TestCase
         $this->asAdmin()->get(route('admin.blog-posts.preview', $published->id))->assertDontSee('application/ld+json', false);
     }
 
-    public function test_public_listing_shows_live_articles_with_filters_and_pagination(): void
+    public function test_public_listing_shows_live_articles_with_seo_friendly_filters(): void
     {
         Blog::query()->update(['status' => Blog::STATUS_ARCHIVED]);
         $category = BlogCategory::create(['name' => 'Listing Guides', 'slug' => 'listing-guides-' . uniqid(), 'status' => 1, 'robots_index' => 'index', 'robots_follow' => 'follow']);
         $city = City::whereNotNull('state_id')->firstOrFail();
-        $countryId = State::findOrFail($city->state_id)->country_id;
+        $state = State::findOrFail($city->state_id);
+        $country = Country::findOrFail($state->country_id);
+        [$countrySlug, $stateSlug, $citySlug] = [Str::slug($country->name), Str::slug($state->name), Str::slug($city->name)];
+        $countryUrl = route('blogs') . '/' . $countrySlug;
+        $cityUrl = "$countryUrl/$stateSlug/$citySlug";
+        $categoryUrl = route('blogs') . '/category/' . $category->slug;
 
         $guide = $this->storeBlog(['status' => 'published', 'title' => 'Verified Profile Guide', 'categories' => [$category->id]]);
-        $local = $this->storeBlog(['status' => 'published', 'title' => 'Local Nightlife Guide', 'country_id' => $countryId, 'state_id' => $city->state_id, 'city_id' => $city->id]);
+        $local = $this->storeBlog(['status' => 'published', 'title' => 'Local Nightlife Guide', 'country_id' => $country->id, 'state_id' => $state->id, 'city_id' => $city->id]);
         $draft = $this->storeBlog(['title' => 'Hidden Draft Guide']);
 
         $this->get(route('blogs'))
@@ -270,25 +277,54 @@ class BlogPostManagementTest extends TestCase
             ->assertSee(route('blog.show', $local->slug), false)
             ->assertDontSee($draft->title)
             ->assertSee('2 Articles')
-            ->assertSee(route('blogs', ['category' => $category->slug]), false);
+            ->assertSee('href="' . $categoryUrl . '"', false)
+            ->assertSee('href="' . $cityUrl . '" class="post-location-tag"', false);
 
-        // Every filter narrows the result grid (the sidebar still lists recent posts) and keeps filtered views out of the index.
+        // Filters are path segments; listings with results are indexable with a self canonical.
+        // The result grid is checked through its read-more links because the sidebar also lists recent posts.
         $readMore = fn (Blog $blog) => 'aria-label="Read more: ' . $blog->title . '"';
-        $this->get(route('blogs', ['category' => $category->slug]))
+        $this->get($categoryUrl)
             ->assertOk()
-            ->assertSee('<meta name="robots" content="noindex, follow">', false)
+            ->assertSee('<meta name="robots" content="index, follow">', false)
+            ->assertSee('<link rel="canonical" href="' . $categoryUrl . '">', false)
             ->assertSee('1 Article Found')
             ->assertSee($readMore($guide), false)
             ->assertDontSee($readMore($local), false);
-        $this->get(route('blogs', ['country' => $countryId, 'state' => $city->state_id, 'city' => $city->id]))
-            ->assertSee($readMore($local), false)
-            ->assertDontSee($readMore($guide), false);
-        $this->get(route('blogs', ['q' => 'verified']))->assertSee($readMore($guide), false)->assertDontSee($readMore($local), false);
-        $this->get(route('blogs', ['q' => '%']))->assertSee('No Matching Blog Articles Found');
-        $this->get(route('blogs', ['category' => 'no-such-category']))->assertSee('No Matching Blog Articles Found');
+        foreach ([$countryUrl, "$countryUrl/$stateSlug", $cityUrl] as $url) {
+            $this->get($url)
+                ->assertOk()
+                ->assertSee('<link rel="canonical" href="' . $url . '">', false)
+                ->assertSee('<option value="' . $countrySlug . '" selected', false)
+                ->assertSee($readMore($local), false)
+                ->assertDontSee($readMore($guide), false);
+        }
+        $this->get($cityUrl)->assertSee('<title>Blogs in ' . e($city->name) . ', ' . e($country->name) . ' | ', false);
+        $this->get("$categoryUrl/$countrySlug")->assertOk()->assertSee('No Matching Blog Articles Found');
 
-        // A state without its country is ignored instead of producing an impossible filter.
-        $this->get(route('blogs', ['state' => $city->state_id]))->assertSee($readMore($guide), false)->assertSee($readMore($local), false);
+        // Query-string filters (the form, old links) are 301-redirected to the pretty URL, keeping the keyword.
+        $this->get(route('blogs', ['country' => $countrySlug, 'state' => $stateSlug, 'city' => $citySlug, 'category' => '', 'q' => '']))->assertStatus(301)->assertRedirect($cityUrl);
+        $this->get(route('blogs', ['country' => $country->id, 'category' => $category->slug, 'q' => 'tips']))->assertRedirect("$categoryUrl/$countrySlug?q=tips");
+        $this->get(route('blogs', ['state' => $stateSlug, 'category' => 'no-such-category']))->assertRedirect(route('blogs'));
+
+        // Unknown segments are real 404s, not empty pages.
+        $this->get(route('blogs') . '/category/no-such-category')->assertNotFound();
+        $this->get(route('blogs') . '/no-such-country')->assertNotFound();
+        $this->get("$countryUrl/no-such-state")->assertNotFound();
+
+        // Keyword search stays in the query string and is never indexed.
+        $this->get(route('blogs', ['q' => 'verified']))
+            ->assertSee('<meta name="robots" content="noindex, follow">', false)
+            ->assertSee($readMore($guide), false)
+            ->assertDontSee($readMore($local), false);
+        $this->get(route('blogs', ['q' => '%']))->assertSee('No Matching Blog Articles Found');
+
+        // Every country is offered, even without articles; such a page finds nothing and is not indexed.
+        $emptyCountry = Country::where('id', '!=', $country->id)->get()->first(fn ($c) => Str::slug($c->name) !== $countrySlug);
+        $this->get(route('blogs'))->assertSee('<option value="' . Str::slug($emptyCountry->name) . '"', false);
+        $this->get(route('blogs') . '/' . Str::slug($emptyCountry->name))
+            ->assertOk()
+            ->assertSee('No Matching Blog Articles Found')
+            ->assertSee('<meta name="robots" content="noindex, follow">', false);
 
         foreach (range(1, 12) as $i) {
             $this->storeBlog(['status' => 'published', 'published_at' => now()->subDays($i)->format('Y-m-d\TH:i')]);
@@ -302,14 +338,23 @@ class BlogPostManagementTest extends TestCase
 
     public function test_sitemap_lists_indexable_live_articles(): void
     {
-        $live = $this->storeBlog(['status' => 'published']);
+        $category = BlogCategory::create(['name' => 'Sitemap Guides', 'slug' => 'sitemap-guides-' . uniqid(), 'status' => 1, 'robots_index' => 'index', 'robots_follow' => 'follow']);
+        $city = City::whereNotNull('state_id')->firstOrFail();
+        $state = State::findOrFail($city->state_id);
+        $country = Country::findOrFail($state->country_id);
+
+        $live = $this->storeBlog(['status' => 'published', 'categories' => [$category->id], 'country_id' => $country->id, 'state_id' => $state->id, 'city_id' => $city->id]);
         $noindex = $this->storeBlog(['status' => 'published', 'robots_index' => 'noindex']);
         $elsewhere = $this->storeBlog(['status' => 'published', 'canonical_url' => 'https://example.com/original-article']);
         $draft = $this->storeBlog();
 
+        $countryUrl = route('blogs') . '/' . Str::slug($country->name);
         $this->get(route('sitemap'))
             ->assertOk()
             ->assertSee('<loc>' . route('blogs') . '</loc>', false)
+            ->assertSee('<loc>' . route('blogs') . '/category/' . $category->slug . '</loc>', false)
+            ->assertSee('<loc>' . $countryUrl . '</loc>', false)
+            ->assertSee('<loc>' . $countryUrl . '/' . Str::slug($state->name) . '/' . Str::slug($city->name) . '</loc>', false)
             ->assertSee('<loc>' . route('blog.show', $live->slug) . '</loc>', false)
             ->assertDontSee(route('blog.show', $noindex->slug), false)
             ->assertDontSee(route('blog.show', $elsewhere->slug), false)

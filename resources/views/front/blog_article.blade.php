@@ -200,7 +200,7 @@
                                     <ul class="topics-list">
                                         @foreach ($blogTopics as $topic)
                                             <li class="topic-item">
-                                                <a href="{{ route('blogs', ['category' => $topic->slug]) }}" class="topic-link">
+                                                <a href="{{ app(\App\Services\Front\BlogServices::class)->listingUrl($topic) }}" class="topic-link">
                                                     <span class="topic-name"><i class="fa fa-chevron-right"></i> {{ $topic->name }}</span>
                                                     <span class="topic-count">{{ $topic->blogs_count }}</span>
                                                 </a>

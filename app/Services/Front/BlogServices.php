@@ -7,6 +7,7 @@ use App\Models\BlogCategory;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\State;
+use Illuminate\Support\Str;
 
 class BlogServices
 {
@@ -19,49 +20,100 @@ class BlogServices
     }
 
     /**
-     * Data for the public /blogs listing: live articles filtered by the query string, the
-     * filter dropdown options (only locations/categories that actually have live articles)
-     * and the sidebar widgets.
+     * Resolve the slug segments of a listing URL (/blogs/category/{category}/{country}/{state}/{city})
+     * to models. Returns null when any given segment is unknown, so the page can 404.
+     *
+     * @return array{category:?BlogCategory, country:?Country, state:?State, city:?City}|null
      */
-    public function listingViewData(array $input, int $perPage = 12): array
+    public function resolveListingPath(?string $category, ?string $country, ?string $state, ?string $city): ?array
     {
-        $filters = [
-            'country_id' => (int) ($input['country'] ?? 0) ?: null,
-            'state_id' => (int) ($input['state'] ?? 0) ?: null,
-            'city_id' => (int) ($input['city'] ?? 0) ?: null,
-            'category' => is_string($input['category'] ?? null) ? $input['category'] : null,
-            'q' => is_string($input['q'] ?? null) ? mb_substr(trim($input['q']), 0, 100) : null,
-        ];
-        // A state/city only applies inside its parent, mirroring the dependent dropdowns.
-        if (!$filters['country_id']) {
-            $filters['state_id'] = null;
+        $resolved = ['category' => null, 'country' => null, 'state' => null, 'city' => null];
+
+        if ($category !== null && !($resolved['category'] = BlogCategory::active()->where('slug', $category)->first())) {
+            return null;
         }
-        if (!$filters['state_id']) {
-            $filters['city_id'] = null;
+        if ($country !== null && !($resolved['country'] = $this->matchSlug(Country::query(), $country))) {
+            return null;
+        }
+        if ($state !== null && !($resolved['state'] = $this->matchSlug(State::where('country_id', $resolved['country']->id), $state))) {
+            return null;
+        }
+        if ($city !== null && !($resolved['city'] = $this->matchSlug(City::where('state_id', $resolved['state']->id), $city))) {
+            return null;
         }
 
-        $category = $filters['category'] ? BlogCategory::active()->where('slug', $filters['category'])->first() : null;
+        return $resolved;
+    }
+
+    /**
+     * Pretty URL of a listing, e.g. /blogs/category/guides/colombia/antioquia/medellin?q=tips
+     */
+    public function listingUrl(?BlogCategory $category = null, ?Country $country = null, ?State $state = null, ?City $city = null, array $query = []): string
+    {
+        $segments = $category ? ['category', $category->slug] : [];
+        foreach ([$country, $state, $city] as $place) {
+            // A state/city is only meaningful below its parent.
+            if (!$place) {
+                break;
+            }
+            $segments[] = Str::slug($place->name);
+        }
+
+        $query = array_filter($query, fn ($value) => $value !== null && $value !== '');
+
+        return rtrim(route('blogs') . '/' . implode('/', $segments), '/') . ($query ? '?' . http_build_query($query) : '');
+    }
+
+    /**
+     * Pretty URL for a query-string listing (the filter form, or old ?country=12 links), or null when
+     * there is nothing to convert. Values may be slugs or numeric ids; unknown ones are dropped.
+     */
+    public function legacyListingUrl(array $query): ?string
+    {
+        if (!array_intersect_key($query, array_flip(['category', 'country', 'state', 'city']))) {
+            return null;
+        }
+
+        $find = function ($builder, $value) {
+            if (!is_string($value) || $value === '') {
+                return null;
+            }
+
+            return ctype_digit($value) ? $builder->find((int) $value) : $this->matchSlug($builder, $value);
+        };
+
+        $category = is_string($query['category'] ?? null) && $query['category'] !== ''
+            ? BlogCategory::active()->where('slug', $query['category'])->first()
+            : null;
+        $country = $find(Country::query(), $query['country'] ?? null);
+        $state = $country ? $find(State::where('country_id', $country->id), $query['state'] ?? null) : null;
+        $city = $state ? $find(City::where('state_id', $state->id), $query['city'] ?? null) : null;
+
+        return $this->listingUrl($category, $country, $state, $city, ['q' => is_string($query['q'] ?? null) ? trim($query['q']) : null]);
+    }
+
+    /**
+     * Data for the public /blogs listing: live articles for the resolved category/location and
+     * keyword, the filter dropdown options and the sidebar widgets.
+     */
+    public function listingViewData(array $current, ?string $keyword, int $perPage = 12): array
+    {
+        $keyword = is_string($keyword) ? mb_substr(trim($keyword), 0, 100) : '';
 
         $blogs = Blog::live()
             ->with(['categories:id,name,slug', 'author:id,name', 'country:id,name', 'state:id,name', 'city:id,name'])
-            ->when($filters['country_id'], fn ($q, $id) => $q->where('country_id', $id))
-            ->when($filters['state_id'], fn ($q, $id) => $q->where('state_id', $id))
-            ->when($filters['city_id'], fn ($q, $id) => $q->where('city_id', $id))
-            // An unknown or inactive category slug matches nothing rather than silently showing everything.
-            ->when($filters['category'], fn ($q) => $q->whereHas('categories', fn ($c) => $c->where('blog_categories.id', $category ? $category->id : 0)))
-            ->when($filters['q'], function ($q, $term) {
-                $like = '%' . addcslashes($term, '%_\\') . '%';
+            ->when($current['category'], fn ($q, $category) => $q->whereHas('categories', fn ($c) => $c->where('blog_categories.id', $category->id)))
+            ->when($current['country'], fn ($q, $country) => $q->where('country_id', $country->id))
+            ->when($current['state'], fn ($q, $state) => $q->where('state_id', $state->id))
+            ->when($current['city'], fn ($q, $city) => $q->where('city_id', $city->id))
+            ->when($keyword !== '', function ($q) use ($keyword) {
+                $like = '%' . addcslashes($keyword, '%_\\') . '%';
                 $q->where(fn ($w) => $w->where('title', 'like', $like)->orWhere('excerpt', 'like', $like));
             })
             ->orderByDesc('published_at')
             ->orderByDesc('id')
             ->paginate($perPage)
             ->withQueryString();
-
-        $liveLocations = Blog::live();
-        $countryIds = (clone $liveLocations)->whereNotNull('country_id')->distinct()->pluck('country_id');
-        $stateIds = $filters['country_id'] ? (clone $liveLocations)->where('country_id', $filters['country_id'])->whereNotNull('state_id')->distinct()->pluck('state_id') : collect();
-        $cityIds = $filters['state_id'] ? (clone $liveLocations)->where('state_id', $filters['state_id'])->whereNotNull('city_id')->distinct()->pluck('city_id') : collect();
 
         $topics = BlogCategory::active()
             ->withCount(['blogs' => fn ($q) => $q->live()])
@@ -72,16 +124,63 @@ class BlogServices
 
         return [
             'blogs' => $blogs,
-            'filters' => $filters,
-            'activeCategory' => $category,
-            'isFiltered' => (bool) array_filter($filters),
-            'filterCountries' => $countryIds->isEmpty() ? collect() : Country::whereIn('id', $countryIds)->orderBy('name')->get(['id', 'name']),
-            'filterStates' => $stateIds->isEmpty() ? collect() : State::whereIn('id', $stateIds)->orderBy('name')->get(['id', 'name']),
-            'filterCities' => $cityIds->isEmpty() ? collect() : City::whereIn('id', $cityIds)->orderBy('name')->get(['id', 'name']),
+            'current' => $current,
+            'keyword' => $keyword,
+            'locationLabel' => collect([$current['city'], $current['state'], $current['country']])->filter()->pluck('name')->implode(', '),
+            'isFiltered' => (bool) array_filter($current) || $keyword !== '',
+            // Full location lists, even where no article exists yet: an empty result shows "no articles found".
+            'filterCountries' => Country::orderBy('name')->get(['id', 'name']),
+            'filterStates' => $current['country'] ? State::where('country_id', $current['country']->id)->orderBy('name')->get(['id', 'name']) : collect(),
+            'filterCities' => $current['state'] ? City::where('state_id', $current['state']->id)->orderBy('name')->get(['id', 'name']) : collect(),
             'blogTopics' => $topics,
             'recentBlogs' => Blog::live()->orderByDesc('published_at')->limit(5)
                 ->get(['id', 'title', 'slug', 'featured_image', 'featured_image_alt', 'published_at']),
         ];
+    }
+
+    /**
+     * Listing URL for the location an article is tagged with, or null when it has none.
+     */
+    public function articleLocationUrl(Blog $blog): ?string
+    {
+        return $blog->country ? $this->listingUrl(null, $blog->country, $blog->state, $blog->state ? $blog->city : null) : null;
+    }
+
+    /**
+     * Indexable listing pages for the sitemap: every category and location (country, state, city)
+     * that has at least one live, indexable article.
+     *
+     * @return array<int, array{loc:string, lastmod:string}>
+     */
+    public function sitemapListingUrls(): array
+    {
+        $urls = [];
+        $add = function (string $loc, $lastmod) use (&$urls) {
+            if (!isset($urls[$loc]) || $urls[$loc]->lt($lastmod)) {
+                $urls[$loc] = $lastmod;
+            }
+        };
+
+        $blogs = Blog::live()->where('robots_index', 'index')
+            ->with(['categories' => fn ($q) => $q->active(), 'country:id,name', 'state:id,name', 'city:id,name'])
+            ->get(['id', 'country_id', 'state_id', 'city_id', 'updated_at']);
+
+        foreach ($blogs as $blog) {
+            foreach ($blog->categories as $category) {
+                $add($this->listingUrl($category), $blog->updated_at);
+            }
+            if ($blog->country) {
+                $add($this->listingUrl(null, $blog->country), $blog->updated_at);
+                if ($blog->state) {
+                    $add($this->listingUrl(null, $blog->country, $blog->state), $blog->updated_at);
+                    if ($blog->city) {
+                        $add($this->listingUrl(null, $blog->country, $blog->state, $blog->city), $blog->updated_at);
+                    }
+                }
+            }
+        }
+
+        return collect($urls)->map(fn ($lastmod, $loc) => ['loc' => $loc, 'lastmod' => $lastmod->format('Y-m-d')])->values()->all();
     }
 
     /**
@@ -122,5 +221,13 @@ class BlogServices
             'blogTopics' => $topics,
             'isPreview' => $isPreview,
         ];
+    }
+
+    /**
+     * First record in the query whose name slugifies to the given slug (location tables have no slug column).
+     */
+    private function matchSlug($query, string $slug)
+    {
+        return $query->get(['id', 'name'])->first(fn ($place) => Str::slug($place->name) === $slug);
     }
 }
