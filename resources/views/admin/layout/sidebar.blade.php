@@ -251,7 +251,7 @@
 					<span class="menu-text">Hot Stories</span>
 				</a>
 			</div>
-			<div class="menu-item {{ request()->routeIs('admin.blogs.*', 'admin.blog-categories.*') ? 'active' : '' }}">
+			<div class="menu-item {{ request()->routeIs('admin.blogs.*', 'admin.blog-categories.*', 'admin.blog-posts.*') ? 'active' : '' }}">
 				<a href="{{route('admin.blogs.index')}}" class="menu-link">
 					<span class="menu-icon"><i class="fa fa-blog"></i></span>
 					<span class="menu-text">Blogs</span>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\City;
 use App\Models\Agency;
+use App\Models\Blog;
 use App\Models\LocationSeoContent;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -110,6 +111,29 @@ class SitemapController extends Controller
                     'priority' => '0.7',
                     'changefreq' => 'weekly',
                     'lastmod' => $agency->updated_at ? $agency->updated_at->format('Y-m-d') : now()->format('Y-m-d'),
+                ];
+            }
+
+            // 7. Blog listing and live, indexable articles. Articles canonicalised to another URL are left out.
+            $blogs = Blog::live()->where('robots_index', 'index')->orderByDesc('published_at')->get(['slug', 'canonical_url', 'published_at', 'updated_at']);
+            if ($blogs->isNotEmpty() && !in_array('blog', $noindexTitles)) {
+                $urls[] = [
+                    'loc' => route('blogs'),
+                    'priority' => '0.7',
+                    'changefreq' => 'weekly',
+                    'lastmod' => $blogs->max('updated_at')->format('Y-m-d'),
+                ];
+            }
+            foreach ($blogs as $blog) {
+                $blogUrl = route('blog.show', $blog->slug);
+                if ($blog->canonical_url && rtrim($blog->canonical_url, '/') !== $blogUrl) {
+                    continue;
+                }
+                $urls[] = [
+                    'loc' => $blogUrl,
+                    'priority' => '0.6',
+                    'changefreq' => 'monthly',
+                    'lastmod' => $blog->updated_at->max($blog->published_at)->format('Y-m-d'),
                 ];
             }
 

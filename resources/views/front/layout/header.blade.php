@@ -20,6 +20,7 @@
 
         }
     }
+
     .goog-te-banner-frame.skiptranslate,
     .goog-logo-link,
     .goog-te-gadget span {
@@ -29,6 +30,7 @@
     #google_translate_element {
         display: none;
     }
+
     #goog-gt-tt {
         display: none !important;
     }
@@ -53,41 +55,53 @@
                     @endif
                 @endauth
                 <div class="container-fluid position-relative">
-                    <div class="d-flex flex-column flex-md-row py-2 mb-1 justify-content-between px-3 align-items-center">
+                    <div
+                        class="d-flex flex-column flex-md-row py-2 mb-1 justify-content-between px-3 align-items-center">
                         <p class="mb-2"><strong>Phone:</strong> <small>{{ $globalData->phone_no }}</small>,
                             <small>{{ $globalData->alter_phone_no }}</small>
                         </p>
                         <div class="language-box">
                             <div class="top-socials pt-0 mb-0">
                                 @if ($globalData->telegram_active == 1)
-                                    <a href="{{ $globalData->telegram }}" target="_blank" rel="nofollow noopener" class="" title="telegram">
+                                    <a href="{{ $globalData->telegram }}" target="_blank" rel="nofollow noopener" class=""
+                                        title="telegram">
                                         <i class="fa-brands fa-telegram"></i>
                                     </a>
                                 @endif
                                 @if ($globalData->facebook_active == 1)
-                                    <a href="{{ $globalData->facebook }}" target="_blank" rel="nofollow noopener" class="" title="facebook">
+                                    <a href="{{ $globalData->facebook }}" target="_blank" rel="nofollow noopener" class=""
+                                        title="facebook">
                                         <i class="fa-brands fa-facebook"></i>
                                     </a>
                                 @endif
                                 @if ($globalData->instagram_active == 1)
-                                    <a href="{{ $globalData->intagram }}" target="_blank" rel="nofollow noopener" class="" title="instagram">
+                                    <a href="{{ $globalData->intagram }}" target="_blank" rel="nofollow noopener" class=""
+                                        title="instagram">
                                         <i class="fa-brands fa-instagram"></i>
                                     </a>
                                 @endif
                                 <a href="https://api.whatsapp.com/send/?phone={{ $globalData->whatsApp_no }}&text=hi&type=phone_number&app_absent=0"
-                                    target="_blank" rel="nofollow noopener" class="" title="whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                                    target="_blank" rel="nofollow noopener" class="" title="whatsapp"><i
+                                        class="fa-brands fa-whatsapp"></i></a>
                                 <a href="mailto:{{ $globalData->email }}" class="" title="email">
                                     <i class="fa-solid fa-envelope"></i>
                                 </a>
                             </div>
                             <div class="dropdown lang-btn">
-                                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" id="selected-language"></button>
+                                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"
+                                    id="selected-language"></button>
                                 <div class="dropdown-menu lang-dropdown">
-                                <a class="dropdown-item" onclick="selectLanguage('en','EN','https://flagcdn.com/gb.svg')"><img width="35" src="https://flagcdn.com/gb.svg" title="English"></a>
-                                <a class="dropdown-item" onclick="selectLanguage('es','ES','https://flagcdn.com/es.svg')"><img width="35" src="https://flagcdn.com/es.svg" title="Spanish"></a>
-                                <a class="dropdown-item" onclick="selectLanguage('de','DE','https://flagcdn.com/de.svg')"><img width="35" src="https://flagcdn.com/de.svg" title="German"></a>
+                                    <a class="dropdown-item"
+                                        onclick="selectLanguage('en','EN','https://flagcdn.com/gb.svg')"><img width="35"
+                                            src="https://flagcdn.com/gb.svg" title="English"></a>
+                                    <a class="dropdown-item"
+                                        onclick="selectLanguage('es','ES','https://flagcdn.com/es.svg')"><img width="35"
+                                            src="https://flagcdn.com/es.svg" title="Spanish"></a>
+                                    <a class="dropdown-item"
+                                        onclick="selectLanguage('de','DE','https://flagcdn.com/de.svg')"><img width="35"
+                                            src="https://flagcdn.com/de.svg" title="German"></a>
                                 </div>
-                            </div> 
+                            </div>
                             <div id="google_translate_element"></div>
                         </div>
                     </div>
@@ -127,21 +141,36 @@
                                     {{-- Not Logged In --}}
                                     @guest
                                         <ul class="nav main-nav align-items-center">
-                                            <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Home</a></li>
-                                            <li class="{{ request()->routeIs('model.search*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">All Escorts</a></li>
-                                            <li class="{{ request()->routeIs('new.escorts*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('new.escorts', ['city' => $city]) : route('new.escorts') }}">New Escorts</a></li>
-                                            <li class="{{ request()->routeIs('reels*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('reels', ['city' => $city]) : route('reels') }}">Hot Stories</a></li>
-                                            <li class="{{ request()->routeIs('user.agencies*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('user.agencies', ['city' => $city]) : route('user.agencies') }}">Agencies/Sex Locations</a></li>
+                                            <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a
+                                                    href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Home</a>
+                                            </li>
+                                            <li class="{{ request()->routeIs('model.search*') ? 'active' : '' }}"><a
+                                                    href="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">All
+                                                    Escorts</a></li>
+                                            <li class="{{ request()->routeIs('new.escorts*') ? 'active' : '' }}"><a
+                                                    href="{{ !empty($city) ? route('new.escorts', ['city' => $city]) : route('new.escorts') }}">New
+                                                    Escorts</a></li>
+                                            <li class="{{ request()->routeIs('reels*') ? 'active' : '' }}"><a
+                                                    href="{{ !empty($city) ? route('reels', ['city' => $city]) : route('reels') }}">Hot
+                                                    Stories</a></li>
+                                            <li class="{{ request()->routeIs('user.agencies*') ? 'active' : '' }}"><a
+                                                    href="{{ !empty($city) ? route('user.agencies', ['city' => $city]) : route('user.agencies') }}">Agencies/Sex
+                                                    Locations</a></li>
                                             <!-- <li><a href="#">Stories</a></li> -->
-                                            <li class="{{ request()->routeIs('contact-us*') ? 'active' : '' }}"><a href="{{ route('contact-us') }}">Contact Us</a></li>
+                                            <li class="{{ request()->routeIs('contact-us*') ? 'active' : '' }}"><a
+                                                    href="{{ route('contact-us') }}">Contact Us</a></li>
+
+                                            <li class="{{ request()->routeIs('blogs*') ? 'active' : '' }}"><a
+                                                    href="{{ route('blogs') }}">Blogs</a></li>
+
                                             <!-- <li class="position-relative ">
 
-                                                <div class="bg-top-element d-lg-block d-none">
+                                                                        <div class="bg-top-element d-lg-block d-none">
 
-                                                    <div class="bg-top-element bg-top-element-login ">
-                                                        <img src="{{ asset('images/bgelement2.png') }}" alt="img">
-                                                    </div>
-                                            </li> -->
+                                                                            <div class="bg-top-element bg-top-element-login ">
+                                                                                <img src="{{ asset('images/bgelement2.png') }}" alt="img">
+                                                                            </div>
+                                                                    </li> -->
                                             <li class="login_out_mobile">
                                                 <div class="d-flex gap-4 justify-content-center">
                                                     <a href="{{ route('user-login') }}"
@@ -159,23 +188,37 @@
                                         {{-- Full menu only if approved, verified and plan active (for type 2) --}}
                                         @if($user->user_status == 0 && $user->email_verified_at !== null && ($user->type == 1 || ($user->type == 2 && $user->plan_id && $user->admin_status == 'approved')))
                                             <ul class="nav main-nav align-items-center">
-                                                <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Home</a></li>
-                                                <li class="{{ request()->routeIs('model.search*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">All Escorts</a></li>
-                                                <li class="{{ request()->routeIs('new.escorts*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('new.escorts', ['city' => $city]) : route('new.escorts') }}">New Escorts</a></li>
-                                                <li class="{{ request()->routeIs('reels*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('reels', ['city' => $city]) : route('reels') }}">Hot Stories</a></li>
-                                                <li class="{{ request()->routeIs('user.agencies*') ? 'active' : '' }}"><a href="{{ !empty($city) ? route('user.agencies', ['city' => $city]) : route('user.agencies') }}">Agencies/Sex Locations</a></li>
+                                                <li class="{{ request()->routeIs('home*') ? 'active' : '' }}"><a
+                                                        href="{{ !empty($city) ? route('home', ['city' => $city]) : route('home.worldwide') }}">Home</a>
+                                                </li>
+                                                <li class="{{ request()->routeIs('model.search*') ? 'active' : '' }}"><a
+                                                        href="{{ !empty($city) ? route('model.search', ['city' => $city]) : route('model.search') }}">All
+                                                        Escorts</a></li>
+                                                <li class="{{ request()->routeIs('new.escorts*') ? 'active' : '' }}"><a
+                                                        href="{{ !empty($city) ? route('new.escorts', ['city' => $city]) : route('new.escorts') }}">New
+                                                        Escorts</a></li>
+                                                <li class="{{ request()->routeIs('reels*') ? 'active' : '' }}"><a
+                                                        href="{{ !empty($city) ? route('reels', ['city' => $city]) : route('reels') }}">Hot
+                                                        Stories</a></li>
+                                                <li class="{{ request()->routeIs('user.agencies*') ? 'active' : '' }}"><a
+                                                        href="{{ !empty($city) ? route('user.agencies', ['city' => $city]) : route('user.agencies') }}">Agencies/Sex
+                                                        Locations</a></li>
                                                 <!-- <li><a href="#">Stories</a></li> -->
-                                                <li class="{{ request()->routeIs('contact-us*') ? 'active' : '' }}"><a href="{{ route('contact-us') }}">Contact Us</a></li>
+                                                <li class="{{ request()->routeIs('contact-us*') ? 'active' : '' }}"><a
+                                                        href="{{ route('contact-us') }}">Contact Us</a></li>
+
+                                                <li class="{{ request()->routeIs('blogs*') ? 'active' : '' }}"><a
+                                                        href="{{ route('blogs') }}">Blogs</a></li>
                                                 <!-- <li class="position-relative ">
 
-                                                    <div class="bg-top-element d-lg-block d-none">
+                                                                                                    <div class="bg-top-element d-lg-block d-none">
 
-                                                        <div class="bg-top-element bg-top-element-login ">
+                                                                                                        <div class="bg-top-element bg-top-element-login ">
 
 
-                                                            <img src="{{ asset('images/bgelement2.png') }}" alt="img">
-                                                        </div>
-                                                </li> -->
+                                                                                                            <img src="{{ asset('images/bgelement2.png') }}" alt="img">
+                                                                                                        </div>
+                                                                                                </li> -->
                                             </ul>
                                         @else
 
@@ -206,15 +249,14 @@
                                         <ul class="nav">
                                             <li class="profile">
                                                 @if(isset($user->profile_image) && Storage::disk('public')->exists($user->profile_image))
-                                                <a href="#" class="profile_img">
-                                                    <img src="{{ config('app.img_url') . ($user->profile_image ?? 'profile_image/default-profile.png') }}"
-                                                        alt="">
-                                                </a>
+                                                    <a href="#" class="profile_img">
+                                                        <img src="{{ config('app.img_url') . ($user->profile_image ?? 'profile_image/default-profile.png') }}"
+                                                            alt="">
+                                                    </a>
                                                 @else
-                                                <a href="#" class="profile_img">
-                                                    <img src="{{ asset('storage/profile_image/default-profile.png') }}"
-                                                        alt="">
-                                                </a>
+                                                    <a href="#" class="profile_img">
+                                                        <img src="{{ asset('storage/profile_image/default-profile.png') }}" alt="">
+                                                    </a>
                                                 @endif
                                                 <ul class="profileSub">
                                                     <li>
@@ -235,10 +277,10 @@
                                 @else
                                     <!-- Simple Logout Button -->
                                     <!-- <div class="logoutbtn">
-                                                        <a href="{{ route('user.logout') }}" class="btn btn-maincolor">
-                                                            Logout <i class="fas fa-sign-out"></i>
-                                                        </a>
-                                                    </div> -->
+                                                                                                        <a href="{{ route('user.logout') }}" class="btn btn-maincolor">
+                                                                                                            Logout <i class="fas fa-sign-out"></i>
+                                                                                                        </a>
+                                                                                                    </div> -->
                                     @php
                                         $redirect = null;
 

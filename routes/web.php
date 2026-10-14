@@ -74,8 +74,8 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
         Route::post('fetchModels', 'BoostController@fetchModels')->name('fetchModels');
         Route::post('addFeatureDevil', 'BoostController@addFeatureDevil')->name('addFeatureDevil');
         Route::post('fetchFeatureDevils', 'BoostController@fetchFeatureDevils')->name('fetchFeatureDevils');
-        Route::match(["get", "post"],'manually-boost-request', 'BoostController@manuallyBoostRequest')->name('manually-boost-request');
-        Route::match(["get", "post"],'manually-boost-request-action', 'BoostController@manuallyBoostRequestAction')->name('manually-boost-request-action');
+        Route::match(["get", "post"], 'manually-boost-request', 'BoostController@manuallyBoostRequest')->name('manually-boost-request');
+        Route::match(["get", "post"], 'manually-boost-request-action', 'BoostController@manuallyBoostRequestAction')->name('manually-boost-request-action');
         //plan 
         Route::get('plan', 'PlanController@get')->name('plan');
         Route::post('priceHideShow', 'PlanController@priceHideShow')->name('priceHideShow');
@@ -88,11 +88,15 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
         Route::get('privacy-policy', 'TermsConditionsController@adminPrivacy')->name('privacy-policy');
         Route::get('contact-page-content', 'TermsConditionsController@contactPageContent')->name('contact-page-content');
         Route::get('location-seo-content', 'TermsConditionsController@locationSeoContent')->name('location-seo-content');
-        Route::post('location-seo-content', 
-        'TermsConditionsController@locationSeoContentStore')->name('location-seo-content');
+        Route::post(
+            'location-seo-content',
+            'TermsConditionsController@locationSeoContentStore'
+        )->name('location-seo-content');
 
-        Route::post('get-location-seo-content', 
-        'TermsConditionsController@getLocationSeoContent')->name('get-location-seo-content');
+        Route::post(
+            'get-location-seo-content',
+            'TermsConditionsController@getLocationSeoContent'
+        )->name('get-location-seo-content');
 
         Route::get('getStates', 'TermsConditionsController@loadStates')->name('get-states');
         Route::get('getCities', 'TermsConditionsController@loadCities')->name('get-cities');
@@ -100,161 +104,171 @@ Route::prefix('/admin')->name('admin.')->namespace('App\Http\Controllers\Admin')
         Route::post('terms-conditions-update', 'TermsConditionsController@adminTermsUpdate')->name('terms-conditions-update');
         Route::post('contact-page-content-action', 'TermsConditionsController@contactPageContentUpdate')->name('contact-page-content-action');
         /* Image / video approval*/
-         Route::match(["get", "post"],'image-approval', 'ImageVideoApprovalController@ImageApproval')->name('image-approval');
-         Route::match(["get", "post"],'image-approval-action', 'ImageVideoApprovalController@ImageApprovalAction')->name('image-approval-action');
+        Route::match(["get", "post"], 'image-approval', 'ImageVideoApprovalController@ImageApproval')->name('image-approval');
+        Route::match(["get", "post"], 'image-approval-action', 'ImageVideoApprovalController@ImageApprovalAction')->name('image-approval-action');
 
-         Route::match(["get", "post"], 'video-approval', 'ImageVideoApprovalController@VideoApproval')->name('video-approval');
-         Route::match(["get", "post"], 'video-approval-action', 'ImageVideoApprovalController@VideoApprovalAction')->name('video-approval-action');
-         Route::match(["get", "post"], 'video-convert', 'ImageVideoApprovalController@VideoConvert')->name('video-convert');
+        Route::match(["get", "post"], 'video-approval', 'ImageVideoApprovalController@VideoApproval')->name('video-approval');
+        Route::match(["get", "post"], 'video-approval-action', 'ImageVideoApprovalController@VideoApprovalAction')->name('video-approval-action');
+        Route::match(["get", "post"], 'video-convert', 'ImageVideoApprovalController@VideoConvert')->name('video-convert');
 
-         /* FAQ Management */
-         Route::resource('faqs', 'FaqController')->except(['show']);
-         Route::post('faqs/toggle-status/{id}', 'FaqController@toggleStatus')->name('faqs.toggle-status');
+        /* FAQ Management */
+        Route::resource('faqs', 'FaqController')->except(['show']);
+        Route::post('faqs/toggle-status/{id}', 'FaqController@toggleStatus')->name('faqs.toggle-status');
 
-         /* Blogs */
-         Route::get('blogs', 'BlogController@index')->name('blogs.index');
-         Route::resource('blog-categories', 'BlogCategoryController')->except(['show', 'create']);
-         Route::post('blog-categories/toggle-status/{id}', 'BlogCategoryController@toggleStatus')->name('blog-categories.toggle-status');
+        /* Blogs */
+        Route::get('blogs', 'BlogController@index')->name('blogs.index');
+        Route::resource('blog-categories', 'BlogCategoryController')->except(['show', 'create']);
+        Route::post('blog-categories/toggle-status/{id}', 'BlogCategoryController@toggleStatus')->name('blog-categories.toggle-status');
+        Route::get('blog-posts/media', 'BlogPostController@mediaLibrary')->name('blog-posts.media');
+        Route::post('blog-posts/media', 'BlogPostController@uploadMedia')->name('blog-posts.media.upload');
+        Route::post('blog-posts/preview', 'BlogPostController@previewDraft')->name('blog-posts.preview-draft');
+        Route::get('blog-posts/{id}/preview', 'BlogPostController@preview')->name('blog-posts.preview');
+        Route::post('blog-posts/{id}/duplicate', 'BlogPostController@duplicate')->name('blog-posts.duplicate');
+        Route::resource('blog-posts', 'BlogPostController')->except(['show']);
 
-         /* Hot Stories Moderation & Control */
-         Route::get('hot-stories', 'HotStoryController@index')->name('hot-stories.index');
-         Route::delete('hot-stories/{id}', 'HotStoryController@destroy')->name('hot-stories.destroy');
-         Route::post('hot-stories/bulk-delete', 'HotStoryController@bulkDelete')->name('hot-stories.bulk-delete');
+        /* Hot Stories Moderation & Control */
+        Route::get('hot-stories', 'HotStoryController@index')->name('hot-stories.index');
+        Route::delete('hot-stories/{id}', 'HotStoryController@destroy')->name('hot-stories.destroy');
+        Route::post('hot-stories/bulk-delete', 'HotStoryController@bulkDelete')->name('hot-stories.bulk-delete');
     });
 });
 
 //Front Route Module 
-Route::namespace('App\Http\Controllers\Front')->group(function () {
-    Route::get('/home', 'HomeController@index')->name('home.worldwide');
-    Route::get('/', 'HomeController@landing')->name('landing');
+Route::
+        namespace('App\Http\Controllers\Front')->group(function () {
+            Route::get('/home', 'HomeController@index')->name('home.worldwide');
+            Route::get('/', 'HomeController@landing')->name('landing');
 
-    Route::get('/user-login', 'HomeController@Login')->name('user-login');
-    Route::get('/user-signup', 'HomeController@Signup')->name('signup');
-    Route::get('/user-signupadvertiser', 'HomeController@SignupAdveriser')->name('user-signupadvertiser');
-    Route::get('/user-forgot-password', 'HomeController@userForgotPassword')->name('user-forgot-password');
-    Route::get('/about-us', 'HomeController@aboutUs')->name('about-us');
-    Route::get('/contact-us', 'HomeController@contactUs')->name('contact-us');
-    Route::get('/faq', 'HomeController@faq')->name('faq');
-    Route::post('/user.register', 'HomeController@Register')->name('user.register');
-    Route::get('/get-states/{country_id}', 'DashboardController@getStates')->name(name: 'getstates');
-    Route::get('/get-cities/{state_id}', 'DashboardController@getCities')->name('getcities');
-    Route::get('/get-citiesbycountry/{country_id}', 'DashboardController@getCitiesCountry')->name('getcitiesCountry');
-    Route::get('/getcurrency/{id}', 'DashboardController@getCurrency')->name('getcurrency');
-    Route::get('/reels/{city?}', 'NewStoryController@reels')->name('reels');
-    Route::post('/reels', 'NewStoryController@reelSearch')->name('home.reels');
-    Route::get('/storage/app/public/{any}', function ($any) {
-        return redirect('/storage/' . $any, 301);
-    })->where('any', '.*');
+            Route::get('/user-login', 'HomeController@Login')->name('user-login');
+            Route::get('/user-signup', 'HomeController@Signup')->name('signup');
+            Route::get('/user-signupadvertiser', 'HomeController@SignupAdveriser')->name('user-signupadvertiser');
+            Route::get('/user-forgot-password', 'HomeController@userForgotPassword')->name('user-forgot-password');
+            Route::get('/about-us', 'HomeController@aboutUs')->name('about-us');
+            Route::get('/contact-us', 'HomeController@contactUs')->name('contact-us');
+            Route::get('/blogs', 'HomeController@blogs')->name('blogs');
+            Route::get('/blog', 'HomeController@blogDetail')->name('blog_detail');
+            Route::get('/blog/{slug}', 'HomeController@blogShow')->name('blog.show')->where('slug', '[a-z0-9\-]+');
+            Route::get('/faq', 'HomeController@faq')->name('faq');
+            Route::post('/user.register', 'HomeController@Register')->name('user.register');
+            Route::get('/get-states/{country_id}', 'DashboardController@getStates')->name(name: 'getstates');
+            Route::get('/get-cities/{state_id}', 'DashboardController@getCities')->name('getcities');
+            Route::get('/get-citiesbycountry/{country_id}', 'DashboardController@getCitiesCountry')->name('getcitiesCountry');
+            Route::get('/getcurrency/{id}', 'DashboardController@getCurrency')->name('getcurrency');
+            Route::get('/reels/{city?}', 'NewStoryController@reels')->name('reels');
+            Route::post('/reels', 'NewStoryController@reelSearch')->name('home.reels');
+            Route::get('/storage/app/public/{any}', function ($any) {
+                return redirect('/storage/' . $any, 301);
+            })->where('any', '.*');
 
-    Route::get('/getsubcategory/{category_id}', 'DashboardController@getSubCategory')->name('getsubcategory');
-    Route::match(['get', 'post'],'/model-search/{city?}', 'ModelController@search')->name('model.search');
-    Route::get('/terms-condition', 'HomeController@termsConditions')->name('terms');
-    Route::get('/get-cities-users', 'HomeController@getCitiesUsers')->name('getCitiesUsers');
+            Route::get('/getsubcategory/{category_id}', 'DashboardController@getSubCategory')->name('getsubcategory');
+            Route::match(['get', 'post'], '/model-search/{city?}', 'ModelController@search')->name('model.search');
+            Route::get('/terms-condition', 'HomeController@termsConditions')->name('terms');
+            Route::get('/get-cities-users', 'HomeController@getCitiesUsers')->name('getCitiesUsers');
 
-    /* Route::get('/terms-condition', function () {
-        return view('front.terms'); // users/terms.blade.php
-    })->name('terms'); */
+            /* Route::get('/terms-condition', function () {
+                return view('front.terms'); // users/terms.blade.php
+            })->name('terms'); */
 
-    Route::post('/review/store', 'ModelController@storeReview')->name('review.store');
-    Route::post('/chunk-upload', 'NewStoryController@chunkUpload')->name('chunk.upload');
-    Route::post('/comments', 'NewStoryController@commentstore')->name('comments.store');
-    Route::post('/toggle-like', 'NewStoryController@toggleLike')->name('like.toggle');
-    Route::post('/comments/{id}/like', 'NewStoryController@like')->name('comments.like');
-    Route::post('/comments/{id}/reply', 'NewStoryController@reply')->name('comments.reply');
-    Route::match(['get', 'post'], '/new-escorts/{city?}', 'ModelController@newEscort')->name('new.escorts');
-    Route::match(['get', 'post'], '/active-escorts/{city?}', 'ModelController@activeEscort')->name('active.escorts');
-    Route::match(['get', 'post'], '/lowcost-escorts/{city?}', 'ModelController@lowcostEscort')->name('lowcost.escorts');
-    Route::match(['get', 'post'], '/recommend-escorts/{city?}', 'ModelController@recommendEscort')->name('recommend.escorts');
-    Route::get('/sitemap.xml', 'SitemapController@index')->name('sitemap');
-    Route::get('/robots.txt', function () {
-        $robotsPath = public_path('robots.txt');
-        if (file_exists($robotsPath)) {
-            return response(file_get_contents($robotsPath), 200)
-                ->header('Content-Type', 'text/plain');
-        }
-        return response("User-agent: *\nDisallow: /admin\nSitemap: " . url('/sitemap.xml'), 200)
-            ->header('Content-Type', 'text/plain');
-    })->name('robots');
+            Route::post('/review/store', 'ModelController@storeReview')->name('review.store');
+            Route::post('/chunk-upload', 'NewStoryController@chunkUpload')->name('chunk.upload');
+            Route::post('/comments', 'NewStoryController@commentstore')->name('comments.store');
+            Route::post('/toggle-like', 'NewStoryController@toggleLike')->name('like.toggle');
+            Route::post('/comments/{id}/like', 'NewStoryController@like')->name('comments.like');
+            Route::post('/comments/{id}/reply', 'NewStoryController@reply')->name('comments.reply');
+            Route::match(['get', 'post'], '/new-escorts/{city?}', 'ModelController@newEscort')->name('new.escorts');
+            Route::match(['get', 'post'], '/active-escorts/{city?}', 'ModelController@activeEscort')->name('active.escorts');
+            Route::match(['get', 'post'], '/lowcost-escorts/{city?}', 'ModelController@lowcostEscort')->name('lowcost.escorts');
+            Route::match(['get', 'post'], '/recommend-escorts/{city?}', 'ModelController@recommendEscort')->name('recommend.escorts');
+            Route::get('/sitemap.xml', 'SitemapController@index')->name('sitemap');
+            Route::get('/robots.txt', function () {
+                $robotsPath = public_path('robots.txt');
+                if (file_exists($robotsPath)) {
+                    return response(file_get_contents($robotsPath), 200)
+                        ->header('Content-Type', 'text/plain');
+                }
+                return response("User-agent: *\nDisallow: /admin\nSitemap: " . url('/sitemap.xml'), 200)
+                    ->header('Content-Type', 'text/plain');
+            })->name('robots');
 
-    Route::get('/favicon.ico', function () {
-        $path = public_path('favicon.ico');
-        if (!file_exists($path)) {
-            $path = base_path('favicon.ico');
-        }
-        if (file_exists($path)) {
-            return response()->file($path, [
-                'Content-Type' => 'image/x-icon',
-                'Cache-Control' => 'public, max-age=86400',
-            ]);
-        }
-        return response('', 404);
-    })->name('favicon');
+            Route::get('/favicon.ico', function () {
+                $path = public_path('favicon.ico');
+                if (!file_exists($path)) {
+                    $path = base_path('favicon.ico');
+                }
+                if (file_exists($path)) {
+                    return response()->file($path, [
+                        'Content-Type' => 'image/x-icon',
+                        'Cache-Control' => 'public, max-age=86400',
+                    ]);
+                }
+                return response('', 404);
+            })->name('favicon');
 
-    Route::get('/apple-touch-icon.png', function () {
-        $path = public_path('apple-touch-icon.png');
-        if (!file_exists($path)) {
-            $path = base_path('apple-touch-icon.png');
-        }
-        if (file_exists($path)) {
-            return response()->file($path, [
-                'Content-Type' => 'image/png',
-                'Cache-Control' => 'public, max-age=86400',
-            ]);
-        }
-        return response('', 404);
-    })->name('apple-touch-icon');
+            Route::get('/apple-touch-icon.png', function () {
+                $path = public_path('apple-touch-icon.png');
+                if (!file_exists($path)) {
+                    $path = base_path('apple-touch-icon.png');
+                }
+                if (file_exists($path)) {
+                    return response()->file($path, [
+                        'Content-Type' => 'image/png',
+                        'Cache-Control' => 'public, max-age=86400',
+                    ]);
+                }
+                return response('', 404);
+            })->name('apple-touch-icon');
 
-    Route::get('/apple-touch-icon-precomposed.png', function () {
-        $path = public_path('apple-touch-icon-precomposed.png');
-        if (!file_exists($path)) {
-            $path = base_path('apple-touch-icon-precomposed.png');
-        }
-        if (file_exists($path)) {
-            return response()->file($path, [
-                'Content-Type' => 'image/png',
-                'Cache-Control' => 'public, max-age=86400',
-            ]);
-        }
-        return response('', 404);
-    });
+            Route::get('/apple-touch-icon-precomposed.png', function () {
+                $path = public_path('apple-touch-icon-precomposed.png');
+                if (!file_exists($path)) {
+                    $path = base_path('apple-touch-icon-precomposed.png');
+                }
+                if (file_exists($path)) {
+                    return response()->file($path, [
+                        'Content-Type' => 'image/png',
+                        'Cache-Control' => 'public, max-age=86400',
+                    ]);
+                }
+                return response('', 404);
+            });
 
-    Route::get('/favicon-{size}.png', function ($size) {
-        $allowed = ['48x48', '96x96', '192x192'];
-        if (in_array($size, $allowed, true)) {
-            $filename = "favicon-{$size}.png";
-            $path = public_path($filename);
-            if (!file_exists($path)) {
-                $path = base_path($filename);
-            }
-            if (file_exists($path)) {
-                return response()->file($path, [
-                    'Content-Type' => 'image/png',
-                    'Cache-Control' => 'public, max-age=86400',
-                ]);
-            }
-        }
-        return response('', 404);
-    })->where('size', '48x48|96x96|192x192');
+            Route::get('/favicon-{size}.png', function ($size) {
+                $allowed = ['48x48', '96x96', '192x192'];
+                if (in_array($size, $allowed, true)) {
+                    $filename = "favicon-{$size}.png";
+                    $path = public_path($filename);
+                    if (!file_exists($path)) {
+                        $path = base_path($filename);
+                    }
+                    if (file_exists($path)) {
+                        return response()->file($path, [
+                            'Content-Type' => 'image/png',
+                            'Cache-Control' => 'public, max-age=86400',
+                        ]);
+                    }
+                }
+                return response('', 404);
+            })->where('size', '48x48|96x96|192x192');
 
-    // 301 Redirects for /public/ favicon and icon requests to root
-    Route::get('/public/favicon.ico', fn() => redirect()->to(url('/favicon.ico'), 301));
-    Route::get('/public/apple-touch-icon.png', fn() => redirect()->to(url('/apple-touch-icon.png'), 301));
-    Route::get('/public/apple-touch-icon-precomposed.png', fn() => redirect()->to(url('/apple-touch-icon-precomposed.png'), 301));
-    Route::get('/public/favicon-{size}.png', fn($size) => redirect()->to(url("/favicon-{$size}.png"), 301))->where('size', '48x48|96x96|192x192');
+            // 301 Redirects for /public/ favicon and icon requests to root
+            Route::get('/public/favicon.ico', fn() => redirect()->to(url('/favicon.ico'), 301));
+            Route::get('/public/apple-touch-icon.png', fn() => redirect()->to(url('/apple-touch-icon.png'), 301));
+            Route::get('/public/apple-touch-icon-precomposed.png', fn() => redirect()->to(url('/apple-touch-icon-precomposed.png'), 301));
+            Route::get('/public/favicon-{size}.png', fn($size) => redirect()->to(url("/favicon-{$size}.png"), 301))->where('size', '48x48|96x96|192x192');
 
-    // Legacy & Alias 301 Redirects for Technical SEO & GSC
-    Route::get('/terms-and-conditions', fn() => redirect()->to(route('terms'), 301));
-    Route::get('/terms-conditions', fn() => redirect()->to(route('terms'), 301));
-    Route::get('/gallery', fn() => redirect()->to(route('reels'), 301));
-    Route::get('/login', fn() => redirect()->to(route('user-login'), 301));
-    Route::get('/signup', fn() => redirect()->to(route('choose'), 301));
-    Route::get('/signup-adveriser', fn() => redirect()->to(route('user-signupadvertiser'), 301));
-    Route::get('/signup-advertiser', fn() => redirect()->to(route('user-signupadvertiser'), 301));
-    Route::get('/register', fn() => redirect()->to(route('choose'), 301));
-    Route::get('/stories', fn() => redirect()->to(route('reels'), 301));
-    Route::get('/all-escorts', fn() => redirect()->to(route('model.search'), 301));
-    Route::get('/escorts', fn() => redirect()->to(route('model.search'), 301));
-});
+            // Legacy & Alias 301 Redirects for Technical SEO & GSC
+            Route::get('/terms-and-conditions', fn() => redirect()->to(route('terms'), 301));
+            Route::get('/terms-conditions', fn() => redirect()->to(route('terms'), 301));
+            Route::get('/gallery', fn() => redirect()->to(route('reels'), 301));
+            Route::get('/login', fn() => redirect()->to(route('user-login'), 301));
+            Route::get('/signup', fn() => redirect()->to(route('choose'), 301));
+            Route::get('/signup-adveriser', fn() => redirect()->to(route('user-signupadvertiser'), 301));
+            Route::get('/signup-advertiser', fn() => redirect()->to(route('user-signupadvertiser'), 301));
+            Route::get('/register', fn() => redirect()->to(route('choose'), 301));
+            Route::get('/stories', fn() => redirect()->to(route('reels'), 301));
+            Route::get('/all-escorts', fn() => redirect()->to(route('model.search'), 301));
+            Route::get('/escorts', fn() => redirect()->to(route('model.search'), 301));
+        });
 
 Route::get('/user-email-verify', 'App\Http\Controllers\Front\UserAuthController@userEmailVerify')->name('user-email-verify');
 Route::get('/choose', 'App\Http\Controllers\Front\UserAuthController@choose')->name('choose');
@@ -312,6 +326,7 @@ Route::prefix('/user')->name('user.')->namespace('App\Http\Controllers\Front')->
         Route::post('/boost-activate', 'UserAuthController@ajaxBoostActivate')->name('boost.activate');
     });
 });
-Route::namespace('App\Http\Controllers\Front')->group(function () {
-    Route::get('/{city?}', 'HomeController@index')->name('home');
-});
+Route::
+        namespace('App\Http\Controllers\Front')->group(function () {
+            Route::get('/{city?}', 'HomeController@index')->name('home');
+        });

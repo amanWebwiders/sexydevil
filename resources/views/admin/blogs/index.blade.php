@@ -35,6 +35,28 @@
         <div class="col-md-6 col-xl-4">
             <div class="card blog-section-card p-4 h-100">
                 <div class="d-flex align-items-start gap-3 mb-3">
+                    <div class="blog-section-icon"><i class="fa fa-pen-nib"></i></div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-1">Blog Articles</h5>
+                        <small class="text-muted">
+                            {{ $blogStats['all'] }} total &middot; {{ $blogStats['published'] }} published &middot; {{ $blogStats['draft'] }} drafts
+                        </small>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4">Write, schedule and publish articles with SEO, media and location settings.</p>
+                <div class="d-flex gap-2 mt-auto">
+                    <a href="{{ route('admin.blog-posts.index') }}" class="btn btn-primary flex-fill">
+                        <i class="fa fa-newspaper me-1"></i> Blog Management
+                    </a>
+                    <a href="{{ route('admin.blog-posts.create') }}" class="btn btn-outline-primary" title="Write a new article">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+            <div class="card blog-section-card p-4 h-100">
+                <div class="d-flex align-items-start gap-3 mb-3">
                     <div class="blog-section-icon"><i class="fa fa-folder-tree"></i></div>
                     <div>
                         <h5 class="fw-bold text-dark mb-1">Blog Categories</h5>

@@ -28,6 +28,11 @@ class BlogCategory extends Model
         'status' => 'integer',
     ];
 
+    public function blogs()
+    {
+        return $this->belongsToMany(Blog::class, 'blog_blog_category');
+    }
+
     /**
      * Scope active categories
      */
