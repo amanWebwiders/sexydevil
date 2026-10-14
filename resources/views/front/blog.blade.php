@@ -1,6 +1,7 @@
 @extends('front.layout.layout')
 
 @section('content')
+    @inject('blogUrls', 'App\Services\Front\BlogServices')
 
     <div class="main-area" id="blog-page-content">
         <!-- Main Blog Section -->
@@ -11,7 +12,7 @@
                     <div class="blog-filter-header">
                         <h1 class="blog-filter-header-title">
                             <i class="fa fa-sliders-h"></i>
-                            {{ $activeCategory ? $activeCategory->name : 'Blog' }}
+                            {{ $heading }}
                         </h1>
                         <span class="filter-count-badge">
                             {{ $blogs->total() }} Article{{ $blogs->total() === 1 ? '' : 's' }}{{ $isFiltered ? ' Found' : '' }}
@@ -27,7 +28,7 @@
                                 <select id="filterCountry" name="country" class="form-control" data-resets="filterState,filterCity">
                                     <option value="">All Countries</option>
                                     @foreach ($filterCountries as $country)
-                                        <option value="{{ $country->id }}" @selected($filters['country_id'] == $country->id)>{{ $country->name }}</option>
+                                        <option value="{{ \Illuminate\Support\Str::slug($country->name) }}" @selected(optional($current['country'])->id === $country->id)>{{ $country->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -39,7 +40,7 @@
                                 <select id="filterState" name="state" class="form-control" data-resets="filterCity" @disabled($filterStates->isEmpty())>
                                     <option value="">All States</option>
                                     @foreach ($filterStates as $state)
-                                        <option value="{{ $state->id }}" @selected($filters['state_id'] == $state->id)>{{ $state->name }}</option>
+                                        <option value="{{ \Illuminate\Support\Str::slug($state->name) }}" @selected(optional($current['state'])->id === $state->id)>{{ $state->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -52,7 +53,7 @@
                                 <select id="filterCity" name="city" class="form-control" @disabled($filterCities->isEmpty())>
                                     <option value="">All Cities</option>
                                     @foreach ($filterCities as $city)
-                                        <option value="{{ $city->id }}" @selected($filters['city_id'] == $city->id)>{{ $city->name }}</option>
+                                        <option value="{{ \Illuminate\Support\Str::slug($city->name) }}" @selected(optional($current['city'])->id === $city->id)>{{ $city->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -64,7 +65,7 @@
                                 <select id="filterCategory" name="category" class="form-control">
                                     <option value="">All Categories</option>
                                     @foreach ($blogTopics as $topic)
-                                        <option value="{{ $topic->slug }}" @selected($filters['category'] === $topic->slug)>{{ $topic->name }}</option>
+                                        <option value="{{ $topic->slug }}" @selected(optional($current['category'])->id === $topic->id)>{{ $topic->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -75,7 +76,7 @@
                                     Keyword</label>
                                 <div class="d-flex gap-2" style="gap: 8px;">
                                     <input type="search" id="filterKeyword" name="q" class="form-control" placeholder="Search articles..."
-                                        value="{{ $filters['q'] }}" maxlength="100">
+                                        value="{{ $keyword }}" maxlength="100">
                                     <button type="submit" class="btn-filter-reset" title="Search" style="width: 48px; min-width: 48px;">
                                         <i class="fa fa-search"></i>
                                     </button>
@@ -129,6 +130,7 @@
                                         @php
                                             $url = route('blog.show', $blog->slug);
                                             $location = optional($blog->city)->name ?: optional($blog->state)->name ?: optional($blog->country)->name;
+                                            $locationUrl = $blogUrls->articleLocationUrl($blog);
                                         @endphp
                                         <div class="col-xl-4 col-md-6 mb-4">
                                             <article class="trending-card">
@@ -154,8 +156,8 @@
                                                         {{ \Illuminate\Support\Str::limit($blog->excerpt ?: $blog->plain_text, 140) }}
                                                     </p>
                                                     <div class="trending-footer">
-                                                        @if ($location)
-                                                            <span class="post-location-tag"><i class="fa fa-map-marker-alt"></i> {{ $location }}</span>
+                                                        @if ($locationUrl)
+                                                            <a href="{{ $locationUrl }}" class="post-location-tag"><i class="fa fa-map-marker-alt"></i> {{ $location }}</a>
                                                         @else
                                                             <span class="post-location-tag"><i class="fa fa-book-open"></i> {{ $blog->reading_minutes }} min read</span>
                                                         @endif
@@ -212,7 +214,7 @@
                                     <ul class="topics-list">
                                         @foreach ($blogTopics as $topic)
                                             <li class="topic-item">
-                                                <a href="{{ route('blogs', ['category' => $topic->slug]) }}" class="topic-link">
+                                                <a href="{{ $blogUrls->listingUrl($topic) }}" class="topic-link">
                                                     <span class="topic-name"><i class="fa fa-chevron-right"></i> {{ $topic->name }}</span>
                                                     <span class="topic-count">{{ $topic->blogs_count }}</span>
                                                 </a>

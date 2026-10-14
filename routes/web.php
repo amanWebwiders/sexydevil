@@ -146,6 +146,9 @@ Route::
             Route::get('/about-us', 'HomeController@aboutUs')->name('about-us');
             Route::get('/contact-us', 'HomeController@contactUs')->name('contact-us');
             Route::get('/blogs', 'HomeController@blogs')->name('blogs');
+            // SEO friendly listing filters: /blogs/category/{category}[/{country}[/{state}[/{city}]]] and /blogs/{country}[/{state}[/{city}]]
+            Route::get('/blogs/category/{category}/{country?}/{state?}/{city?}', 'HomeController@blogs')->name('blogs.category')->where(['category' => '[a-z0-9\-]+', 'country' => '[a-z0-9\-]+', 'state' => '[a-z0-9\-]+', 'city' => '[a-z0-9\-]+']);
+            Route::get('/blogs/{country}/{state?}/{city?}', 'HomeController@blogs')->name('blogs.location')->where(['country' => '[a-z0-9\-]+', 'state' => '[a-z0-9\-]+', 'city' => '[a-z0-9\-]+']);
             Route::get('/blog', 'HomeController@blogDetail')->name('blog_detail');
             Route::get('/blog/{slug}', 'HomeController@blogShow')->name('blog.show')->where('slug', '[a-z0-9\-]+');
             Route::get('/faq', 'HomeController@faq')->name('faq');

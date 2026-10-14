@@ -123,6 +123,10 @@ class SitemapController extends Controller
                     'changefreq' => 'weekly',
                     'lastmod' => $blogs->max('updated_at')->format('Y-m-d'),
                 ];
+                // Category and location listings (/blogs/category/{slug}, /blogs/{country}/{state}/{city}).
+                foreach (app(\App\Services\Front\BlogServices::class)->sitemapListingUrls() as $listing) {
+                    $urls[] = $listing + ['priority' => '0.6', 'changefreq' => 'weekly'];
+                }
             }
             foreach ($blogs as $blog) {
                 $blogUrl = route('blog.show', $blog->slug);

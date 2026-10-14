@@ -494,27 +494,53 @@ class HomeController extends Controller
         }
     }
 
+    /**
+     * Blog listing. Filters live in the path (/blogs/category/{category}/{country}/{state}/{city});
+     * query-string filters from the form or old links are 301-redirected there. Only the keyword
+     * search stays in the query string.
+     */
     public function blogs(Request $request, BlogServices $blogServices)
     {
-        $data = $blogServices->listingViewData($request->query());
+        if ($request->routeIs('blogs') && ($prettyUrl = $blogServices->legacyListingUrl($request->query()))) {
+            return redirect()->to($prettyUrl, 301);
+        }
+
+        $route = $request->route();
+        $current = $blogServices->resolveListingPath($route->parameter('category'), $route->parameter('country'), $route->parameter('state'), $route->parameter('city'));
+        abort_if(!$current, 404);
+
+        $data = $blogServices->listingViewData($current, $request->query('q'));
+        $category = $current['category'];
+        $place = $current['city'] ?: $current['state'] ?: $current['country'];
+
+        $heading = $category ? $category->name : ($place ? 'Blogs' : 'Blog');
+        if ($place) {
+            $heading .= ' in ' . $place->name . ($place !== $current['country'] ? ', ' . $current['country']->name : '');
+        }
 
         $locationSeoContent = $this->userServices->getLocationSeoContent(null, "Blog");
         $seo = clone ($locationSeoContent['data'] ?? new \stdClass);
         if (empty($seo->meta_description)) {
             $seo->meta_description = 'Guides, tips and news from ' . config('app.name') . ' for advertisers, agencies and members: profiles, verification, safety and visibility.';
         }
-        if ($data['activeCategory']) {
-            $seo->meta_title = $data['activeCategory']->meta_title ?: $data['activeCategory']->name . ' | Blog';
-            $seo->meta_description = $data['activeCategory']->meta_description ?: ($seo->meta_description ?? null);
+        if ($category || $place) {
+            $seo->meta_title = $category && !$place && $category->meta_title ? $category->meta_title : $heading . ' | ' . config('app.name');
+            $seo->meta_description = $category && !$place && $category->meta_description
+                ? $category->meta_description
+                : 'Read the latest ' . ($category ? $category->name . ' ' : '') . 'articles, guides and tips' . ($place ? ' for ' . $data['locationLabel'] : '') . ' on ' . config('app.name') . '.';
+            $seo->meta_keywords = $category ? $category->meta_keywords : null;
+            $seo->canonical_url = $request->url();
         }
-        // Filtered, searched and paginated views duplicate the main listing, so keep them out of the index.
-        if ($data['isFiltered'] || $data['blogs']->currentPage() > 1) {
+        // Searches, later pages and empty listings would be duplicate or thin content.
+        if ($data['keyword'] !== '' || $data['blogs']->currentPage() > 1 || $data['blogs']->isEmpty()) {
             $seo->robots_setting = 'noindex, follow';
+        } elseif ($category || $place) {
+            $seo->robots_setting = 'index, follow';
         }
         $locationSeoContent['data'] = $seo;
         $pageTitle = 'Blog | ' . config('app.name');
 
-        return view('front.blog', compact('locationSeoContent', 'pageTitle') + $data);
+        return view('front.blog', compact('locationSeoContent', 'pageTitle', 'heading') + $data);
     }
     public function blogDetail()
     {
