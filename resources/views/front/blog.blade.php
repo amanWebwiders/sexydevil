@@ -28,7 +28,7 @@
                                 <select id="filterCountry" name="country" class="form-control" data-resets="filterState,filterCity">
                                     <option value="">All Countries</option>
                                     @foreach ($filterCountries as $country)
-                                        <option value="{{ \Illuminate\Support\Str::slug($country->name) }}" @selected(optional($current['country'])->id === $country->id)>{{ $country->name }}</option>
+                                        <option value="{{ \Illuminate\Support\Str::slug($country->name) }}" @selected(optional($current['country'])->id === $country->id)>{{ $country->name }} ({{ $country->blogs_count }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -40,7 +40,7 @@
                                 <select id="filterState" name="state" class="form-control" data-resets="filterCity" @disabled($filterStates->isEmpty())>
                                     <option value="">All States</option>
                                     @foreach ($filterStates as $state)
-                                        <option value="{{ \Illuminate\Support\Str::slug($state->name) }}" @selected(optional($current['state'])->id === $state->id)>{{ $state->name }}</option>
+                                        <option value="{{ \Illuminate\Support\Str::slug($state->name) }}" @selected(optional($current['state'])->id === $state->id)>{{ $state->name }} ({{ $state->blogs_count }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -53,7 +53,7 @@
                                 <select id="filterCity" name="city" class="form-control" @disabled($filterCities->isEmpty())>
                                     <option value="">All Cities</option>
                                     @foreach ($filterCities as $city)
-                                        <option value="{{ \Illuminate\Support\Str::slug($city->name) }}" @selected(optional($current['city'])->id === $city->id)>{{ $city->name }}</option>
+                                        <option value="{{ \Illuminate\Support\Str::slug($city->name) }}" @selected(optional($current['city'])->id === $city->id)>{{ $city->name }} ({{ $city->blogs_count }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -227,6 +227,13 @@
                     </div>
 
                 </div>
+                @if (!empty($locationSeoContent['data']->content))
+                    <div class="row">
+                        <div class="col-lg-12 text-justify locationSeoContent">
+                            {!! $locationSeoContent['data']->content !!}
+                        </div>
+                    </div>
+                @endif
             </div>
         </section>
     </div>

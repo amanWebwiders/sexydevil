@@ -1458,6 +1458,13 @@
                 </section>
             </div>
         </div>
+        @if (!empty($locationSeoContent['data']->content))
+            <div class="row">
+                <div class="col-lg-12 text-justify locationSeoContent">
+                    {!! $locationSeoContent['data']->content !!}
+                </div>
+            </div>
+        @endif
     </div>
 </section>
 
