@@ -128,10 +128,14 @@ class BlogServices
             'keyword' => $keyword,
             'locationLabel' => collect([$current['city'], $current['state'], $current['country']])->filter()->pluck('name')->implode(', '),
             'isFiltered' => (bool) array_filter($current) || $keyword !== '',
-            // Full location lists, even where no article exists yet: an empty result shows "no articles found".
-            'filterCountries' => Country::orderBy('name')->get(['id', 'name']),
-            'filterStates' => $current['country'] ? State::where('country_id', $current['country']->id)->orderBy('name')->get(['id', 'name']) : collect(),
-            'filterCities' => $current['state'] ? City::where('state_id', $current['state']->id)->orderBy('name')->get(['id', 'name']) : collect(),
+            // Only locations that have live articles (in the selected category), each with its article count.
+            'filterCountries' => $this->locationOptions(Country::class, 'country_id', [], $current['category'], $current['country']),
+            'filterStates' => $current['country']
+                ? $this->locationOptions(State::class, 'state_id', ['country_id' => $current['country']->id], $current['category'], $current['state'])
+                : collect(),
+            'filterCities' => $current['state']
+                ? $this->locationOptions(City::class, 'city_id', ['state_id' => $current['state']->id], $current['category'], $current['city'])
+                : collect(),
             'blogTopics' => $topics,
             'recentBlogs' => Blog::live()->orderByDesc('published_at')->limit(5)
                 ->get(['id', 'title', 'slug', 'featured_image', 'featured_image_alt', 'published_at']),
@@ -213,6 +217,8 @@ class BlogServices
             'robots_setting' => $isPreview ? 'noindex, nofollow' : $blog->robots,
             'image_alt_text' => $blog->featured_image_alt,
             'og_image' => $blog->featured_image,
+            // Footer text managed under Location SEO Content (title "Blog"), shown below every blog page.
+            'content' => app(UserServices::class)->getLocationSeoContent(null, 'Blog')['data']->content ?? '',
         ];
 
         return [
@@ -221,6 +227,29 @@ class BlogServices
             'blogTopics' => $topics,
             'isPreview' => $isPreview,
         ];
+    }
+
+    /**
+     * Filter dropdown options for one location level: the places with at least one live article
+     * (optionally in a category and below a parent location), sorted by name, each with a blogs_count.
+     * The currently selected place is always kept so the dropdown still shows the active filter.
+     */
+    private function locationOptions(string $model, string $column, array $parent, ?BlogCategory $category, $selected)
+    {
+        $counts = Blog::live()
+            ->when($category, fn ($q) => $q->whereHas('categories', fn ($c) => $c->where('blog_categories.id', $category->id)))
+            ->where($parent)
+            ->whereNotNull($column)
+            ->selectRaw("{$column} as place_id, count(*) as aggregate")
+            ->groupBy($column)
+            ->pluck('aggregate', 'place_id');
+
+        $ids = $counts->keys()->when($selected, fn ($ids) => $ids->push($selected->id))->unique();
+
+        return $model::whereIn('id', $ids)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->each(fn ($place) => $place->blogs_count = (int) ($counts[$place->id] ?? 0));
     }
 
     /**
