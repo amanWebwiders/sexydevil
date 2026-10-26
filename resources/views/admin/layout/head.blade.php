@@ -15,8 +15,12 @@
 	<link href="{{ asset('admin/assets/css/app.min.css')}}" rel="stylesheet">
 	<!-- ================== END core-css ================== -->
 
-	<link rel="icon" type="image/png" sizes="192x192" href="{{ url('fav.png') }}?v={{ filemtime(public_path('fav.png')) }}">
-	<link rel="apple-touch-icon" href="{{ url('fav.png') }}?v={{ filemtime(public_path('fav.png')) }}">
+	<link rel="icon" type="image/x-icon" href="{{ url('favicon.ico') }}?v=2">
+	<link rel="shortcut icon" type="image/x-icon" href="{{ url('favicon.ico') }}?v=2">
+	<link rel="icon" type="image/png" sizes="48x48" href="{{ url('favicon-48x48.png') }}?v=2">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{ url('favicon-96x96.png') }}?v=2">
+	<link rel="icon" type="image/png" sizes="192x192" href="{{ url('favicon-192x192.png') }}?v=2">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url('apple-touch-icon.png') }}?v=2">
 	
 	<!-- ================== BEGIN page-css ================== -->
 	<link href="{{ asset('admin/assets/plugins/jvectormap-next/jquery-jvectormap.css')}}" rel="stylesheet">
